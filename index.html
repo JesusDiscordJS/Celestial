@@ -43,8 +43,23 @@
       }
     }
   </script>
+  <style>
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      background-image: url('https://i.gifer.com/7plQ.gif');
+      background-size: cover;
+      background-position: center;
+      opacity: 0.3;
+    }
+  </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-start p-4 space-y-6" style="background-image: url('https://images.unsplash.com/photo-1580414057403-c5f451f30e8b?auto=format&fit=crop&w=1950&q=80'); background-size: cover; background-position: center;">
+<body class="min-h-screen flex flex-col items-center justify-start p-4 space-y-6 text-white">
 
   <!-- Cabeçalho lateral com nome + badge -->
   <div class="fixed top-4 left-4 bg-black bg-opacity-80 rounded-xl p-4 flex items-center gap-4 shadow-lg">
