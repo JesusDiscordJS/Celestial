@@ -18,7 +18,11 @@
       resultado.innerHTML = '<p class="text-gray-400">Buscando informações para ID ' + userId + '...</p>';
 
       try {
-        const res = await fetch(`https://discord.bio/api/user/${userId}`);
+        const res = await fetch(`https://cors-anywhere.herokuapp.com/https://discord.bio/api/user/${userId}`, {
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        });
         const json = await res.json();
 
         if (json.success && json.payload && json.payload.user) {
@@ -55,7 +59,7 @@
       background-image: url('https://user-images.githubusercontent.com/74038190/212750155-3ceddfbd-19d3-40a3-87af-8d329c8323c4.gif');
       background-size: cover;
       background-position: center;
-      opacity: 0.3;
+      opacity: 1;
     }
   </style>
 </head>
