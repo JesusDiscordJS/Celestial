@@ -1,181 +1,36 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Perfil de Desenvolvedor</title>
-    <style>
-        /* Paleta de Cores Inspirada na Imagem Fornecida */
-        :root {
-            --page-bg: #f0f2f5; /* Cinza claro para o fundo da página */
-            --card-bg: #ffffff; /* Branco para o card de conteúdo */
-            --primary-purple: #8A2BE2; /* Roxo dominante do cabelo/roupa */
-            --accent-teal: #40E0D0;   /* Azul-petróleo/Ciano dos destaques do cabelo */
-            --secondary-purple-light: #D8BFD8; /* Roxo mais claro (tom de pele ou fundos sutis) */
-            --highlight-magenta: #C71585; /* Magenta dos olhos / destaque forte */
-            --text-dark: #2E3338;      /* Cinza escuro para texto principal */
-            --text-light: #ffffff;     /* Texto branco para fundos escuros */
-            --border-color: #d1d1d1;   /* Cor sutil para bordas */
-            --shadow-color: rgba(0, 0, 0, 0.1); /* Sombra suave */
-            --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Fonte moderna sem serifa */
-        }
-
-        body {
-            font-family: var(--font-main);
-            background-color: var(--page-bg);
-            color: var(--text-dark);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start; 
-            min-height: 100vh;
-            line-height: 1.6;
-        }
-
-        .blog-container {
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            box-shadow: 0 8px 16px var(--shadow-color);
-            width: 100%;
-            max-width: 700px; 
-            overflow: hidden; 
-        }
-
-        .blog-header {
-            background: linear-gradient(135deg, var(--primary-purple), var(--accent-teal));
-            color: var(--text-light);
-            padding: 30px;
-            text-align: center;
-        }
-
-        .blog-header h1 {
-            margin: 0;
-            font-size: 2.5em;
-            font-weight: 700;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
-        }
-
-        .profile-section {
-            display: flex;
-            align-items: center;
-            padding: 30px;
-            gap: 25px; 
-            background-color: var(--card-bg); 
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .profile-image {
-            width: 120px; 
-            height: 120px;
-            border-radius: 50%; 
-            border: 4px solid var(--accent-teal); 
-            object-fit: cover; 
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-        }
-
-        .profile-info {
-            flex-grow: 1;
-        }
-
-        .profile-info h2 { /* Nome de Usuário Discord */
-            margin: 0 0 5px 0;
-            font-size: 1.8em;
-            color: var(--primary-purple);
-        }
-
-        .profile-info .role { /* Cargo de Desenvolvedor */
-            font-size: 1.1em;
-            color: var(--text-dark);
-            background-color: #e0f7fa; /* Fundo azul-petróleo claro para o cargo */
-            border-left: 4px solid var(--accent-teal);
-            padding: 8px 12px;
-            border-radius: 4px;
-            display: inline-block; 
-            font-weight: 500;
-        }
-
-        .blog-content {
-            padding: 30px;
-            font-size: 1.1em;
-        }
-
-        .blog-content h3 {
-            color: var(--primary-purple);
-            margin-top: 0;
-            font-size: 1.5em;
-        }
-
-        .blog-content p {
-            margin-bottom: 15px;
-            color: #555; /* Cor ligeiramente mais clara para o corpo do texto */
-        }
-        
-        .bot-mention {
-            font-weight: bold;
-            color: var(--primary-purple);
-        }
-
-        .highlight { /* Para texto especial, se necessário */
-            color: var(--highlight-magenta);
-            font-weight: bold;
-        }
-
-        /* Ajustes Responsivos */
-        @media (max-width: 600px) {
-            body {
-                padding: 10px;
-            }
-            .profile-section {
-                flex-direction: column; /* Empilha imagem e info verticalmente */
-                text-align: center;
-                gap: 15px;
-            }
-            .profile-image {
-                width: 100px;
-                height: 100px;
-            }
-            .blog-header h1 {
-                font-size: 2em;
-            }
-            .profile-info h2 {
-                font-size: 1.5em;
-            }
-            .profile-info .role {
-                font-size: 1em;
-            }
-            .blog-content {
-                padding: 20px;
-                font-size: 1em;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Perfil Estilo Discord</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-
-    <div class="blog-container">
-        <header class="blog-header">
-            <h1>Meu Perfil Dev</h1>
-        </header>
-
-        <section class="profile-section">
-            <img src="CelestialDevRoleBadge.jpg" alt="Minha foto de perfil do Discord" class="profile-image">
-            <div class="profile-info">
-                <h2>[Seu Nome de Usuário Discord]</h2>
-                <p class="role">Desenvolvedor do <span class="bot-mention">[Nome do Seu BOT]</span></p>
-            </div>
-        </section>
-
-        <article class="blog-content">
-            <h3>Olá, Mundo! Sou eu, o criador por trás da magia! ✨</h3>
-            <p>Bem-vindo ao meu cantinho! Se você chegou até aqui, provavelmente já interagiu com o <span class="bot-mention">[Nome do Seu BOT]</span> no Discord. E sim, sou eu, o desenvolvedor por trás dele!</p>
-            <p>Criei o <span class="bot-mention">[Nome do Seu BOT]</span> com muita paixão por comunidades online e automação. A ideia é sempre trazer funcionalidades úteis, divertidas e que facilitem a vida nos servidores.</p>
-            <p>Este espaço é para compartilhar um pouco sobre mim e os bastidores do desenvolvimento. Adoro explorar novas tecnologias e traduzir ideias em código funcional. As cores que você vê por aqui? São inspiradas diretamente na identidade visual que criei para o meu BOT, refletindo a criatividade e a energia que coloco neste projeto.</p>
-            <p>Obrigado por usar o <span class="bot-mention">[Nome do Seu BOT]</span> e por dar uma espiadinha no meu perfil!</p>
-            <p>Fique à vontade para se conectar ou enviar feedback!</p>
-            <p><em>#DiscordDev #BotDeveloper #CodingLife</em></p>
-        </article>
+<body class="bg-gradient-to-b from-purple-950 to-black min-h-screen flex items-center justify-center p-4">
+  <div class="bg-[#2c2f33] text-white max-w-md w-full rounded-2xl shadow-xl overflow-hidden">
+    <div class="bg-cover bg-center h-32" style="background-image: url('https://images.unsplash.com/photo-1516646255117-8c5b1fce2f56?auto=format&fit=crop&w=1050&q=80');"></div>
+    <div class="flex items-center p-4 -mt-12">
+      <img class="w-24 h-24 rounded-full border-4 border-[#2c2f33] object-cover" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Avatar" />
+      <div class="ml-4">
+        <h2 class="text-2xl font-bold">! FAMOSO ༺✞JesusCristo✞༻</h2>
+        <p class="text-sm text-gray-300">@chicomoedass · new.user</p>
+      </div>
     </div>
 
+    <div class="px-4 pb-4">
+      <div class="flex flex-wrap gap-2 mt-4">
+        <span class="bg-yellow-500 text-black text-sm px-3 py-1 rounded-full">🌟 Estrela Primordial</span>
+        <span class="bg-indigo-600 text-white text-sm px-3 py-1 rounded-full">🛠️ Engenheiro Estelar</span>
+        <span class="bg-purple-700 text-white text-sm px-3 py-1 rounded-full">🧪 Explorador de Anomalias</span>
+        <span class="bg-pink-600 text-white text-sm px-3 py-1 rounded-full">✨ Luminar Premium</span>
+        <span class="bg-red-600 text-white text-sm px-3 py-1 rounded-full">🚀 Impulsor Galáctico</span>
+      </div>
+
+      <div class="mt-6">
+        <p class="text-sm text-gray-400">📅 Membro desde: <strong>6 de mar. de 2021</strong> até <strong>18 de mai. de 2025</strong></p>
+        <p class="mt-2 italic text-gray-300">"Dentro de você, quero sentir..."</p>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
