@@ -18,11 +18,12 @@
       resultado.innerHTML = '<p class="text-gray-400">Buscando informações para ID ' + userId + '...</p>';
 
       try {
-        const res = await fetch(`https://discordlookup.mesavirep.xyz/v1/user/${userId}`);
-        const data = await res.json();
+        const res = await fetch(`https://discord.bio/api/user/${userId}`);
+        const json = await res.json();
 
-        if (data.username) {
-          const avatarUrl = data.avatar ? `https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}` : 'https://cdn.discordapp.com/embed/avatars/0.png';
+        if (json.success && json.payload && json.payload.user) {
+          const data = json.payload.user;
+          const avatarUrl = data.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png';
 
           resultado.innerHTML = `
             <div class="mt-4 p-4 bg-[#23272a] rounded-xl">
@@ -30,15 +31,14 @@
               <p><strong>ID:</strong> ${data.id}</p>
               <p><strong>Nome de usuário:</strong> ${data.username}#${data.discriminator}</p>
               <img src="${avatarUrl}" class="w-20 h-20 rounded-full mt-2" alt="Avatar" />
-              <p class="mt-2"><strong>Flags:</strong> ${data.public_flags_array.join(', ') || 'Nenhuma'}</p>
-              <p><strong>Bot:</strong> ${data.bot ? 'Sim' : 'Não'}</p>
-              <p><strong>Data de criação:</strong> ${new Date(data.created_at).toLocaleString()}</p>
+              <p class="mt-2"><strong>Bio:</strong> ${data.bio || 'Nenhuma bio disponível'}</p>
             </div>
           `;
         } else {
           resultado.innerHTML = '<p class="text-red-500">Usuário não encontrado.</p>';
         }
       } catch (err) {
+        console.error(err);
         resultado.innerHTML = '<p class="text-red-500">Erro ao buscar usuário.</p>';
       }
     }
@@ -52,7 +52,7 @@
       width: 100vw;
       height: 100vh;
       z-index: -1;
-      background-image: url('https://i.gifer.com/7plQ.gif');
+      background-image: url('https://i.gifer.com/Yk2b.gif');
       background-size: cover;
       background-position: center;
       opacity: 0.3;
