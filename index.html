@@ -2,84 +2,79 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Perfil Estilo Discord</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    async function buscarPerfil() {
-      const userId = document.getElementById('discordId').value;
-      const resultado = document.getElementById('resultado');
-
-      if (!userId) {
-        resultado.innerHTML = '<p class="text-red-500">Insira um ID válido.</p>';
-        return;
-      }
-
-      resultado.innerHTML = '<p class="text-gray-400">Buscando informações para ID ' + userId + '...</p>';
-
-      try {
-        const res = await fetch(`https://cors-anywhere.herokuapp.com/https://discord.bio/api/user/${userId}`, {
-          headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-          }
-        });
-        const json = await res.json();
-
-        if (json.success && json.payload && json.payload.user) {
-          const data = json.payload.user;
-          const avatarUrl = data.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png';
-
-          resultado.innerHTML = `
-            <div class="mt-4 p-4 bg-[#23272a] rounded-xl">
-              <h3 class="text-lg font-semibold">Usuário encontrado:</h3>
-              <p><strong>ID:</strong> ${data.id}</p>
-              <p><strong>Nome de usuário:</strong> ${data.username}#${data.discriminator}</p>
-              <img src="${avatarUrl}" class="w-20 h-20 rounded-full mt-2" alt="Avatar" />
-              <p class="mt-2"><strong>Bio:</strong> ${data.bio || 'Nenhuma bio disponível'}</p>
-            </div>
-          `;
-        } else {
-          resultado.innerHTML = '<p class="text-red-500">Usuário não encontrado.</p>';
-        }
-      } catch (err) {
-        console.error(err);
-        resultado.innerHTML = '<p class="text-red-500">Erro ao buscar usuário.</p>';
-      }
-    }
-  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Avatares do Discord</title>
   <style>
-    body::before {
-      content: "";
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: -1;
-      background-image: url('https://user-images.githubusercontent.com/74038190/212750155-3ceddfbd-19d3-40a3-87af-8d329c8323c4.gif');
-      background-size: cover;
-      background-position: center;
-      opacity: 1;
+    body {
+      font-family: Arial, sans-serif;
+      background: #121212;
+      color: #fff;
+      padding: 2rem;
+      text-align: center;
+    }
+    input {
+      padding: 0.5rem;
+      width: 250px;
+      font-size: 1rem;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      margin-left: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .avatars {
+      margin-top: 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+    }
+    .avatars img {
+      border-radius: 50%;
+      width: 128px;
+      height: 128px;
+      object-fit: cover;
+      border: 2px solid #4caf50;
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-start p-4 space-y-6 text-white">
+<body>
+  <h1>Buscar Avatares Salvos</h1>
+  <input type="text" id="userIdInput" placeholder="Digite o ID do usuário" />
+  <button onclick="buscarAvatares()">Buscar</button>
 
-  <!-- Cabeçalho lateral com nome + badge -->
-  <div class="fixed top-4 left-4 bg-black bg-opacity-80 rounded-xl p-4 flex items-center gap-4 shadow-lg">
-    <img class="w-12 h-12 rounded-full object-cover" src="https://media.discordapp.net/attachments/1375545742675935314/1376892656394829864/c541b1c8-29ab-45a1-8f5d-5a55aacb5d0c.png?ex=6836fab6&is=6835a936&hm=4c3fb3ab5a112beb2a1430429f3ba112cf30290a21796ca9a4320992ba39dd46&=&format=webp&quality=lossless&width=960&height=960" alt="Avatar" />
-    <h1 class="text-white text-xl font-bold flex items-center gap-2">JesusCristo <img src="https://cdn.discordapp.com/badge-icons/6df5892e0f35b051f8b61eace34f4967.png" alt="Badge" class="w-5 h-5" /></h1>
-  </div>
+  <div class="avatars" id="avatarsContainer"></div>
 
-  <!-- Barra de pesquisa centralizada -->
-  <div class="mt-32 bg-[#2c2f33] w-full max-w-md p-6 rounded-2xl shadow-xl bg-opacity-90">
-    <label for="discordId" class="block text-white text-sm mb-2">Buscar perfil por ID do Discord</label>
-    <div class="flex gap-2">
-      <input id="discordId" type="text" placeholder="Digite o ID do usuário" class="flex-1 px-3 py-2 rounded-lg text-black text-sm" />
-      <button onclick="buscarPerfil()" class="bg-blue-600 text-white px-4 py-2 rounded-lg">Buscar</button>
-    </div>
-    <div id="resultado" class="mt-4 text-white text-sm"></div>
-  </div>
+  <script>
+    async function buscarAvatares() {
+      const userId = document.getElementById('userIdInput').value;
+      const container = document.getElementById('avatarsContainer');
+      container.innerHTML = '';
 
+      if (!userId) {
+        alert('Por favor, insira um ID de usuário.');
+        return;
+      }
+
+      try {
+        const response = await fetch(`https://celestial-api.onrender.com/api/avatars/${userId}`);
+        const data = await response.json();
+
+        if (data.avatars && data.avatars.length > 0) {
+          data.avatars.forEach(url => {
+            const img = document.createElement('img');
+            img.src = url;
+            container.appendChild(img);
+          });
+        } else {
+          container.innerHTML = '<p>Nenhum avatar encontrado para esse usuário.</p>';
+        }
+      } catch (err) {
+        console.error(err);
+        container.innerHTML = '<p>Erro ao buscar avatares. Verifique o ID ou tente novamente mais tarde.</p>';
+      }
+    }
+  </script>
 </body>
 </html>
