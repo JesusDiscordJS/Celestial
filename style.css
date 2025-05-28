@@ -1,3 +1,6 @@
+/* Importa a fonte Montserrat do Google Fonts com os pesos 400 (normal), 500 (medium), 600 (semi-bold), 700 (bold) */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+
 * {
   box-sizing: border-box;
 }
@@ -5,10 +8,11 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
+  /* Aplica a nova fonte Montserrat como principal, com fallbacks para fontes do sistema */
+  font-family: 'Montserrat', 'Segoe UI', -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
   background: url('https://user-images.githubusercontent.com/74038190/225813708-98b745f2-7d22-48cf-9150-083f1b00d6c9.gif') no-repeat center center fixed;
   background-size: cover;
-  color: #dcddde;
+  color: #dcddde; /* Cor de texto padrão para o corpo */
   min-height: 100vh;
   overflow-x: hidden;
 }
@@ -30,7 +34,6 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Estilo para o link da logo */
 .header > a {
   display: inline-block;
   text-decoration: none;
@@ -71,7 +74,7 @@ h1.page-title {
   font-size: 1.4rem;
   color: #b9bbbe;
   margin-bottom: 15px;
-  font-weight: 500;
+  font-weight: 500; /* Usando o peso medium da Montserrat */
 }
 
 p.description {
@@ -83,38 +86,39 @@ p.description {
   margin-left: auto;
   margin-right: auto;
   line-height: 1.7;
+  font-weight: 400; /* Usando o peso normal da Montserrat */
 }
 
-/* SEÇÃO .features-info COM FUNDO MAIS ESCURO E TEXTO BOLD */
+/* SEÇÃO .features-info ATUALIZADA */
 .features-info {
-  background: rgba(20, 22, 25, 0.92); /* Cinza muito escuro, 92% opaco - para funcionar como o "retângulo" */
+  background: rgba(20, 22, 25, 0.92);
   border-radius: 12px;
-  padding: 30px; /* Aumentei um pouco o padding interno */
+  padding: 30px;
   margin: 30px auto 40px;
   max-width: 900px;
   border: 1px solid #43b581;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.5); /* Sombra um pouco mais pronunciada */
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
 }
 
 .features-info h3 {
   color: #43b581;
-  font-size: 1.4rem; /* Um pouco maior */
+  font-size: 1.4rem;
   margin-bottom: 25px;
-  font-weight: 700;    /* Bold */
-  text-transform: uppercase; /* Opcional: deixa o título em maiúsculas */
-  letter-spacing: 1px;     /* Opcional: leve espaçamento entre letras */
+  font-weight: 700;    /* Bold da Montserrat */
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .features-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 25px; /* Aumentei o espaçamento */
+  gap: 25px;
   margin-top: 20px;
 }
 
 .feature-item {
-  background: rgba(40, 43, 48, 0.8); /* Fundo dos itens um pouco mais escuro e opaco */
-  padding: 25px; /* Aumentei o padding */
+  background: rgba(40, 43, 48, 0.8);
+  padding: 25px;
   border-radius: 8px;
   border-left: 4px solid #7289da;
   text-align: left;
@@ -128,17 +132,17 @@ p.description {
 
 .feature-item h4 {
   color: #ffffff;
-  margin: 0 0 12px 0; /* Aumentei margem inferior */
-  font-size: 1.15rem; /* Um pouco maior */
-  font-weight: 700;   /* Bold */
+  margin: 0 0 12px 0;
+  font-size: 1.15rem;
+  font-weight: 700;   /* Bold da Montserrat */
 }
 
 .feature-item p {
-  color: #c0c3c7; /* Cor do texto um pouco mais clara para melhor contraste */
+  color: #c0c3c7;
   margin: 0;
-  font-size: 0.98rem; /* Um pouco maior */
+  font-size: 0.98rem;
   line-height: 1.6;
-  font-weight: 500;   /* Peso médio (mais bold que normal) */
+  font-weight: 600;   /* Semi-bold da Montserrat (mais bold que o 500 anterior) */
 }
 /* FIM DA SEÇÃO .features-info ATUALIZADA */
 
@@ -169,7 +173,7 @@ input[type="text"] {
   max-width: 100%;
   border: 2px solid #43b581;
   border-radius: 10px;
-  font-size: 1.1rem;
+  font-size: 1.1rem; /* A fonte Montserrat será aplicada aqui também */
   background-color: #40444b;
   color: #dcddde;
   transition: all 0.3s ease;
@@ -198,7 +202,7 @@ input[type="text"]::placeholder {
 button {
   padding: 18px 35px;
   font-size: 1.1rem;
-  font-weight: 600;
+  font-weight: 600; /* Usando o peso semi-bold da Montserrat */
   border: none;
   border-radius: 10px;
   color: white;
@@ -207,6 +211,7 @@ button {
   position: relative;
   overflow: hidden;
   min-width: 140px;
+  letter-spacing: 0.5px; /* Leve espaçamento para botões */
 }
 
 .btn-primary {
@@ -297,7 +302,7 @@ button.loading::after {
 
 .stat-number {
   font-size: 2rem;
-  font-weight: 700;
+  font-weight: 700; /* Bold da Montserrat */
   color: #43b581;
   display: block;
 }
@@ -306,11 +311,12 @@ button.loading::after {
   color: #b9bbbe;
   font-size: 0.9rem;
   margin-top: 5px;
+  font-weight: 500; /* Medium da Montserrat */
 }
 
 /* Card Principal */
 .user-info-container {
-  background: linear-gradient(135deg, rgba(40, 43, 48, 0.96), rgba(54, 57, 63, 0.96)); /* Fundo mais escuro e opaco */
+  background: linear-gradient(135deg, rgba(40, 43, 48, 0.96), rgba(54, 57, 63, 0.96));
   padding: 40px;
   margin-top: 40px;
   border-radius: 15px;
@@ -321,7 +327,7 @@ button.loading::after {
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
   border: 2px solid #43b581;
   animation: scaleIn 0.5s ease-out 0.3s both;
-  backdrop-filter: blur(8px); /* Reduzi um pouco o blur, ajuste conforme necessário */
+  backdrop-filter: blur(8px);
 }
 
 @keyframes scaleIn {
@@ -329,12 +335,12 @@ button.loading::after {
   to { opacity: 1; transform: scale(1); }
 }
 
-.user-info-container h2 {
+.user-info-container h2 { /* Títulos de seção dentro do card principal */
   color: #ffffff;
   margin-top: 0;
   margin-bottom: 25px;
   font-size: 1.6rem;
-  font-weight: 700;
+  font-weight: 700; /* Bold da Montserrat */
   border-bottom: 2px solid #43b581;
   padding-bottom: 15px;
   display: flex;
@@ -359,14 +365,14 @@ button.loading::after {
   gap: 30px;
   align-items: center;
   padding: 30px;
-  background: linear-gradient(135deg, rgba(114, 137, 218, 0.15), rgba(67, 181, 129, 0.15)); /* Levemente mais opaco */
+  background: linear-gradient(135deg, rgba(114, 137, 218, 0.15), rgba(67, 181, 129, 0.15));
   border: 2px solid #7289da;
   border-radius: 12px;
 }
 
-.info-section {
+.info-section { /* Seções dentro do user-info-container */
   margin-bottom: 35px;
-  background: rgba(28, 30, 33, 0.85); /* Fundo mais escuro para seções internas */
+  background: rgba(28, 30, 33, 0.85);
   padding: 25px;
   border-radius: 12px;
   border: 1px solid #40444b;
@@ -400,18 +406,19 @@ button.loading::after {
   font-size: 1rem;
   margin-top: 12px;
   color: #b9bbbe;
-  font-weight: 500;
+  font-weight: 500; /* Medium da Montserrat */
 }
 
 .user-details {
   flex-grow: 1;
 }
 
-.user-details h2 {
+.user-details h2 { /* Título "Informações do Usuário" */
   border-bottom: none;
   padding-bottom: 0;
   margin-bottom: 20px;
   font-size: 2rem;
+  font-weight: 700; /* Bold da Montserrat, o gradiente já o destaca */
   background: linear-gradient(135deg, #7289da, #43b581);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -424,7 +431,7 @@ button.loading::after {
   gap: 12px;
 }
 
-.user-info-container p {
+.user-info-container p { /* Parágrafos de ID, Usuário, Status, Calls */
   font-size: 1.1rem;
   color: #dcddde;
   margin-bottom: 12px;
@@ -433,11 +440,12 @@ button.loading::after {
   align-items: baseline;
   gap: 10px;
   flex-wrap: wrap;
+  font-weight: 400; /* Peso normal para estes, o .value e .label terão seus pesos */
 }
 
 .label {
   color: #43b581;
-  font-weight: 600;
+  font-weight: 600; /* Semi-bold da Montserrat */
   display: inline-block;
   min-width: 200px;
   font-size: 1rem;
@@ -446,7 +454,7 @@ button.loading::after {
 
 .value {
   color: #ffffff;
-  font-weight: 500;
+  font-weight: 500; /* Medium da Montserrat */
   background: rgba(67, 181, 129, 0.1);
   padding: 5px 12px;
   border-radius: 6px;
@@ -457,6 +465,7 @@ button.loading::after {
 .placeholder {
   color: #8e9297;
   font-style: italic;
+  font-weight: 400; /* Placeholder com peso normal */
 }
 
 .status-online { color: #43b581 !important; }
@@ -469,15 +478,16 @@ button.loading::after {
   margin: 0;
 }
 
-.user-info-container ul li {
+.user-info-container ul li { /* Itens da lista de histórico de nomes */
   padding: 15px 20px;
   margin-bottom: 10px;
   border: 1px solid #40444b;
   border-radius: 8px;
   color: #dcddde;
   font-size: 1rem;
+  font-weight: 500; /* Medium da Montserrat para os nomes antigos */
   transition: all 0.3s ease;
-  background: rgba(54, 57, 63, 0.6); /* Fundo dos itens da lista mais escuro */
+  background: rgba(54, 57, 63, 0.6);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -495,6 +505,7 @@ button.loading::after {
   color: #8e9297;
   font-style: italic;
   margin-left: 10px;
+  font-weight: 400; /* Peso normal */
 }
 
 .old-avatars-container {
@@ -535,21 +546,22 @@ button.loading::after {
   font-size: 0.8rem;
   color: #8e9297;
   text-align: center;
+  font-weight: 500; /* Medium da Montserrat */
 }
 
 #errorMessage, .success-message {
   padding: 20px 25px;
   border-radius: 12px;
   margin-top: 25px;
-  font-weight: 600;
+  font-weight: 600; /* Semi-bold da Montserrat para mensagens */
   display: inline-block;
   max-width: 80%;
 }
 
 #errorMessage {
   color: #f04747;
-  background: linear-gradient(135deg, rgba(240, 71, 71, 0.15), rgba(240, 71, 71, 0.1)); /* Levemente mais opaco */
-  border: 2px solid rgba(240, 71, 71, 0.5); /* Borda mais forte */
+  background: linear-gradient(135deg, rgba(240, 71, 71, 0.15), rgba(240, 71, 71, 0.1));
+  border: 2px solid rgba(240, 71, 71, 0.5);
   animation: shake 0.5s ease-in-out;
   box-shadow: 0 8px 16px rgba(240, 71, 71, 0.2);
 }
@@ -562,8 +574,8 @@ button.loading::after {
 
 .success-message {
   color: #43b581;
-  background: linear-gradient(135deg, rgba(67, 181, 129, 0.15), rgba(67, 181, 129, 0.1)); /* Levemente mais opaco */
-  border: 2px solid rgba(67, 181, 129, 0.5); /* Borda mais forte */
+  background: linear-gradient(135deg, rgba(67, 181, 129, 0.15), rgba(67, 181, 129, 0.1));
+  border: 2px solid rgba(67, 181, 129, 0.5);
   box-shadow: 0 8px 16px rgba(67, 181, 129, 0.2);
 }
 
@@ -576,6 +588,7 @@ button.loading::after {
   font-size: 0.8rem;
   color: #7289da;
   margin-left: 8px;
+  font-weight: 500; /* Medium da Montserrat */
 }
 
 .modal-overlay {
@@ -584,7 +597,7 @@ button.loading::after {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.92); /* Fundo do modal mais escuro */
+  background: rgba(0,0,0,0.92);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -622,15 +635,14 @@ button.loading::after {
     height: 120px;
   }
 
-  .input-group {
-    flex-direction: column;
-    gap: 15px;
-  }
-
   input[type="text"] {
     width: 100%;
     max-width: 400px;
   }
+  .input-group { /* Garante que o grupo de input não exceda o input */
+      max-width: 400px;
+  }
+
 
   .button-group {
     width: 100%;
@@ -639,7 +651,7 @@ button.loading::after {
   }
 
   .button-group button {
-    width: 100%; /* Botões principais ocupam largura total e empilham */
+    width: 100%;
     margin-bottom: 10px;
   }
   .button-group button:last-child {
@@ -681,8 +693,8 @@ button.loading::after {
   }
   .user-actions button {
     flex-grow: 1;
-    min-width: calc(50% - 10px); /* Tenta 2 por linha, mas pode ser 1 se não couber */
-    max-width: calc(50% - 5px); /* Evita que um botão seja muito maior que o outro */
+    min-width: calc(50% - 10px);
+    max-width: calc(50% - 5px);
   }
 
 
@@ -706,7 +718,7 @@ button.loading::after {
     height: 80px;
   }
 
-  .features-info { /* Ajustes para a seção features em mobile */
+  .features-info {
     padding: 20px;
   }
   .features-info h3 {
@@ -720,10 +732,11 @@ button.loading::after {
     padding: 15px;
   }
   .feature-item h4 {
-    font-size: 1.1rem;
+    font-size: 1.1rem; /* Mantido o tamanho, já que aumentamos um pouco o base */
   }
   .feature-item p {
-    font-size: 0.9rem;
+    font-size: 0.9rem; /* Reduzido um pouco para mobile */
+    font-weight: 500; /* Medium para parágrafos em mobile pode ser mais legível que 600 */
   }
 
 
@@ -751,11 +764,11 @@ button.loading::after {
   button {
     padding: 15px 25px;
     font-size: 1rem;
+    font-weight: 600; /* Semi-bold para botões */
   }
   .button-group {
     gap: 10px;
   }
-   /* Os botões no button-group já são 100% width pela regra de 768px */
 
   .user-info-container {
     padding: 20px 15px;
@@ -797,9 +810,9 @@ button.loading::after {
   #errorMessage, .success-message {
     padding: 15px 20px;
     font-size: 0.9rem;
-    max-width: 95%; /* Mensagens podem ser mais largas em telas pequenas */
+    max-width: 95%;
   }
-  .user-actions button { /* Botões de ação empilhados em telas muito pequenas */
+  .user-actions button {
     min-width: 100%;
     margin-bottom: 10px;
   }
