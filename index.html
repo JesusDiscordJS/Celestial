@@ -1,123 +1,145 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Celestial Avatares</title>
   <style>
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #1c1c2e;
-      color: #ffffff;
       margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: url('https://media.discordapp.net/attachments/1375545742675935314/1377324597241843783/ChatGPT_Image_28_de_mai._de_2025_13_35_59.png?ex=68388cfd&is=68373b7d&hm=2ab513c4c38a9aa79331ace98440c928e93398f319cac4814c07607c745aa7a0&=&format=webp&quality=lossless&width=1050&height=700') no-repeat center center fixed;
+      background-size: cover;
+      backdrop-filter: blur(2px);
+      color: #eee;
+    }
+
+    .container {
+      background-color: rgba(18, 18, 30, 0.85);
+      max-width: 800px;
+      margin: 4rem auto;
       padding: 2rem;
-      text-align: center;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(140, 82, 255, 0.3);
     }
 
     h1 {
-      color: #b388eb;
+      text-align: center;
+      color: #caaeff;
+      margin-bottom: 2rem;
       font-size: 2.5rem;
-      margin-bottom: 1rem;
     }
 
-    input {
-      padding: 0.6rem 1rem;
-      width: 280px;
-      font-size: 1rem;
-      border: 2px solid #8e44ad;
+    form {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 0.7rem;
+      border: 2px solid #7b5cff;
       border-radius: 8px;
-      background-color: #2d2d44;
+      background-color: #1e1e2f;
       color: #fff;
-      outline: none;
-    }
-
-    input:focus {
-      border-color: #b388eb;
     }
 
     button {
-      padding: 0.6rem 1.2rem;
-      margin-left: 10px;
-      font-size: 1rem;
+      padding: 0.7rem 1.2rem;
+      background-color: #a678ff;
       border: none;
       border-radius: 8px;
-      background: linear-gradient(135deg, #8e44ad, #b388eb);
       color: white;
+      font-weight: bold;
       cursor: pointer;
-      transition: background 0.3s ease;
+      transition: background 0.3s;
     }
 
     button:hover {
-      background: linear-gradient(135deg, #b388eb, #8e44ad);
+      background-color: #c3a0ff;
     }
 
     .avatars {
-      margin-top: 3rem;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 1.5rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 1rem;
     }
 
-    .avatars img {
-      width: 128px;
-      height: 128px;
-      border-radius: 50%;
-      border: 4px solid transparent;
-      background: linear-gradient(#1c1c2e, #1c1c2e) padding-box,
-                  linear-gradient(135deg, #8e44ad, #b388eb) border-box;
-      transition: transform 0.3s ease;
+    .avatar {
+      background-color: #2b2b40;
+      padding: 0.5rem;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(125, 75, 255, 0.2);
+      transition: transform 0.2s;
     }
 
-    .avatars img:hover {
-      transform: scale(1.1);
+    .avatar:hover {
+      transform: scale(1.05);
     }
 
-    .info-text {
-      margin-top: 2rem;
-      font-size: 1.1rem;
-      color: #aaa;
+    .avatar img {
+      width: 100%;
+      border-radius: 8px;
+    }
+
+    .avatar p {
+      margin: 0.5rem 0 0;
+      font-size: 0.9rem;
+      color: #d4bfff;
+      word-break: break-word;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        margin: 2rem 1rem;
+        padding: 1.5rem;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>🌌 Avatares Celestiais</h1>
-  <p class="info-text">Digite o ID de um usuário do Discord para ver seus avatares salvos.</p>
-
-  <input type="text" id="userIdInput" placeholder="Ex: 123456789012345678" />
-  <button onclick="buscarAvatares()">Buscar</button>
-
-  <div class="avatars" id="avatarsContainer"></div>
+  <div class="container">
+    <h1>🌌 Avatares Celestiais</h1>
+    <form id="form">
+      <input type="text" id="userId" placeholder="ID do usuário" required />
+      <button type="submit">Buscar</button>
+    </form>
+    <div class="avatars" id="avatarContainer"></div>
+  </div>
 
   <script>
-    async function buscarAvatares() {
-      const userId = document.getElementById('userIdInput').value.trim();
-      const container = document.getElementById('avatarsContainer');
-      container.innerHTML = '';
+    const form = document.getElementById('form');
+    const avatarContainer = document.getElementById('avatarContainer');
 
-      if (!userId) {
-        alert('Por favor, insira um ID de usuário válido.');
-        return;
-      }
-
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const userId = document.getElementById('userId').value;
       try {
-        const response = await fetch(`https://celestial-api.onrender.com/api/avatars/${userId}`);
+        const response = await fetch(`https://seu-api-aqui.com/api/user/${userId}`);
         const data = await response.json();
 
-        if (data.avatars && data.avatars.length > 0) {
-          data.avatars.forEach(url => {
-            const img = document.createElement('img');
-            img.src = url;
-            container.appendChild(img);
-          });
-        } else {
-          container.innerHTML = '<p class="info-text">Nenhum avatar encontrado para esse usuário.</p>';
-        }
-      } catch (err) {
-        console.error(err);
-        container.innerHTML = '<p class="info-text">Erro ao buscar avatares. Verifique o ID ou tente novamente mais tarde.</p>';
+        avatarContainer.innerHTML = ''; // Limpa avatares antigos
+
+        data.avatars.forEach(avatarUrl => {
+          const avatar = document.createElement('div');
+          avatar.className = 'avatar';
+          avatar.innerHTML = `
+            <img src="${avatarUrl}" alt="Avatar">
+            <p>${avatarUrl}</p>
+          `;
+          avatarContainer.appendChild(avatar);
+        });
+      } catch (error) {
+        avatarContainer.innerHTML = '<p>❌ Erro ao buscar avatares.</p>';
       }
-    }
+    });
   </script>
 </body>
 </html>
