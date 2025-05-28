@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Celestial Avatar Tracker</title>
+  <title>Celestial User Tracker</title>
   <style>
     body {
       margin: 0;
@@ -31,10 +31,21 @@
       color: #e0ccff;
     }
 
+    h2 {
+      color: #e0ccff;
+      margin-top: 30px;
+      margin-bottom: 15px;
+      font-size: 1.5rem;
+    }
+
     p {
       color: #d1c7ff;
       font-size: 1.1rem;
-      margin-bottom: 30px;
+      margin-bottom: 10px; /* Ajustado para espaçamento geral */
+    }
+
+    .description {
+        margin-bottom: 30px; /* Mantém o espaçamento original da descrição */
     }
 
     input {
@@ -44,6 +55,7 @@
       border: none;
       border-radius: 5px;
       font-size: 1rem;
+      margin-bottom: 10px; /* Espaçamento para mobile */
     }
 
     button {
@@ -62,64 +74,271 @@
       background-color: #c3a6ff;
     }
 
-    .avatar-container {
-      margin-top: 40px;
+    .user-info-container {
+        background-color: rgba(0, 0, 0, 0.4); /* Fundo levemente transparente para destacar */
+        padding: 25px;
+        margin-top: 30px;
+        border-radius: 10px;
+        display: inline-block; 
+        text-align: left; 
+        max-width: 700px; 
+        width: 90%; 
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+
+    .user-info-container p, .user-info-container li {
+        font-size: 1rem;
+        color: #f0f0f0; 
+    }
+
+    .user-info-container span, .user-info-container .placeholder {
+        color: #ffdd99; /* Cor de destaque para os valores */
+        font-style: italic;
+        font-weight: bold;
+    }
+    
+    .user-info-container .label {
+        color: #c5b3ff; /* Cor para os rótulos como "ID:", "Usuário Atual:" */
+        font-weight: normal;
+    }
+
+
+    .user-info-container ul {
+        list-style-type: none;
+        padding-left: 0;
+    }
+
+    .user-info-container ul li {
+        padding: 6px 0;
+        border-bottom: 1px dashed #ffffff22;
+    }
+    .user-info-container ul li:last-child {
+        border-bottom: none;
+    }
+
+
+    .avatar-display {
+        margin-bottom: 20px;
+        text-align: center; 
+    }
+
+    .avatar-display img {
+        width: 128px; 
+        height: 128px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #a478ff;
+        margin-bottom: 10px;
+        background-color: #ffffff11; /* Fundo caso a imagem não carregue */
+    }
+
+    .old-avatars-container {
+      margin-top: 20px; 
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 20px;
+      gap: 15px; 
     }
 
-    .avatar-container img {
-      width: 100px;
-      height: 100px;
+    .old-avatars-container img {
+      width: 80px; 
+      height: 80px;
       border-radius: 50%;
       object-fit: cover;
       border: 2px solid #ffffff66;
       transition: transform 0.3s;
+      background-color: #ffffff11;
     }
 
-    .avatar-container img:hover {
+    .old-avatars-container img:hover {
       transform: scale(1.1);
+    }
+
+    .info-section {
+        margin-bottom: 25px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #ffffff33; 
+    }
+    .info-section:last-child {
+        border-bottom: none; 
+        margin-bottom: 0;
+    }
+
+    /* Responsividade para input e botão */
+    @media (max-width: 600px) {
+        input {
+            width: calc(100% - 22px); 
+            margin-bottom: 10px;
+        }
+        button {
+            width: 100%;
+            margin-left: 0;
+        }
+        .container {
+            padding: 20px 10px;
+        }
+        h1 {
+            font-size: 1.8rem;
+        }
+        .user-info-container {
+            width: calc(100% - 50px); /* Ajustar com padding */
+            padding: 20px;
+        }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <img src="https://media.discordapp.net/attachments/1375545742675935314/1377352293313282068/CelestialDevRoleBadge.png?ex=6838a6c8&is=68375548&hm=93dc31b55a4847e14b072e4db5c338f7ed3d3386a96bf69fe1ef5f01b0a7f712&=&format=webp&quality=lossless" alt="Celestial Bot Icon" class="logo">
-    <h1>Celestial Avatar Tracker</h1>
-    <p>Somos um sistema de rastreamento de alterações de avatar no Discord, alimentado pela inteligência do bot Celestial.</p>
+    <h1>Celestial User Tracker</h1>
+    <p class="description">Somos um sistema de rastreamento de alterações de avatar e outras informações de usuários do Discord, alimentado pela inteligência do bot Celestial.</p>
     
     <input type="text" id="userIdInput" placeholder="Digite o ID do usuário">
-    <button onclick="buscarAvatares()">Buscar</button>
+    <button onclick="buscarDadosUsuario()">Buscar</button>
 
-    <div class="avatar-container" id="avatarContainer"></div>
+    <div id="resultsContainer" style="display: none;">
+        <div class="user-info-container">
+            <div class="info-section">
+                <h2>Informações Gerais</h2>
+                <p><span class="label">ID do Usuário:</span> <span id="userInfoId" class="placeholder">null</span></p>
+                <p><span class="label">Nome de Usuário Atual:</span> <span id="currentUser" class="placeholder">null</span></p>
+            </div>
+
+            <div class="info-section avatar-display">
+                <h2>Avatar Atual</h2>
+                <img id="currentAvatarImg" src="#" alt="Avatar Atual" style="display: none;">
+                <p id="currentAvatarMsg" class="placeholder">null</p>
+            </div>
+
+            <div class="info-section">
+                <h2>Nomes de Usuário Antigos</h2>
+                <ul id="oldUsernamesList">
+                    <li class="placeholder">null</li>
+                </ul>
+            </div>
+            
+            <div class="info-section">
+                <h2>Avatares Antigos</h2>
+                <div class="old-avatars-container" id="oldAvatarsContainer">
+                    <p id="oldAvatarsMsg" class="placeholder">Nenhum avatar antigo encontrado ou API não disponível.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <p id="errorMessage" style="color: #ffdddd; margin-top: 20px; font-weight: bold;"></p>
   </div>
 
   <script>
-    async function buscarAvatares() {
-      const userId = document.getElementById('userIdInput').value;
-      if (!userId) return;
+    function initializeUserInfoFields() {
+        document.getElementById('userInfoId').innerHTML = '<span class="placeholder">null</span>';
+        document.getElementById('currentUser').innerHTML = '<span class="placeholder">null</span>';
+        
+        const currentAvatarImg = document.getElementById('currentAvatarImg');
+        currentAvatarImg.style.display = 'none';
+        currentAvatarImg.src = '#'; // Reset src
+        document.getElementById('currentAvatarMsg').style.display = 'block';
+        document.getElementById('currentAvatarMsg').innerHTML = '<span class="placeholder">null</span>';
+        
+        const oldUsernamesList = document.getElementById('oldUsernamesList');
+        oldUsernamesList.innerHTML = '<li class="placeholder">null</li>';
+        
+        const oldAvatarsContainer = document.getElementById('oldAvatarsContainer');
+        // Limpa o conteúdo anterior, mas mantém a mensagem de placeholder se necessário.
+        oldAvatarsContainer.innerHTML = '<p id="oldAvatarsMsg" class="placeholder">Buscando...</p>';
+    }
+
+    async function buscarDadosUsuario() {
+      const userId = document.getElementById('userIdInput').value.trim();
+      const resultsContainer = document.getElementById('resultsContainer');
+      const errorMessageElement = document.getElementById('errorMessage');
+
+      if (!userId) {
+        errorMessageElement.textContent = "Por favor, insira um ID de usuário.";
+        resultsContainer.style.display = 'none';
+        return;
+      }
+      
+      errorMessageElement.textContent = ""; 
+      resultsContainer.style.display = 'block'; 
+      initializeUserInfoFields(); 
 
       try {
-        const response = await fetch(`https://celestial-api.onrender.com/api/avatars/${userId}`);
-        const data = await response.json();
+        // --- BUSCA DE DADOS DA API ---
+        // A API atual (celestial-api.onrender.com/api/avatars/${userId}) só retorna avatares.
+        // No futuro, você substituiria esta chamada por uma que retorne todos os dados.
+        // Exemplo: const response = await fetch(`SUA_NOVA_API_ENDPOINT_COMPLETA/${userId}`);
+        // const userData = await response.json();
+        
+        // Por enquanto, usamos a API de avatares existente.
+        const avatarResponse = await fetch(`https://celestial-api.onrender.com/api/avatars/${userId}`);
+        
+        if (!avatarResponse.ok) {
+            let errorMsg = `Erro ${avatarResponse.status}: ${avatarResponse.statusText}`;
+            try {
+                const errorData = await avatarResponse.json();
+                if (errorData && errorData.error) {
+                    errorMsg = errorData.error;
+                } else if (avatarResponse.status === 404) {
+                     errorMsg = "Usuário não encontrado ou sem dados na API.";
+                }
+            } catch (e) {
+                // Se o corpo do erro não for JSON ou estiver vazio
+                if (avatarResponse.status === 404) {
+                     errorMsg = "Usuário não encontrado ou sem dados na API.";
+                }
+                console.warn("Não foi possível parsear o JSON da resposta de erro.");
+            }
+            throw new Error(errorMsg);
+        }
+        const avatarData = await avatarResponse.json();
 
-        const container = document.getElementById('avatarContainer');
-        container.innerHTML = "";
+        // --- PREENCHENDO OS CAMPOS ---
 
-        if (!data || !data.avatars || data.avatars.length === 0) {
-          container.innerHTML = "<p>Nenhum avatar encontrado.</p>";
-          return;
+        // ID do Usuário (mostramos o ID que foi buscado, já que a API não o retorna separadamente)
+        document.getElementById('userInfoId').textContent = userId; 
+        
+        // Nome de Usuário Atual (placeholder, pois a API atual não fornece)
+        document.getElementById('currentUser').innerHTML = '<span class="placeholder">null (API não fornece)</span>';
+        
+        // Avatar Atual (placeholder)
+        document.getElementById('currentAvatarMsg').innerHTML = '<span class="placeholder">null (API não fornece)</span>';
+        document.getElementById('currentAvatarImg').style.display = 'none'; // Garante que a imagem placeholder não apareça
+
+        // Nomes de Usuário Antigos (placeholder)
+        document.getElementById('oldUsernamesList').innerHTML = '<li class="placeholder">null (API não fornece)</li>';
+
+        // --- Processando Avatares Antigos (da API atual) ---
+        const oldAvatarsContainer = document.getElementById('oldAvatarsContainer');
+
+        if (avatarData && avatarData.avatars && avatarData.avatars.length > 0) {
+          oldAvatarsContainer.innerHTML = ""; // Limpa a mensagem "Buscando..." ou "Nenhum avatar..."
+          avatarData.avatars.forEach(url => {
+            const img = document.createElement("img");
+            img.src = url;
+            img.alt = "Avatar Antigo";
+            // Adiciona um error handler para cada imagem de avatar
+            img.onerror = () => {
+                img.alt = "Avatar indisponível";
+                // Opcional: Pode substituir por uma imagem placeholder ou estilizar diferente
+                img.style.border = "2px dashed #ff8a80"; 
+            };
+            oldAvatarsContainer.appendChild(img);
+          });
+        } else {
+          oldAvatarsContainer.innerHTML = '<p class="placeholder">Nenhum avatar antigo encontrado para este usuário.</p>';
         }
 
-        data.avatars.forEach(url => {
-          const img = document.createElement("img");
-          img.src = url;
-          container.appendChild(img);
-        });
       } catch (err) {
-        document.getElementById('avatarContainer').innerHTML = "<p>Erro ao buscar dados.</p>";
+        console.error("Erro ao buscar dados:", err);
+        errorMessageElement.textContent = `Erro ao buscar dados: ${err.message}`;
+        
+        // Resetar campos para seus placeholders de erro ou "null"
+        document.getElementById('userInfoId').innerHTML = `<span class="placeholder">${userId || 'null'}</span>`; // Mantém o ID se já foi inserido
+        document.getElementById('currentUser').innerHTML = '<span class="placeholder">Erro ao carregar</span>';
+        document.getElementById('currentAvatarMsg').innerHTML = '<span class="placeholder">Erro ao carregar</span>';
+        document.getElementById('currentAvatarImg').style.display = 'none';
+        document.getElementById('oldUsernamesList').innerHTML = '<li class="placeholder">Erro ao carregar</li>';
+        document.getElementById('oldAvatarsContainer').innerHTML = `<p class="placeholder">Erro ao carregar avatares: ${err.message}</p>`;
       }
     }
   </script>
