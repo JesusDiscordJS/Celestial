@@ -8,16 +8,16 @@
     body {
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', sans-serif;
+      font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
       background: url('https://user-images.githubusercontent.com/74038190/225813708-98b745f2-7d22-48cf-9150-083f1b00d6c9.gif') no-repeat center center fixed;
       background-size: cover;
-      color: #ffffff;
+      color: #dcddde; /* Cor de texto padrão mais clara */
       min-height: 100vh;
     }
 
     .container {
       text-align: center;
-      padding: 40px 20px;
+      padding: 30px 20px;
     }
 
     .logo {
@@ -25,83 +25,143 @@
       margin-bottom: 10px;
     }
 
-    h1 {
-      font-size: 2.2rem;
-      margin-bottom: 10px;
-      color: #e0ccff;
+    h1.page-title { /* Adicionada classe para estilização específica */
+      font-size: 2.4rem;
+      margin-bottom: 8px;
+      color: #ffffff;
+      font-weight: 600;
+      text-shadow: 0px 0px 6px rgba(0,0,0,0.7), 0px 0px 3px rgba(0,0,0,0.9);
     }
 
-    h2 {
-      color: #e0ccff;
-      margin-top: 30px;
-      margin-bottom: 15px;
-      font-size: 1.5rem;
-    }
-
-    p {
-      color: #d1c7ff;
+    p.description {
+      color: #e0e0e0;
       font-size: 1.1rem;
-      margin-bottom: 10px; /* Ajustado para espaçamento geral */
-    }
-
-    .description {
-        margin-bottom: 30px; /* Mantém o espaçamento original da descrição */
+      margin-bottom: 30px;
+      text-shadow: 0px 0px 5px rgba(0,0,0,0.6);
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     input {
-      padding: 10px;
-      width: 280px;
+      padding: 12px 15px;
+      width: 300px;
       max-width: 80%;
-      border: none;
+      border: 1px solid #222428;
       border-radius: 5px;
       font-size: 1rem;
-      margin-bottom: 10px; /* Espaçamento para mobile */
+      background-color: #40444b; /* Cor de input do Discord */
+      color: #dcddde;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    input::placeholder {
+        color: #b9bbbe;
     }
 
     button {
-      padding: 10px 20px;
+      padding: 12px 22px;
       margin-left: 10px;
       font-size: 1rem;
-      background-color: #a478ff;
+      font-weight: 500;
+      background-color: #7289da; /* Cor de botão principal do Discord */
       border: none;
       border-radius: 5px;
       color: white;
       cursor: pointer;
-      transition: background 0.3s;
+      transition: background-color 0.2s ease;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
     button:hover {
-      background-color: #c3a6ff;
+      background-color: #677bc4; /* Hover do botão Discord */
     }
 
+    /* Estilo do Card Principal */
     .user-info-container {
-        background-color: rgba(0, 0, 0, 0.4); /* Fundo levemente transparente para destacar */
+        background-color: #2f3136; /* Fundo de card do Discord (mais escuro) */
         padding: 25px;
-        margin-top: 30px;
-        border-radius: 10px;
+        margin-top: 35px;
+        border-radius: 8px; 
         display: inline-block; 
         text-align: left; 
-        max-width: 700px; 
-        width: 90%; 
-        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        max-width: 550px; 
+        width: calc(100% - 50px); /* Ajuste para padding */
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        border: 1px solid #202225; /* Borda sutil, comum no Discord */
     }
 
-    .user-info-container p, .user-info-container li {
-        font-size: 1rem;
-        color: #f0f0f0; 
+    .user-info-container h2 {
+      color: #ffffff; /* Títulos das seções em branco */
+      margin-top: 0; /* Ajuste para o primeiro h2 */
+      margin-bottom: 18px;
+      font-size: 1.3rem; /* Tamanho de título de seção */
+      font-weight: 600;
+      border-bottom: 1px solid #3b3e45; /* Separador de título */
+      padding-bottom: 10px;
+    }
+    
+    .info-section {
+        margin-bottom: 25px;
+    }
+    .info-section:last-child {
+        margin-bottom: 0;
+    }
+    
+    /* Header do perfil: Avatar + Detalhes do Usuário */
+    .profile-header-section {
+        display: flex;
+        align-items: center;
+        gap: 20px; /* Espaço entre avatar e detalhes */
+        padding-bottom: 20px;
+        border-bottom: 1px solid #3b3e45;
     }
 
-    .user-info-container span, .user-info-container .placeholder {
-        color: #ffdd99; /* Cor de destaque para os valores */
-        font-style: italic;
-        font-weight: bold;
+    .profile-header-section .avatar-display { /* Container do Avatar Atual */
+        flex-shrink: 0; /* Não encolher o avatar */
+        text-align: center; /* Centraliza a mensagem "null" se a imagem não aparecer */
+    }
+
+    .profile-header-section .avatar-display img { /* Avatar Atual */
+        width: 96px; 
+        height: 96px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #43b581; /* Cor de status "online" do Discord para destaque */
+        background-color: #36393f; /* Fundo caso a imagem não carregue */
+    }
+    .profile-header-section .avatar-display p#currentAvatarMsg {
+        font-size: 0.9rem;
+        margin-top: 5px;
+    }
+    
+    .profile-header-section .user-details {
+        flex-grow: 1; /* Ocupa o espaço restante */
+    }
+    .profile-header-section .user-details h2 { /* "Informações do Usuário" */
+        border-bottom: none; /* Remove borda duplicada */
+        padding-bottom: 0;
+        margin-bottom: 10px;
+        font-size: 1.5rem; /* Nome de usuário/título maior */
+    }
+
+    .user-info-container p {
+        font-size: 0.95rem;
+        color: #dcddde; /* Cor de texto principal dentro do card */
+        margin-bottom: 8px;
+        line-height: 1.4;
     }
     
     .user-info-container .label {
-        color: #c5b3ff; /* Cor para os rótulos como "ID:", "Usuário Atual:" */
-        font-weight: normal;
+        color: #b9bbbe; /* Cinza mais claro para rótulos */
+        font-weight: 500;
     }
 
+    .user-info-container .placeholder,
+    #currentAvatarMsg.placeholder {
+        color: #8e9297; /* Cinza para placeholders */
+        font-style: italic;
+    }
 
     .user-info-container ul {
         list-style-type: none;
@@ -109,80 +169,82 @@
     }
 
     .user-info-container ul li {
-        padding: 6px 0;
-        border-bottom: 1px dashed #ffffff22;
+        padding: 8px 5px;
+        border-bottom: 1px solid #3a3e45; /* Separador de item da lista */
+        color: #dcddde;
+        font-size: 0.9rem;
     }
     .user-info-container ul li:last-child {
         border-bottom: none;
     }
-
-
-    .avatar-display {
-        margin-bottom: 20px;
-        text-align: center; 
-    }
-
-    .avatar-display img {
-        width: 128px; 
-        height: 128px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 3px solid #a478ff;
-        margin-bottom: 10px;
-        background-color: #ffffff11; /* Fundo caso a imagem não carregue */
+    .user-info-container ul li.placeholder {
+        color: #8e9297;
     }
 
     .old-avatars-container {
-      margin-top: 20px; 
+      margin-top: 15px; 
       display: flex;
       flex-wrap: wrap;
-      justify-content: center;
-      gap: 15px; 
+      justify-content: flex-start; /* Alinhar à esquerda no card */
+      gap: 12px; 
     }
 
     .old-avatars-container img {
-      width: 80px; 
-      height: 80px;
+      width: 64px; 
+      height: 64px;
       border-radius: 50%;
       object-fit: cover;
-      border: 2px solid #ffffff66;
-      transition: transform 0.3s;
-      background-color: #ffffff11;
+      border: 2px solid #7289da; /* Borda com cor do Discord */
+      transition: transform 0.2s ease;
+      background-color: #36393f;
     }
 
     .old-avatars-container img:hover {
       transform: scale(1.1);
     }
-
-    .info-section {
-        margin-bottom: 25px;
-        padding-bottom: 20px;
-        border-bottom: 1px solid #ffffff33; 
+    
+    #errorMessage {
+        color: #f04747; /* Cor de erro do Discord */
+        background-color: rgba(47, 49, 54, 0.8); /* Fundo escuro para mensagem de erro */
+        padding: 10px;
+        border-radius: 5px;
+        margin-top: 20px;
+        font-weight: 500;
+        display: inline-block; /* Para não ocupar largura total se a mensagem for curta */
     }
-    .info-section:last-child {
-        border-bottom: none; 
-        margin-bottom: 0;
-    }
 
-    /* Responsividade para input e botão */
+
+    /* Responsividade */
     @media (max-width: 600px) {
         input {
-            width: calc(100% - 22px); 
+            width: calc(100% - 32px); /* Full width menos padding */
             margin-bottom: 10px;
         }
         button {
             width: 100%;
             margin-left: 0;
+            margin-top: 5px;
         }
         .container {
             padding: 20px 10px;
         }
-        h1 {
-            font-size: 1.8rem;
+        h1.page-title {
+            font-size: 2rem;
         }
         .user-info-container {
-            width: calc(100% - 50px); /* Ajustar com padding */
-            padding: 20px;
+            width: calc(100% - 30px); /* Ajustar com padding */
+            padding: 20px 15px;
+        }
+        .profile-header-section {
+            flex-direction: column; /* Avatar em cima, texto abaixo em telas pequenas */
+            align-items: center;
+            text-align: center;
+        }
+        .profile-header-section .user-details h2 {
+            font-size: 1.3rem;
+        }
+        .old-avatars-container {
+            justify-content: center; /* Centralizar avatares antigos em telas pequenas */
         }
     }
   </style>
@@ -190,24 +252,22 @@
 <body>
   <div class="container">
     <img src="https://media.discordapp.net/attachments/1375545742675935314/1377352293313282068/CelestialDevRoleBadge.png?ex=6838a6c8&is=68375548&hm=93dc31b55a4847e14b072e4db5c338f7ed3d3386a96bf69fe1ef5f01b0a7f712&=&format=webp&quality=lossless" alt="Celestial Bot Icon" class="logo">
-    <h1>Celestial User Tracker</h1>
-    <p class="description">Somos um sistema de rastreamento de alterações de avatar e outras informações de usuários do Discord, alimentado pela inteligência do bot Celestial.</p>
+    <h1 class="page-title">Celestial User Tracker</h1> <p class="description">Somos um sistema de rastreamento de alterações de avatar e outras informações de usuários do Discord, alimentado pela inteligência do bot Celestial.</p>
     
     <input type="text" id="userIdInput" placeholder="Digite o ID do usuário">
     <button onclick="buscarDadosUsuario()">Buscar</button>
 
     <div id="resultsContainer" style="display: none;">
         <div class="user-info-container">
-            <div class="info-section">
-                <h2>Informações Gerais</h2>
-                <p><span class="label">ID do Usuário:</span> <span id="userInfoId" class="placeholder">null</span></p>
-                <p><span class="label">Nome de Usuário Atual:</span> <span id="currentUser" class="placeholder">null</span></p>
-            </div>
-
-            <div class="info-section avatar-display">
-                <h2>Avatar Atual</h2>
-                <img id="currentAvatarImg" src="#" alt="Avatar Atual" style="display: none;">
-                <p id="currentAvatarMsg" class="placeholder">null</p>
+            
+            <div class="info-section profile-header-section">
+                <div class="avatar-display"> <img id="currentAvatarImg" src="#" alt="Avatar Atual" style="display: none;">
+                    <p id="currentAvatarMsg" class="placeholder">null</p>
+                </div>
+                <div class="user-details">
+                    <h2>Informações do Usuário</h2> <p><span class="label">ID:</span> <span id="userInfoId" class="placeholder">null</span></p>
+                    <p><span class="label">Usuário Atual:</span> <span id="currentUser" class="placeholder">null</span></p>
+                </div>
             </div>
 
             <div class="info-section">
@@ -220,13 +280,12 @@
             <div class="info-section">
                 <h2>Avatares Antigos</h2>
                 <div class="old-avatars-container" id="oldAvatarsContainer">
-                    <p id="oldAvatarsMsg" class="placeholder">Nenhum avatar antigo encontrado ou API não disponível.</p>
+                    <p id="oldAvatarsMsg" class="placeholder">Nenhum avatar antigo encontrado.</p>
                 </div>
             </div>
         </div>
     </div>
-    <p id="errorMessage" style="color: #ffdddd; margin-top: 20px; font-weight: bold;"></p>
-  </div>
+    <p id="errorMessage" style="display: none;"></p> </div>
 
   <script>
     function initializeUserInfoFields() {
@@ -235,16 +294,19 @@
         
         const currentAvatarImg = document.getElementById('currentAvatarImg');
         currentAvatarImg.style.display = 'none';
-        currentAvatarImg.src = '#'; // Reset src
+        currentAvatarImg.src = '#'; 
         document.getElementById('currentAvatarMsg').style.display = 'block';
         document.getElementById('currentAvatarMsg').innerHTML = '<span class="placeholder">null</span>';
+        document.getElementById('currentAvatarMsg').className = 'placeholder'; // Garante classe
         
         const oldUsernamesList = document.getElementById('oldUsernamesList');
         oldUsernamesList.innerHTML = '<li class="placeholder">null</li>';
         
         const oldAvatarsContainer = document.getElementById('oldAvatarsContainer');
-        // Limpa o conteúdo anterior, mas mantém a mensagem de placeholder se necessário.
         oldAvatarsContainer.innerHTML = '<p id="oldAvatarsMsg" class="placeholder">Buscando...</p>';
+
+        document.getElementById('errorMessage').style.display = 'none'; // Esconde erro
+        document.getElementById('errorMessage').textContent = '';
     }
 
     async function buscarDadosUsuario() {
@@ -252,24 +314,18 @@
       const resultsContainer = document.getElementById('resultsContainer');
       const errorMessageElement = document.getElementById('errorMessage');
 
+      initializeUserInfoFields(); // Limpa campos e erros anteriores
+
       if (!userId) {
         errorMessageElement.textContent = "Por favor, insira um ID de usuário.";
+        errorMessageElement.style.display = 'block';
         resultsContainer.style.display = 'none';
         return;
       }
       
-      errorMessageElement.textContent = ""; 
       resultsContainer.style.display = 'block'; 
-      initializeUserInfoFields(); 
 
       try {
-        // --- BUSCA DE DADOS DA API ---
-        // A API atual (celestial-api.onrender.com/api/avatars/${userId}) só retorna avatares.
-        // No futuro, você substituiria esta chamada por uma que retorne todos os dados.
-        // Exemplo: const response = await fetch(`SUA_NOVA_API_ENDPOINT_COMPLETA/${userId}`);
-        // const userData = await response.json();
-        
-        // Por enquanto, usamos a API de avatares existente.
         const avatarResponse = await fetch(`https://celestial-api.onrender.com/api/avatars/${userId}`);
         
         if (!avatarResponse.ok) {
@@ -282,63 +338,54 @@
                      errorMsg = "Usuário não encontrado ou sem dados na API.";
                 }
             } catch (e) {
-                // Se o corpo do erro não for JSON ou estiver vazio
                 if (avatarResponse.status === 404) {
                      errorMsg = "Usuário não encontrado ou sem dados na API.";
                 }
-                console.warn("Não foi possível parsear o JSON da resposta de erro.");
             }
             throw new Error(errorMsg);
         }
         const avatarData = await avatarResponse.json();
 
-        // --- PREENCHENDO OS CAMPOS ---
-
-        // ID do Usuário (mostramos o ID que foi buscado, já que a API não o retorna separadamente)
         document.getElementById('userInfoId').textContent = userId; 
-        
-        // Nome de Usuário Atual (placeholder, pois a API atual não fornece)
         document.getElementById('currentUser').innerHTML = '<span class="placeholder">null (API não fornece)</span>';
         
-        // Avatar Atual (placeholder)
+        // Placeholder para Avatar Atual
         document.getElementById('currentAvatarMsg').innerHTML = '<span class="placeholder">null (API não fornece)</span>';
-        document.getElementById('currentAvatarImg').style.display = 'none'; // Garante que a imagem placeholder não apareça
+        document.getElementById('currentAvatarMsg').className = 'placeholder';
+        document.getElementById('currentAvatarImg').style.display = 'none';
 
-        // Nomes de Usuário Antigos (placeholder)
         document.getElementById('oldUsernamesList').innerHTML = '<li class="placeholder">null (API não fornece)</li>';
 
-        // --- Processando Avatares Antigos (da API atual) ---
         const oldAvatarsContainer = document.getElementById('oldAvatarsContainer');
-
         if (avatarData && avatarData.avatars && avatarData.avatars.length > 0) {
-          oldAvatarsContainer.innerHTML = ""; // Limpa a mensagem "Buscando..." ou "Nenhum avatar..."
+          oldAvatarsContainer.innerHTML = ""; 
           avatarData.avatars.forEach(url => {
             const img = document.createElement("img");
             img.src = url;
             img.alt = "Avatar Antigo";
-            // Adiciona um error handler para cada imagem de avatar
             img.onerror = () => {
                 img.alt = "Avatar indisponível";
-                // Opcional: Pode substituir por uma imagem placeholder ou estilizar diferente
-                img.style.border = "2px dashed #ff8a80"; 
+                img.style.border = "2px dashed #72767d"; 
             };
             oldAvatarsContainer.appendChild(img);
           });
         } else {
-          oldAvatarsContainer.innerHTML = '<p class="placeholder">Nenhum avatar antigo encontrado para este usuário.</p>';
+          oldAvatarsContainer.innerHTML = '<p class="placeholder">Nenhum avatar antigo encontrado.</p>';
         }
 
       } catch (err) {
         console.error("Erro ao buscar dados:", err);
-        errorMessageElement.textContent = `Erro ao buscar dados: ${err.message}`;
+        errorMessageElement.textContent = `Erro: ${err.message}`;
+        errorMessageElement.style.display = 'block';
         
-        // Resetar campos para seus placeholders de erro ou "null"
-        document.getElementById('userInfoId').innerHTML = `<span class="placeholder">${userId || 'null'}</span>`; // Mantém o ID se já foi inserido
+        // Mantém os placeholders como "null" ou "erro" no card
+        document.getElementById('userInfoId').innerHTML = `<span class="placeholder">${userId || 'null'}</span>`;
         document.getElementById('currentUser').innerHTML = '<span class="placeholder">Erro ao carregar</span>';
         document.getElementById('currentAvatarMsg').innerHTML = '<span class="placeholder">Erro ao carregar</span>';
+        document.getElementById('currentAvatarMsg').className = 'placeholder';
         document.getElementById('currentAvatarImg').style.display = 'none';
         document.getElementById('oldUsernamesList').innerHTML = '<li class="placeholder">Erro ao carregar</li>';
-        document.getElementById('oldAvatarsContainer').innerHTML = `<p class="placeholder">Erro ao carregar avatares: ${err.message}</p>`;
+        document.getElementById('oldAvatarsContainer').innerHTML = `<p class="placeholder">Erro ao carregar avatares.</p>`;
       }
     }
   </script>
