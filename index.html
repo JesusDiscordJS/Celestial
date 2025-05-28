@@ -3,57 +3,100 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Avatares do Discord</title>
+  <title>Celestial Avatares</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #121212;
-      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #1c1c2e;
+      color: #ffffff;
+      margin: 0;
       padding: 2rem;
       text-align: center;
     }
-    input {
-      padding: 0.5rem;
-      width: 250px;
-      font-size: 1rem;
+
+    h1 {
+      color: #b388eb;
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
     }
+
+    input {
+      padding: 0.6rem 1rem;
+      width: 280px;
+      font-size: 1rem;
+      border: 2px solid #8e44ad;
+      border-radius: 8px;
+      background-color: #2d2d44;
+      color: #fff;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: #b388eb;
+    }
+
     button {
-      padding: 0.5rem 1rem;
+      padding: 0.6rem 1.2rem;
       margin-left: 10px;
       font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #8e44ad, #b388eb);
+      color: white;
       cursor: pointer;
+      transition: background 0.3s ease;
     }
+
+    button:hover {
+      background: linear-gradient(135deg, #b388eb, #8e44ad);
+    }
+
     .avatars {
-      margin-top: 2rem;
+      margin-top: 3rem;
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 1rem;
+      gap: 1.5rem;
     }
+
     .avatars img {
-      border-radius: 50%;
       width: 128px;
       height: 128px;
-      object-fit: cover;
-      border: 2px solid #4caf50;
+      border-radius: 50%;
+      border: 4px solid transparent;
+      background: linear-gradient(#1c1c2e, #1c1c2e) padding-box,
+                  linear-gradient(135deg, #8e44ad, #b388eb) border-box;
+      transition: transform 0.3s ease;
+    }
+
+    .avatars img:hover {
+      transform: scale(1.1);
+    }
+
+    .info-text {
+      margin-top: 2rem;
+      font-size: 1.1rem;
+      color: #aaa;
     }
   </style>
 </head>
 <body>
-  <h1>Buscar Avatares Salvos</h1>
-  <input type="text" id="userIdInput" placeholder="Digite o ID do usuário" />
+  <h1>🌌 Avatares Celestiais</h1>
+  <p class="info-text">Digite o ID de um usuário do Discord para ver seus avatares salvos.</p>
+
+  <input type="text" id="userIdInput" placeholder="Ex: 123456789012345678" />
   <button onclick="buscarAvatares()">Buscar</button>
 
   <div class="avatars" id="avatarsContainer"></div>
 
   <script>
     async function buscarAvatares() {
-      const userId = document.getElementById('userIdInput').value;
+      const userId = document.getElementById('userIdInput').value.trim();
       const container = document.getElementById('avatarsContainer');
       container.innerHTML = '';
 
       if (!userId) {
-        alert('Por favor, insira um ID de usuário.');
+        alert('Por favor, insira um ID de usuário válido.');
         return;
       }
 
@@ -68,11 +111,11 @@
             container.appendChild(img);
           });
         } else {
-          container.innerHTML = '<p>Nenhum avatar encontrado para esse usuário.</p>';
+          container.innerHTML = '<p class="info-text">Nenhum avatar encontrado para esse usuário.</p>';
         }
       } catch (err) {
         console.error(err);
-        container.innerHTML = '<p>Erro ao buscar avatares. Verifique o ID ou tente novamente mais tarde.</p>';
+        container.innerHTML = '<p class="info-text">Erro ao buscar avatares. Verifique o ID ou tente novamente mais tarde.</p>';
       }
     }
   </script>
