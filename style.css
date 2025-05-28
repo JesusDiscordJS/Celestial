@@ -80,7 +80,7 @@ p.description {
 }
 
 .features-info {
-  background: rgba(47, 49, 54, 0.8);
+  background: rgba(35, 39, 42, 0.85); /* SUGESTÃO ALTERNATIVA: Cinza bem escuro, menos transparente */
   border-radius: 12px;
   padding: 25px;
   margin: 30px auto 40px;
@@ -93,7 +93,7 @@ p.description {
   color: #43b581;
   font-size: 1.3rem;
   margin-bottom: 15px;
-  font-weight: 600;
+  font-weight: 700; /* Letra do título mais bold */
 }
 
 .features-grid {
@@ -104,7 +104,7 @@ p.description {
 }
 
 .feature-item {
-  background: rgba(64, 68, 75, 0.6);
+  background: rgba(64, 68, 75, 0.6); /* Este fundo pode precisar de ajuste também se o problema for contraste aqui dentro */
   padding: 20px;
   border-radius: 8px;
   border-left: 4px solid #7289da;
@@ -115,7 +115,7 @@ p.description {
   color: #ffffff;
   margin: 0 0 10px 0;
   font-size: 1.1rem;
-  font-weight: 600;
+  font-weight: 700; /* Letra do subtítulo mais bold */
 }
 
 .feature-item p {
@@ -123,6 +123,7 @@ p.description {
   margin: 0;
   font-size: 0.95rem;
   line-height: 1.5;
+  font-weight: 500; /* Letra da descrição um pouco mais bold */
 }
 
 .search-container {
