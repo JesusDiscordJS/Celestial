@@ -32,8 +32,8 @@ body {
 
 /* Estilo para o link da logo */
 .header > a {
-  display: inline-block; /* Para que a logo não quebre o layout e possa ser clicável */
-  text-decoration: none; /* Remove sublinhado se houver */
+  display: inline-block;
+  text-decoration: none;
 }
 
 .logo {
@@ -85,52 +85,60 @@ p.description {
   line-height: 1.7;
 }
 
-/* SEÇÃO .features-info ATUALIZADA */
+/* SEÇÃO .features-info COM FUNDO MAIS ESCURO E TEXTO BOLD */
 .features-info {
-  background: rgba(35, 39, 42, 0.85); /* Fundo cinza bem escuro, 85% opaco */
+  background: rgba(20, 22, 25, 0.92); /* Cinza muito escuro, 92% opaco - para funcionar como o "retângulo" */
   border-radius: 12px;
-  padding: 25px;
+  padding: 30px; /* Aumentei um pouco o padding interno */
   margin: 30px auto 40px;
   max-width: 900px;
   border: 1px solid #43b581;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5); /* Sombra um pouco mais pronunciada */
 }
 
 .features-info h3 {
   color: #43b581;
-  font-size: 1.3rem;
-  margin-bottom: 20px; /* Aumentei um pouco a margem */
-  font-weight: 700;    /* Mais bold */
+  font-size: 1.4rem; /* Um pouco maior */
+  margin-bottom: 25px;
+  font-weight: 700;    /* Bold */
+  text-transform: uppercase; /* Opcional: deixa o título em maiúsculas */
+  letter-spacing: 1px;     /* Opcional: leve espaçamento entre letras */
 }
 
 .features-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
+  gap: 25px; /* Aumentei o espaçamento */
   margin-top: 20px;
 }
 
 .feature-item {
-  background: rgba(64, 68, 75, 0.7); /* Levemente mais opaco */
-  padding: 20px;
+  background: rgba(40, 43, 48, 0.8); /* Fundo dos itens um pouco mais escuro e opaco */
+  padding: 25px; /* Aumentei o padding */
   border-radius: 8px;
   border-left: 4px solid #7289da;
   text-align: left;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.feature-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0,0,0,0.3);
 }
 
 .feature-item h4 {
   color: #ffffff;
-  margin: 0 0 10px 0;
-  font-size: 1.1rem;
-  font-weight: 700; /* Mais bold */
+  margin: 0 0 12px 0; /* Aumentei margem inferior */
+  font-size: 1.15rem; /* Um pouco maior */
+  font-weight: 700;   /* Bold */
 }
 
 .feature-item p {
-  color: #b9bbbe;
+  color: #c0c3c7; /* Cor do texto um pouco mais clara para melhor contraste */
   margin: 0;
-  font-size: 0.95rem;
-  line-height: 1.5;
-  font-weight: 500; /* Peso médio, mais "bold" que o normal (400) */
+  font-size: 0.98rem; /* Um pouco maior */
+  line-height: 1.6;
+  font-weight: 500;   /* Peso médio (mais bold que normal) */
 }
 /* FIM DA SEÇÃO .features-info ATUALIZADA */
 
@@ -155,7 +163,7 @@ p.description {
   margin: 0 auto;
 }
 
-input[type="text"] { /* Mais específico para o input de texto */
+input[type="text"] {
   padding: 18px 25px;
   width: 350px;
   max-width: 100%;
@@ -302,18 +310,18 @@ button.loading::after {
 
 /* Card Principal */
 .user-info-container {
-  background: linear-gradient(135deg, rgba(47, 49, 54, 0.95), rgba(64, 68, 75, 0.95));
+  background: linear-gradient(135deg, rgba(40, 43, 48, 0.96), rgba(54, 57, 63, 0.96)); /* Fundo mais escuro e opaco */
   padding: 40px;
   margin-top: 40px;
   border-radius: 15px;
-  display: inline-block; /* Mudado para inline-block para respeitar text-align:center do container pai */
+  display: inline-block;
   text-align: left;
   max-width: 1200px;
   width: 100%;
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
   border: 2px solid #43b581;
   animation: scaleIn 0.5s ease-out 0.3s both;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(8px); /* Reduzi um pouco o blur, ajuste conforme necessário */
 }
 
 @keyframes scaleIn {
@@ -337,29 +345,28 @@ button.loading::after {
 .section-icon {
   width: 24px;
   height: 24px;
-  filter: brightness(0) saturate(100%) invert(68%) sepia(47%) saturate(824%) hue-rotate(88deg) brightness(118%) contrast(119%); /* Cor verde #43b581 */
+  filter: brightness(0) saturate(100%) invert(68%) sepia(47%) saturate(824%) hue-rotate(88deg) brightness(118%) contrast(119%);
 }
 
-.section-icon.avatar-icon { /* Ícone específico para galeria de avatares */
-  filter: brightness(0) saturate(100%) invert(59%) sepia(11%) saturate(2009%) hue-rotate(198deg) brightness(90%) contrast(89%); /* Cor azul #7289da */
+.section-icon.avatar-icon {
+  filter: brightness(0) saturate(100%) invert(59%) sepia(11%) saturate(2009%) hue-rotate(198deg) brightness(90%) contrast(89%);
 }
 
 
-/* Header do perfil */
 .profile-header-section {
   display: grid;
-  grid-template-columns: auto 1fr auto; /* Avatar | Detalhes | Ações */
+  grid-template-columns: auto 1fr auto;
   gap: 30px;
   align-items: center;
   padding: 30px;
-  background: linear-gradient(135deg, rgba(114, 137, 218, 0.1), rgba(67, 181, 129, 0.1));
-  border: 2px solid #7289da; /* Borda correspondente ao azul Discord */
-  border-radius: 12px; /* Arredondamento consistente */
+  background: linear-gradient(135deg, rgba(114, 137, 218, 0.15), rgba(67, 181, 129, 0.15)); /* Levemente mais opaco */
+  border: 2px solid #7289da;
+  border-radius: 12px;
 }
 
 .info-section {
   margin-bottom: 35px;
-  background: rgba(32, 34, 37, 0.6);
+  background: rgba(28, 30, 33, 0.85); /* Fundo mais escuro para seções internas */
   padding: 25px;
   border-radius: 12px;
   border: 1px solid #40444b;
@@ -378,7 +385,7 @@ button.loading::after {
   height: 150px;
   border-radius: 50%;
   object-fit: cover;
-  border: 5px solid #43b581; /* Borda verde destacando o avatar */
+  border: 5px solid #43b581;
   background-color: #36393f;
   transition: all 0.3s ease;
   box-shadow: 0 10px 25px rgba(0,0,0,0.4);
@@ -397,15 +404,15 @@ button.loading::after {
 }
 
 .user-details {
-  flex-grow: 1; /* Ocupa o espaço disponível */
+  flex-grow: 1;
 }
 
-.user-details h2 { /* Título dentro do .user-details (Informações do Usuário) */
-  border-bottom: none; /* Remove borda inferior duplicada */
+.user-details h2 {
+  border-bottom: none;
   padding-bottom: 0;
   margin-bottom: 20px;
   font-size: 2rem;
-  background: linear-gradient(135deg, #7289da, #43b581); /* Gradiente para o título */
+  background: linear-gradient(135deg, #7289da, #43b581);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -417,7 +424,7 @@ button.loading::after {
   gap: 12px;
 }
 
-.user-info-container p { /* Estilo para os parágrafos de informação (ID, Usuário, Status, Calls) */
+.user-info-container p {
   font-size: 1.1rem;
   color: #dcddde;
   margin-bottom: 12px;
@@ -429,10 +436,10 @@ button.loading::after {
 }
 
 .label {
-  color: #43b581; /* Cor verde para labels */
+  color: #43b581;
   font-weight: 600;
   display: inline-block;
-  min-width: 200px; /* Garante alinhamento dos valores */
+  min-width: 200px;
   font-size: 1rem;
   flex-shrink: 0;
 }
@@ -440,11 +447,11 @@ button.loading::after {
 .value {
   color: #ffffff;
   font-weight: 500;
-  background: rgba(67, 181, 129, 0.1); /* Fundo sutil para valores */
+  background: rgba(67, 181, 129, 0.1);
   padding: 5px 12px;
   border-radius: 6px;
   border: 1px solid rgba(67, 181, 129, 0.3);
-  word-break: break-all; /* Quebra IDs de canal longos */
+  word-break: break-all;
 }
 
 .placeholder {
@@ -452,11 +459,11 @@ button.loading::after {
   font-style: italic;
 }
 
-.status-online { color: #43b581 !important; } /* Verde para status online/OK */
-.status-offline { color: #747f8d !important; } /* Cinza para offline/não disponível */
-.status-error { color: #f04747 !important; } /* Vermelho para erros */
+.status-online { color: #43b581 !important; }
+.status-offline { color: #747f8d !important; }
+.status-error { color: #f04747 !important; }
 
-.user-info-container ul { /* Lista para histórico de nomes */
+.user-info-container ul {
   list-style-type: none;
   padding-left: 0;
   margin: 0;
@@ -470,7 +477,7 @@ button.loading::after {
   color: #dcddde;
   font-size: 1rem;
   transition: all 0.3s ease;
-  background: rgba(64, 68, 75, 0.4);
+  background: rgba(54, 57, 63, 0.6); /* Fundo dos itens da lista mais escuro */
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -511,7 +518,7 @@ button.loading::after {
   height: 100px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid #7289da; /* Borda azul Discord */
+  border: 3px solid #7289da;
   transition: all 0.3s ease;
   background-color: #36393f;
   cursor: pointer;
@@ -521,7 +528,7 @@ button.loading::after {
 .old-avatars-container img:hover {
   transform: scale(1.2);
   box-shadow: 0 10px 20px rgba(114, 137, 218, 0.6);
-  border-color: #43b581; /* Muda para verde no hover */
+  border-color: #43b581;
 }
 
 .avatar-date {
@@ -530,19 +537,19 @@ button.loading::after {
   text-align: center;
 }
 
-#errorMessage, .success-message { /* Estilos unificados para mensagens */
+#errorMessage, .success-message {
   padding: 20px 25px;
   border-radius: 12px;
   margin-top: 25px;
   font-weight: 600;
-  display: inline-block; /* Para que não ocupem a largura toda por padrão */
-  max-width: 80%; /* Evita que fiquem muito largas em telas grandes */
+  display: inline-block;
+  max-width: 80%;
 }
 
 #errorMessage {
   color: #f04747;
-  background: linear-gradient(135deg, rgba(240, 71, 71, 0.1), rgba(240, 71, 71, 0.05));
-  border: 2px solid rgba(240, 71, 71, 0.4);
+  background: linear-gradient(135deg, rgba(240, 71, 71, 0.15), rgba(240, 71, 71, 0.1)); /* Levemente mais opaco */
+  border: 2px solid rgba(240, 71, 71, 0.5); /* Borda mais forte */
   animation: shake 0.5s ease-in-out;
   box-shadow: 0 8px 16px rgba(240, 71, 71, 0.2);
 }
@@ -555,8 +562,8 @@ button.loading::after {
 
 .success-message {
   color: #43b581;
-  background: linear-gradient(135deg, rgba(67, 181, 129, 0.1), rgba(67, 181, 129, 0.05));
-  border: 2px solid rgba(67, 181, 129, 0.4);
+  background: linear-gradient(135deg, rgba(67, 181, 129, 0.15), rgba(67, 181, 129, 0.1)); /* Levemente mais opaco */
+  border: 2px solid rgba(67, 181, 129, 0.5); /* Borda mais forte */
   box-shadow: 0 8px 16px rgba(67, 181, 129, 0.2);
 }
 
@@ -577,7 +584,7 @@ button.loading::after {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.9); /* Fundo mais escuro para o modal */
+  background: rgba(0,0,0,0.92); /* Fundo do modal mais escuro */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -591,13 +598,13 @@ button.loading::after {
   to { opacity: 1; }
 }
 
-.modal-content { /* Imagem dentro do modal */
-  max-width: 90vw;   /* Usa viewport width */
-  max-height: 90vh;  /* Usa viewport height */
+.modal-content {
+  max-width: 90vw;
+  max-height: 90vh;
   border-radius: 15px;
   box-shadow: 0 20px 40px rgba(0,0,0,0.8);
-  animation: scaleIn 0.3s ease-out; /* Reutiliza scaleIn para o modal */
-  object-fit: contain; /* Garante que a imagem inteira seja visível */
+  animation: scaleIn 0.3s ease-out;
+  object-fit: contain;
 }
 
 /* --- RESPONSIVIDADE --- */
@@ -622,17 +629,17 @@ button.loading::after {
 
   input[type="text"] {
     width: 100%;
-    max-width: 400px; /* Limita o input em telas maiores que a coluna */
+    max-width: 400px;
   }
 
   .button-group {
     width: 100%;
-    max-width: 400px; /* Consistente com o input */
-    flex-direction: column; /* Botões empilhados */
+    max-width: 400px;
+    flex-direction: column;
   }
 
-  .button-group button { /* Botões no grupo de busca */
-    width: 100%;
+  .button-group button {
+    width: 100%; /* Botões principais ocupam largura total e empilham */
     margin-bottom: 10px;
   }
   .button-group button:last-child {
@@ -647,7 +654,7 @@ button.loading::after {
   }
 
   .profile-header-section {
-    grid-template-columns: 1fr; /* Stack avatar, details, actions */
+    grid-template-columns: 1fr;
     text-align: center;
     gap: 20px;
   }
@@ -655,27 +662,27 @@ button.loading::after {
   .user-details p .label {
     min-width: auto;
     margin-bottom: 5px;
-    text-align: left; /* Alinhar labels à esquerda */
+    text-align: left;
   }
   .user-details p .value {
-    text-align: left; /* Alinhar valores à esquerda */
-    width: 100%; /* Fazer valor ocupar largura */
+    text-align: left;
+    width: 100%;
   }
   .user-details p {
     flex-direction: column;
     align-items: flex-start;
   }
 
-
   .user-actions {
-    flex-direction: row; /* Botões lado a lado se couberem */
+    flex-direction: row;
     flex-wrap: wrap;
-    justify-content: center; /* Centraliza botões de ação */
-    gap: 10px; /* Espaço entre botões de ação */
+    justify-content: center;
+    gap: 10px;
   }
   .user-actions button {
-    flex-grow: 1; /* Permite que os botões cresçam para preencher o espaço */
-    min-width: calc(50% - 10px); /* Tenta colocar 2 botões por linha */
+    flex-grow: 1;
+    min-width: calc(50% - 10px); /* Tenta 2 por linha, mas pode ser 1 se não couber */
+    max-width: calc(50% - 5px); /* Evita que um botão seja muito maior que o outro */
   }
 
 
@@ -685,7 +692,7 @@ button.loading::after {
   }
 
   .user-details h2 {
-    font-size: 1.8rem; /* Ajuste leve */
+    font-size: 1.8rem;
     text-align: center;
   }
 
@@ -699,9 +706,26 @@ button.loading::after {
     height: 80px;
   }
 
-  .features-grid {
-    grid-template-columns: 1fr; /* Uma coluna para features */
+  .features-info { /* Ajustes para a seção features em mobile */
+    padding: 20px;
   }
+  .features-info h3 {
+    font-size: 1.2rem;
+  }
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  .feature-item {
+    padding: 15px;
+  }
+  .feature-item h4 {
+    font-size: 1.1rem;
+  }
+  .feature-item p {
+    font-size: 0.9rem;
+  }
+
 
   .stats-container {
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -729,8 +753,9 @@ button.loading::after {
     font-size: 1rem;
   }
   .button-group {
-    gap: 10px; /* Menor espaçamento entre botões empilhados */
+    gap: 10px;
   }
+   /* Os botões no button-group já são 100% width pela regra de 768px */
 
   .user-info-container {
     padding: 20px 15px;
@@ -739,18 +764,18 @@ button.loading::after {
     font-size: 1.6rem;
   }
   .user-info-container p {
-    font-size: 1rem; /* Reduz tamanho da fonte para informações do usuário */
+    font-size: 1rem;
   }
   .label {
-    font-size: 0.9rem; /* Reduz tamanho da fonte para labels */
+    font-size: 0.9rem;
   }
   .value {
-    font-size: 0.95rem; /* Reduz tamanho da fonte para valores */
+    font-size: 0.95rem;
   }
 
 
   .stats-container {
-    grid-template-columns: 1fr; /* Uma coluna para stats */
+    grid-template-columns: 1fr;
     gap: 15px;
   }
   .stat-number {
@@ -761,7 +786,7 @@ button.loading::after {
   }
 
   .old-avatars-container {
-    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); /* Avatares menores */
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
     gap: 10px;
   }
 
@@ -772,5 +797,13 @@ button.loading::after {
   #errorMessage, .success-message {
     padding: 15px 20px;
     font-size: 0.9rem;
+    max-width: 95%; /* Mensagens podem ser mais largas em telas pequenas */
+  }
+  .user-actions button { /* Botões de ação empilhados em telas muito pequenas */
+    min-width: 100%;
+    margin-bottom: 10px;
+  }
+  .user-actions button:last-child {
+    margin-bottom: 0;
   }
 }
