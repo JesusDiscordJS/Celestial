@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Celestial Tracker - Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <script defer src="script_frontend.js"></script>
+</head>
+<body>
+    <div class="container dashboard-container">
+        <header class="dashboard-header">
+            <div class="user-info">
+                <img id="userAvatar" src="https://via.placeholder.com/50" alt="User Avatar" class="avatar">
+                <span id="username">Carregando...</span>
+            </div>
+            <h1>Celestial Dashboard</h1>
+            <button id="logoutButton" class="logout-button">Logout</button>
+        </header>
+
+        <main class="dashboard-main">
+            <section class="tracker-section">
+                <h2>Rastrear Usuário do Discord</h2>
+                <div class="input-group">
+                    <input type="text" id="discordUserId" placeholder="Cole o ID do Usuário do Discord aqui">
+                    <button id="trackUserButton">Rastrear</button>
+                </div>
+                <p id="trackerErrorMessage" class="error-message"></p>
+            </section>
+
+            <section id="resultsSection" class="results-section" style="display: none;">
+                <h3>Resultados para <span id="trackedUserId"></span>:</h3>
+                <div id="trackerResults" class="tracker-results-content">
+                    </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2025 Celestial Tracker</p>
+        </footer>
+    </div>
+</body>
+</html>
