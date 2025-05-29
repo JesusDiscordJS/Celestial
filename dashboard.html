@@ -19,19 +19,31 @@
             <button id="logoutButton" class="logout-button">Logout</button>
         </header>
 
+        <nav class="dashboard-nav">
+            <button id="trackUserSectionButton" class="nav-button active">Rastrear Usuário</button>
+            <button id="friendsSectionButton" class="nav-button">Amigos</button>
+        </nav>
+
         <main class="dashboard-main">
-            <section class="tracker-section">
+            <section id="trackerSection" class="tracker-section active-section">
                 <h2>Rastrear Usuário do Discord</h2>
                 <div class="input-group">
                     <input type="text" id="discordUserId" placeholder="Cole o ID do Usuário do Discord aqui">
                     <button id="trackUserButton">Rastrear</button>
                 </div>
                 <p id="trackerErrorMessage" class="error-message"></p>
+                <div id="singleTrackerResultsArea" class="results-section" style="display: none;">
+                     <h3>Resultados para <span id="trackedUserId"></span>:</h3>
+                     <div id="trackerResultsContent" class="tracker-results-content">
+                         </div>
+                </div>
             </section>
 
-            <section id="resultsSection" class="results-section" style="display: none;">
-                <h3>Resultados para <span id="trackedUserId"></span>:</h3>
-                <div id="trackerResults" class="tracker-results-content">
+            <section id="friendsSection" class="friends-tracker-section">
+                <h2>Tracker de Amigos</h2>
+                <p id="friendsInfoMessage" class="info-message"></p>
+                <p id="friendsErrorMessage" class="error-message"></p>
+                <div id="friendsTrackerResults" class="friends-results-grid">
                     </div>
             </section>
         </main>
