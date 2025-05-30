@@ -471,456 +471,52 @@ body {
         flex-basis: 100%; /* Um item por linha em telas muito pequenas */
     }
 }
+/* === INÍCIO DO NOVO CSS ESPECÍFICO PARA A DASHBOARD === */
 
+/* Garante que o fundo do body da dashboard use o gradiente principal se não sobrescrito por .dashboard-page-body */
+body.dashboard-page-body { /* Se você usa esta classe no body da dashboard */
+    font-family: 'Arial', sans-serif; /* Consistência com o body principal */
+    background: radial-gradient(ellipse at center, #0f0820 0%, #0a0510 25%, #1a0b2e 50%, #0d0419 75%, #000000 100%);
+    color: #fff;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden; /* Já definido globalmente, mas bom garantir */
+}
+
+/* Área principal da Dashboard (container geral) */
 #dashboardArea {
-    padding: 20px;
-    color: #e0e0e0; /* Cor de texto mais clara para a dashboard */
-    min-height: calc(100vh - 80px); /* Subtrai a altura aproximada do header */
-    /* O fundo da galáxia do body ainda será visível por baixo */
+    padding: 20px; /* Espaçamento interno geral da área da dashboard */
+    min-height: 100vh;
+    position: relative; /* Para o z-index do conteúdo da dashboard funcionar sobre os efeitos de fundo globais */
+    z-index: 5; /* Acima de .galaxy e .stars */
 }
 
-.dashboard-header-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 25px;
-    background: rgba(26, 11, 46, 0.8); /* Fundo roxo escuro translúcido */
-    backdrop-filter: blur(10px);
-    border-radius: 12px;
-    margin-bottom: 30px;
-    border: 1px solid rgba(124, 58, 237, 0.4);
-    box-shadow: 0 5px 25px rgba(124, 58, 237, 0.2);
-}
-
-.dashboard-user {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.dashboard-avatar-icon {
-    font-size: 48px; /* Tamanho do ícone placeholder */
-    color: #7c3aed; /* Cor roxa do tema */
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-    padding: 5px;
-    border: 2px solid #7c3aed;
-}
-
-/* Se for usar uma imagem real no futuro:
-.dashboard-avatar {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    border: 2px solid #7c3aed;
-}
-*/
-
-.dashboard-username {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #fff;
-}
-
-.dashboard-maintenance-notice {
-    font-size: 0.9rem;
-    background-color: #f59e0b; /* Laranja para aviso */
-    color: #0f0820; /* Texto escuro para contraste */
-    padding: 8px 15px;
-    border-radius: 20px;
-    font-weight: bold;
-}
-
-.dashboard-actions {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin-bottom: 40px;
-    flex-wrap: wrap; /* Para responsividade dos botões */
-}
-
-.dashboard-btn {
-    background: linear-gradient(45deg, #7c3aed, #8b5cf6);
-    color: white;
-    border: none;
-    padding: 12px 25px;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.dashboard-btn:hover {
-    background: linear-gradient(45deg, #8b5cf6, #7c3aed);
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(124, 58, 237, 0.5);
-}
-
-.dashboard-btn-clear {
-    background: linear-gradient(45deg, #ef4444, #f59e0b); /* Gradiente vermelho/laranja */
-    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
-}
-.dashboard-btn-clear:hover {
-    background: linear-gradient(45deg, #f59e0b, #ef4444);
-    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
-}
-
-
-.dashboard-main-content {
-    background: rgba(15, 8, 32, 0.7); /* Fundo escuro translúcido para conteúdo */
-    backdrop-filter: blur(5px);
-    padding: 30px;
-    border-radius: 15px;
-    text-align: center;
-    border: 1px solid rgba(124, 58, 237, 0.2);
-}
-
-.dashboard-main-content h2 {
-    font-size: 2rem;
-    margin-bottom: 15px;
-    background: linear-gradient(45deg, #10b981, #06b6d4);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    text-fill-color: transparent;
-}
-
-.dashboard-main-content p {
-    font-size: 1.1rem;
-    color: #b0b0b0;
-    margin-bottom: 30px;
-    line-height: 1.6;
-}
-
-.dashboard-widgets {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 25px;
-}
-
-.widget {
-    background: rgba(26, 11, 46, 0.6); /* Roxo escuro para widgets */
-    padding: 25px;
-    border-radius: 10px;
-    border: 1px solid rgba(124, 58, 237, 0.3);
-    box-shadow: 0 4px 15px rgba(0,0,0, 0.2);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.widget:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(124, 58, 237, 0.2);
-}
-
-.widget-icon {
-    font-size: 2.5rem;
-    color: #7c3aed;
-    margin-bottom: 15px;
-    display: block; /* Para o margin-bottom funcionar corretamente */
-}
-
-.widget h3 {
-    font-size: 1.3rem;
-    color: #fff;
-    margin-bottom: 10px;
-}
-
-.widget p {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #06b6d4; /* Azul ciano para números destaque */
-    margin-bottom: 0;
-}
-
-/* Widget especial de fluxo de dados */
-.data-stream-widget .data-stream-animation {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 40px;
-    margin-bottom: 10px;
-    overflow: hidden;
-}
-.data-stream-animation span {
-    display: inline-block;
-    width: 8px;
-    height: 30px;
-    margin: 0 2px;
-    background-color: #7c3aed;
-    border-radius: 3px;
-    animation: dataStream 1.2s infinite ease-in-out;
-}
-.data-stream-animation span:nth-child(2) { animation-delay: 0.1s; }
-.data-stream-animation span:nth-child(3) { animation-delay: 0.2s; }
-.data-stream-animation span:nth-child(4) { animation-delay: 0.3s; }
-.data-stream-animation span:nth-child(5) { animation-delay: 0.4s; }
-.data-stream-animation span:nth-child(6) { animation-delay: 0.5s; display: none; } /* Ocultar alguns em mobile */
-.data-stream-animation span:nth-child(7) { animation-delay: 0.6s; display: none; }
-.data-stream-animation span:nth-child(8) { animation-delay: 0.7s; display: none; }
-.data-stream-animation span:nth-child(9) { animation-delay: 0.8s; display: none; }
-.data-stream-animation span:nth-child(10) { animation-delay: 0.9s; display: none; }
-
-
-@keyframes dataStream {
-    0%, 100% { transform: scaleY(0.3); opacity: 0.5; }
-    50% { transform: scaleY(1); opacity: 1; }
-}
-.data-stream-widget p {
-    font-size: 0.9rem;
-    color: #888;
-}
-
-
-/* Estilo para o body da página da dashboard */
-.dashboard-page-body {
-    background-color: #0a0510; /* Um fundo escuro e simples da paleta */
-    color: #e0e0e0;
-    font-family: 'Arial', sans-serif; /* Garante a mesma fonte */
-    overflow-x: hidden; /* Previne overflow na dashboard também */
-}
-
-
-/* Estilos da Dashboard (Alguns já podem existir, verifique e ajuste) */
-#dashboardArea {
-    padding: 20px;
-    min-height: 100vh; /* Para ocupar a tela toda */
-    display: flex;
-    flex-direction: column;
-}
-
-.dashboard-header-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 25px;
-    background: rgba(26, 11, 46, 0.85); /* Um pouco mais opaco */
-    backdrop-filter: blur(8px); /* Reduzido o blur se ainda for pesado */
-    border-radius: 12px;
-    margin-bottom: 30px;
-    border: 1px solid rgba(124, 58, 237, 0.5); /* Borda um pouco mais visível */
-    box-shadow: 0 5px 25px rgba(124, 58, 237, 0.15);
-}
-
-.dashboard-user {
-    display: flex;
-    align-items: center;
-    gap: 12px; /* Ajuste no gap */
-}
-
-.dashboard-avatar-icon {
-    font-size: 42px; /* Ajuste no tamanho */
-    color: #7c3aed;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 50%;
-    padding: 8px; /* Aumentado padding */
-    border: 2px solid #7c3aed;
-    line-height: 1; /* Para alinhar melhor o ícone */
-}
-
-.dashboard-username {
-    font-size: 1.4rem; /* Ajuste no tamanho */
-    font-weight: bold;
-    color: #fff;
-}
-
-.dashboard-user-status {
-    font-size: 0.8rem;
-    font-weight: bold;
-    padding: 4px 10px;
-    border-radius: 15px;
-    margin-left: 5px; /* Espaçamento do nome */
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.dashboard-user-status.premium {
-    background: linear-gradient(45deg, #f59e0b, #ffc107); /* Dourado para premium */
-    color: #1f1235;
-    box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
-}
-
-.dashboard-user-status.free {
-    background-color: #555; /* Cinza para free */
-    color: #ddd;
-}
-
-
-.dashboard-maintenance-notice {
-    font-size: 0.9rem;
-    background-color: #f59e0b;
-    color: #0f0820;
-    padding: 8px 15px;
-    border-radius: 20px;
-    font-weight: bold;
-}
-
-.dashboard-actions {
-    display: flex;
-    justify-content: center;
-    gap: 15px; /* Ajustado o gap */
-    margin-bottom: 40px;
-    flex-wrap: wrap;
-}
-
-.dashboard-btn {
-    background: linear-gradient(45deg, #7c3aed, #8b5cf6);
-    color: white;
-    border: none;
-    padding: 12px 25px;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(124, 58, 237, 0.2); /* Sombra mais suave */
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.dashboard-btn:hover {
-    background: linear-gradient(45deg, #8b5cf6, #7c3aed);
-    transform: translateY(-2px) scale(1.02); /* Efeito de hover sutil */
-    box-shadow: 0 6px 20px rgba(124, 58, 237, 0.3);
-}
-
-.dashboard-btn-clear {
-    background: linear-gradient(45deg, #ef4444, #f59e0b);
-    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
-}
-.dashboard-btn-clear:hover {
-    background: linear-gradient(45deg, #f59e0b, #ef4444);
-    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
-}
-
-
-.dashboard-main-content {
-    background: rgba(20, 10, 35, 0.75); /* Fundo um pouco mais claro que o body da dash */
-    backdrop-filter: blur(5px); /* Mantido, mas pode ser removido se necessário para performance */
-    padding: 30px;
-    border-radius: 15px;
-    text-align: center;
-    border: 1px solid rgba(124, 58, 237, 0.25);
-    flex-grow: 1; /* Faz o conteúdo principal ocupar o espaço restante */
-}
-
-.dashboard-main-content h2 {
-    font-size: 2rem;
-    margin-bottom: 15px;
-    background: linear-gradient(45deg, #10b981, #06b6d4);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    text-fill-color: transparent;
-}
-
-.dashboard-main-content p {
-    font-size: 1.1rem;
-    color: #b0b0b0;
-    margin-bottom: 30px;
-    line-height: 1.6;
-}
-
-.dashboard-widgets {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); /* Ajustado minmax */
-    gap: 20px; /* Ajustado gap */
-}
-
-.widget {
-    background: rgba(26, 11, 46, 0.65);
-    padding: 20px; /* Ajustado padding */
-    border-radius: 10px;
-    border: 1px solid rgba(124, 58, 237, 0.35);
-    box-shadow: 0 4px 15px rgba(0,0,0, 0.15);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.widget:hover {
-    transform: translateY(-4px); /* Ajustado hover */
-    box-shadow: 0 6px 20px rgba(124, 58, 237, 0.15);
-}
-
-.widget-icon {
-    font-size: 2.2rem; /* Ajustado tamanho */
-    color: #7c3aed;
-    margin-bottom: 12px; /* Ajustado margin */
-    display: block;
-}
-
-.widget h3 {
-    font-size: 1.2rem; /* Ajustado tamanho */
-    color: #fff;
-    margin-bottom: 8px; /* Ajustado margin */
-}
-
-.widget p {
-    font-size: 1.4rem; /* Ajustado tamanho */
-    font-weight: bold;
-    color: #06b6d4;
-    margin-bottom: 0;
-}
-
-.data-stream-widget .data-stream-animation {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 35px; /* Ajustado altura */
-    margin-bottom: 8px; /* Ajustado margin */
-    overflow: hidden;
-}
-.data-stream-animation span {
-    display: inline-block;
-    width: 7px; /* Ajustado largura */
-    height: 25px; /* Ajustado altura */
-    margin: 0 2px;
-    background-color: #7c3aed;
-    border-radius: 3px;
-    animation: dataStream 1.2s infinite ease-in-out;
-}
-/* As nth-child para esconder spans em mobile já estão na media query abaixo */
-
-@keyframes dataStream {
-    0%, 100% { transform: scaleY(0.3); opacity: 0.5; }
-    50% { transform: scaleY(1); opacity: 1; }
-}
-.data-stream-widget p {
-    font-size: 0.85rem; /* Ajustado tamanho */
-    color: #888;
-}
-
-/* Adicione ao seu dashboard.css ou style.css */
-
-/* Layout Principal da Dashboard */
+/* Layout Flex para Sidebar e Conteúdo Principal */
 .dashboard-layout {
     display: flex;
-    gap: 25px; /* Espaço entre a barra lateral e o conteúdo principal */
-    margin-top: 25px;
-    padding: 0 20px; /* Adiciona um pouco de padding lateral geral */
+    gap: 25px; 
+    margin-top: 20px; /* Espaço abaixo do header da dashboard */
 }
 
 /* Barra Lateral de Navegação */
 .dashboard-sidebar {
-    flex: 0 0 280px; /* Largura da barra lateral, não cresce/encolhe */
-    background: rgba(24, 25, 28, 0.85); /* Estilo similar ao .dev-card */
-    backdrop-filter: blur(15px);
+    flex: 0 0 280px; 
+    background: rgba(20, 10, 35, 0.75); /* Fundo semi-transparente para deixar o gradiente do body aparecer */
+    backdrop-filter: blur(10px);
     padding: 25px;
     border-radius: 15px;
-    border: 1px solid rgba(124, 58, 237, 0.3);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-    height: fit-content; /* Altura se ajusta ao conteúdo */
-    align-self: flex-start; /* Alinha a sidebar ao topo do flex container */
+    border: 1px solid rgba(124, 58, 237, 0.35); /* Borda sutil roxa */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    height: fit-content; 
+    align-self: flex-start; 
 }
 
 .dashboard-sidebar h3 {
-    font-size: 1.6rem;
+    font-size: 1.5rem; /* Ajustado para melhor encaixe */
     color: #fff;
-    margin-bottom: 25px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid rgba(124, 58, 237, 0.5);
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(124, 58, 237, 0.4);
     text-align: center;
     background: linear-gradient(45deg, #7c3aed, #06b6d4);
     -webkit-background-clip: text;
@@ -929,47 +525,61 @@ body {
     text-fill-color: transparent;
 }
 
-/* Reutilizando e adaptando .dashboard-btn do seu CSS existente para os botões de filtro */
-.dashboard-sidebar .dashboard-btn {
+/* Botões da Sidebar - Usa .dashboard-btn do seu CSS original e adiciona especificidade */
+.dashboard-sidebar .dashboard-btn { /* Mais específico para botões DENTRO da sidebar */
     display: block;
     width: 100%;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     text-align: left;
-    padding: 12px 20px; /* Ajuste no padding para mais espaço interno */
-    font-size: 1rem; /* Garantindo o tamanho da fonte */
+    padding: 10px 15px; 
+    font-size: 0.95rem; 
+    background: rgba(124, 58, 237, 0.2); /* Fundo sutil para botões não ativos */
+    border: 1px solid rgba(124, 58, 237, 0.4);
+    box-shadow: none; /* Remove sombra padrão do .dashboard-btn para um look mais integrado */
+}
+.dashboard-sidebar .dashboard-btn:hover {
+    background: rgba(124, 58, 237, 0.35);
+    transform: translateY(-2px); /* Efeito de hover mantido */
+    box-shadow: 0 4px 15px rgba(124, 58, 237, 0.2);
 }
 
-.dashboard-sidebar .dashboard-btn i { /* Para ícones, se você adicionar */
+.dashboard-sidebar .dashboard-btn i {
     margin-right: 10px;
-    width: 18px; /* Largura fixa para alinhar o texto */
+    width: 18px; 
     text-align: center;
+    color: rgba(255,255,255,0.7); /* Cor do ícone */
 }
-
+.dashboard-sidebar .dashboard-btn:hover i {
+    color: #fff;
+}
 
 .dashboard-sidebar .dashboard-btn.active {
-    background: linear-gradient(45deg, #10b981, #06b6d4); /* Destaque verde/ciano */
-    color: #0f0820 !important; /* Texto escuro para contraste */
-    box-shadow: 0 0 20px rgba(16, 185, 129, 0.6), inset 0 0 10px rgba(255,255,255,0.2);
-    transform: translateY(-2px) scale(1.01); /* Pequeno efeito de elevação */
+    background: linear-gradient(45deg, #10b981, #06b6d4) !important; 
+    color: #0f0820 !important; 
+    border-color: #10b981;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+}
+.dashboard-sidebar .dashboard-btn.active i {
+    color: #0f0820 !important;
 }
 .dashboard-sidebar .dashboard-btn.active:hover {
-    background: linear-gradient(45deg, #10b981, #06b6d4); /* Mantém a cor no hover do ativo */
+    background: linear-gradient(45deg, #10b981, #06b6d4) !important; /* Mantém a cor no hover do ativo */
 }
 
-/* Área de Visualização Principal do Conteúdo */
+/* Área de Visualização Principal do Conteúdo da Dashboard */
 .dashboard-main-view {
-    flex-grow: 1; /* Ocupa o espaço restante */
-    min-width: 0; /* Necessário para flex items que podem encolher */
+    flex-grow: 1; 
+    min-width: 0; 
 }
 
-/* Seção de Pesquisa (Dentro do .dashboard-main-view) */
-.user-search-section-dashboard { /* Nome diferenciado para evitar conflito com CSS global se houver */
-    background: rgba(24, 25, 28, 0.75);
-    backdrop-filter: blur(10px);
+/* Seção de Pesquisa de Usuário */
+.user-search-section-dashboard {
+    background: rgba(20, 10, 35, 0.7); 
+    backdrop-filter: blur(8px);
     padding: 20px;
     border-radius: 12px;
     margin-bottom: 25px;
-    border: 1px solid rgba(124, 58, 237, 0.2);
+    border: 1px solid rgba(124, 58, 237, 0.3);
     display: flex;
     gap: 15px;
     align-items: center;
@@ -979,162 +589,265 @@ body {
     flex-grow: 1;
     padding: 12px 15px;
     border-radius: 8px;
-    border: 1px solid rgba(124, 58, 237, 0.4);
-    background-color: rgba(15, 8, 32, 0.9);
-    color: #fff;
+    border: 1px solid rgba(124, 58, 237, 0.5); /* Borda um pouco mais forte */
+    background-color: rgba(10, 5, 20, 0.8); /* Fundo escuro para input */
+    color: #e0e0e0;
     font-size: 1rem;
 }
-.user-search-section-dashboard input[type="text"]::placeholder {
-    color: #888;
-}
-.user-search-section-dashboard .dashboard-btn { /* Reutiliza seu estilo .dashboard-btn */
-    padding: 12px 20px; /* Consistência com outros botões */
+.user-search-section-dashboard input[type="text"]::placeholder { color: #8a909a; }
+.user-search-section-dashboard .dashboard-btn { /* Usa seu .dashboard-btn */
+    padding: 12px 20px; 
 }
 
-
-/* Área de Conteúdo do Usuário (Dentro do .dashboard-main-view) */
+/* Área onde o conteúdo do usuário filtrado é exibido */
 #userContentArea {
-    background: rgba(15, 8, 32, 0.8); /* Um pouco mais escuro que a sidebar */
-    backdrop-filter: blur(10px);
-    padding: 30px;
+    background: rgba(10, 5, 20, 0.75); /* Fundo principal escuro e semi-transparente */
+    backdrop-filter: blur(12px);
+    padding: 25px; /* Padding interno */
     border-radius: 15px;
-    min-height: 400px; /* Altura mínima para a área de conteúdo */
-    border: 1px solid rgba(124, 58, 237, 0.25);
-    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+    min-height: 450px; 
+    border: 1px solid rgba(124, 58, 237, 0.3);
+    box-shadow: 0 5px 25px rgba(0,0,0,0.35);
+    color: #e0e0e0; /* Cor de texto padrão para o conteúdo */
 }
 
+/* Estilo para cada seção dentro de #userContentArea (Resumo, Avatares, etc.) */
 #userContentArea .profile-section {
-    background: rgba(24, 25, 28, 0.6); /* Fundo para cada seção dentro da área de conteúdo */
-    padding: 25px;
+    background: rgba(24, 25, 28, 0.7); /* Fundo de cada "card" de seção */
+    padding: 20px;
     border-radius: 10px;
-    margin-bottom: 25px;
-    border: 1px solid rgba(124, 58, 237, 0.2);
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    margin-bottom: 20px; /* Espaço entre seções */
+    border: 1px solid rgba(124, 58, 237, 0.25);
+    box-shadow: 0 3px 15px rgba(0,0,0,0.2);
+}
+#userContentArea .profile-section:last-child {
+    margin-bottom: 0; /* Remove margem da última seção */
 }
 
-#userContentArea .profile-section h3 { /* Estilo para títulos de seção */
-    font-size: 1.6rem;
-    color: #06b6d4; /* Ciano do seu tema */
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid rgba(124, 58, 237, 0.4);
+#userContentArea .profile-section h3 { 
+    font-size: 1.5rem; /* Tamanho do título da seção */
+    color: #06b6d4; 
+    margin-bottom: 18px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(124, 58, 237, 0.3);
+}
+#userContentArea .profile-section h3 i { /* Ícones nos títulos da seção */
+    margin-right: 8px;
 }
 
-#userContentArea .profile-list {
-    list-style: none;
-    padding-left: 0;
-}
-
+/* Estilos para listas dentro das seções de perfil */
+#userContentArea .profile-list { list-style: none; padding-left: 0; }
 #userContentArea .profile-list li {
-    background: rgba(124, 58, 237, 0.1); /* Fundo levemente roxo */
-    padding: 12px 15px;
+    background: rgba(124, 58, 237, 0.08); 
+    padding: 10px 15px;
     border-radius: 6px;
-    margin-bottom: 10px;
-    color: #ddd;
-    border-left: 3px solid #7c3aed; /* Destaque roxo na lateral */
-    transition: background-color 0.3s ease;
+    margin-bottom: 8px;
+    color: #cdd2d9; /* Cor de texto para itens da lista */
+    border-left: 3px solid #7c3aed; 
+    transition: background-color 0.2s ease, transform 0.2s ease;
 }
-#userContentArea .profile-list li:hover {
-    background-color: rgba(124, 58, 237, 0.2);
+#userContentArea .profile-list li:hover { 
+    background-color: rgba(124, 58, 237, 0.15);
+    transform: translateX(3px);
+}
+#userContentArea .profile-list li strong {
+    color: #fff; /* Destaca o texto em negrito */
+}
+#userContentArea .profile-list li small {
+    color: #8a909a; /* Cor para texto pequeno/adicional */
+    display: block; /* Para que o <small> fique abaixo se necessário */
+    font-size: 0.8em;
+    margin-top: 3px;
 }
 
 
-/* Galerias de Avatar e Banner (Dentro do .profile-section) */
+/* Galerias de Avatar e Banner */
 #userContentArea .avatar-gallery,
-#userContentArea .banner-gallery {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px; /* Espaçamento entre imagens */
-}
+#userContentArea .banner-gallery { display: flex; flex-wrap: wrap; gap: 12px; }
 
-#userContentArea .history-avatar { /* Seu CSS já tem .dev-avatar, mas este é para a galeria */
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-    border-radius: 12px; /* Bordas mais arredondadas */
-    border: 3px solid rgba(124, 58, 237, 0.5);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    cursor: pointer;
+#userContentArea .history-avatar {
+    width: 90px; height: 90px; object-fit: cover; border-radius: 10px;
+    border: 2px solid rgba(124, 58, 237, 0.4);
+    background-color: rgba(0,0,0,0.2); /* Fundo para imagens que não carregam */
+    transition: transform 0.25s ease, box-shadow 0.25s ease; cursor: pointer;
 }
-#userContentArea .history-avatar:hover {
-    transform: scale(1.1);
-    box-shadow: 0 0 15px rgba(124, 58, 237, 0.7);
-}
+#userContentArea .history-avatar:hover { transform: scale(1.08); box-shadow: 0 0 12px rgba(124, 58, 237, 0.6); }
 
 #userContentArea .history-banner {
-    width: 220px; /* Banners são geralmente mais largos */
-    height: auto; /* Mantém a proporção */
-    object-fit: contain; /* Mostra o banner inteiro */
+    width: 200px; height: auto; max-height: 100px; /* Limita altura do banner */
+    object-fit: cover; /* Cover pode ser melhor para banners */
     border-radius: 8px;
-    border: 2px solid rgba(124, 58, 237, 0.4);
-    background-color: rgba(0,0,0,0.2); /* Fundo caso a imagem não carregue ou tenha transparência */
+    border: 2px solid rgba(124, 58, 237, 0.3); 
+    background-color: rgba(0,0,0,0.2);
+    cursor: pointer;
+    transition: transform 0.25s ease;
+}
+#userContentArea .history-banner:hover {
+    transform: scale(1.03);
 }
 
-/* Log de Histórico Completo (Dentro do .profile-section) */
+
+/* Log de Histórico Completo */
 #userContentArea .profile-history-log pre {
-    background-color: rgba(0,0,0,0.3);
-    padding: 15px;
-    border-radius: 8px;
-    color: #e0e0e0;
-    font-family: 'Courier New', Courier, monospace; /* Fonte monoespaçada para <pre> */
-    font-size: 0.9rem;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    border: 1px solid rgba(124, 58, 237, 0.2);
+    background-color: rgba(0,0,0,0.25); padding: 12px; border-radius: 6px;
+    color: #cdd2d9; font-family: 'Consolas', 'Courier New', monospace; font-size: 0.85rem;
+    white-space: pre-wrap; word-wrap: break-word; border: 1px solid rgba(124, 58, 237, 0.15);
+    max-height: 400px; /* Permite scroll se o histórico for muito grande */
+    overflow-y: auto;
 }
-#userContentArea .profile-history-log li {
-    border-bottom: 1px dashed rgba(124,58,237,0.2);
+#userContentArea .profile-history-log li { 
+    border-bottom: 1px dashed rgba(124,58,237,0.15); 
+    padding-bottom: 12px; margin-bottom:12px;
+}
+#userContentArea .profile-history-log li:last-child { border-bottom: none; margin-bottom: 0; }
+
+
+/* Placeholder e mensagens de erro dentro de #userContentArea */
+#userContentArea .placeholder-text, 
+#userContentArea .error-message {
+    padding: 30px; text-align: center; font-size: 1.1rem; color: #969faf;
+    background: rgba(24, 25, 28, 0.5); border-radius: 8px;
+    border: 1px dashed rgba(124, 58, 237, 0.3);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    min-height: 300px; /* Garante que o placeholder ocupe espaço */
+}
+#userContentArea .error-message { color: #e74c3c; border-color: rgba(231, 76, 60, 0.4); }
+#userContentArea .placeholder-text i,
+#userContentArea .error-message i { /* Ícones dentro de placeholders/erros */
+    font-size: 2.5rem; margin-bottom: 15px; opacity: 0.7;
+}
+
+
+/* Seção da Lista de Usuários Recentes na Dashboard */
+.user-list-section-dashboard { 
+    margin-top: 30px; 
+    background: rgba(20, 10, 35, 0.65); 
+    backdrop-filter: blur(8px); 
+    padding: 20px 25px; /* Mais padding horizontal */
+    border-radius: 15px; 
+    border: 1px solid rgba(124, 58, 237, 0.3);
+}
+.user-list-section-dashboard h2 { 
+    font-size: 1.6rem; 
+    margin-bottom: 20px; 
     padding-bottom: 10px;
-}
-#userContentArea .profile-history-log li:last-child {
-    border-bottom: none;
-}
-
-
-/* Placeholder e mensagens de erro */
-.placeholder-text, .error-message {
-    padding: 40px;
-    text-align: center;
-    font-size: 1.2rem;
-    color: #aaa;
-    background: rgba(24, 25, 28, 0.7);
-    border-radius: 10px;
-    border: 1px dashed rgba(124, 58, 237, 0.4);
-}
-.error-message {
-    color: #ff6b6b; /* Cor de erro */
-    border-color: rgba(239, 68, 68, 0.5);
-}
-
-/* Estilos para lista de usuários e paginação (se mantiver na dashboard) */
-.user-list-section-dashboard { /* Nome diferenciado */
-    margin-top: 30px;
-    background: rgba(24, 25, 28, 0.75);
-    backdrop-filter: blur(10px);
-    padding: 20px;
-    border-radius: 12px;
-    border: 1px solid rgba(124, 58, 237, 0.2);
-}
-.user-list-section-dashboard h2 {
-    /* Use seu estilo de .dashboard-main-content h2 ou defina um novo */
-    font-size: 1.8rem;
-    margin-bottom: 20px;
-    background: linear-gradient(45deg, #7c3aed, #06b6d4);
-    -webkit-background-clip: text;
+    border-bottom: 1px solid rgba(124,58,237,0.2);
+    background: linear-gradient(45deg, #7c3aed, #06b6d4); 
+    -webkit-background-clip: text; 
     -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
 }
-/* Estilos para .user-list, .user-list-item, .user-avatar-small, pagination-controls podem ser reutilizados ou adaptados do seu JS anterior */
-.pagination-controls {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    margin-top: 20px;
+.user-list-section-dashboard h2 i { margin-right: 10px; }
+
+/* Itens da Lista de Usuários Aprimorada */
+.user-list-section-dashboard .user-list { list-style: none; padding: 0; }
+
+.user-list-item-enhanced {
+    display: flex; align-items: center; background: rgba(24, 25, 28, 0.8); /* Mais escuro para contraste */
+    padding: 15px; border-radius: 10px; margin-bottom: 12px;
+    border: 1px solid rgba(124, 58, 237, 0.2);
+    box-shadow: 0 4px 10px rgba(0,0,0, 0.2);
+    transition: all 0.3s ease;
 }
-.pagination-controls button { /* Reutiliza .dashboard-btn */
-    min-width: 100px;
+.user-list-item-enhanced:hover { 
+    transform: translateY(-3px); 
+    box-shadow: 0 6px 18px rgba(124, 58, 237, 0.2); 
+    border-color: rgba(124, 58, 237, 0.4); 
 }
-.pagination-controls span {
-    color: #ccc;
-    font-weight: bold;
+
+.user-list-item-enhanced .user-avatar-small { 
+    width: 50px; height: 50px; border-radius: 50%; margin-right: 18px; 
+    border: 2px solid rgba(124, 58, 237, 0.5); flex-shrink: 0; object-fit: cover; 
 }
+
+.user-list-item-enhanced .user-info-column, 
+.user-list-item-enhanced .server-info-column, 
+.user-list-item-enhanced .last-update-column { 
+    display: flex; flex-direction: column; justify-content: center; 
+    flex-grow: 1; min-width: 0; margin-right: 15px; 
+}
+.user-list-item-enhanced .user-info-column { flex-basis: 22%; flex-grow: 1.5; }
+.user-list-item-enhanced .server-info-column { flex-basis: 28%; flex-grow: 1.8; }
+.user-list-item-enhanced .last-update-column { flex-basis: 20%; flex-grow: 1; }
+
+.user-list-item-enhanced .username { font-size: 1.1rem; font-weight: 600; color: #e0e5ec; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2; }
+.user-list-item-enhanced .user-id { font-size: 0.75rem; color: #828a96; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.user-list-item-enhanced .info-label { font-size: 0.65rem; color: #727883; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+.user-list-item-enhanced .info-label i { margin-right: 4px; }
+.user-list-item-enhanced .info-value { font-size: 0.85rem; color: #b0b8c4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2; }
+.user-list-item-enhanced .info-value.placeholder { color: #5c626b; font-style: italic; }
+
+.user-list-item-enhanced .view-profile-btn { /* Usa .dashboard-btn */
+    margin-left: auto; padding: 8px 15px; font-size: 0.85em; 
+    flex-shrink: 0; white-space: nowrap; 
+}
+.user-list-item-enhanced .view-profile-btn i { margin-right: 6px; }
+
+
+/* Controles de Paginação (reutiliza .dashboard-btn) */
+.pagination-controls { display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 25px; }
+.pagination-controls .dashboard-btn { min-width: 110px; padding: 8px 15px; font-size:0.9em; } 
+.pagination-controls .dashboard-btn i { font-size: 0.9em; }
+.pagination-controls span { color: #b0b8c4; font-weight: bold; font-size: 0.9em; }
+
+
+/* Responsividade para os novos elementos da dashboard */
+@media (max-width: 1100px) { /* Ajuste para telas um pouco menores que large desktops */
+    .user-list-item-enhanced .server-info-column,
+    .user-list-item-enhanced .last-update-column {
+        /* Ocultar em telas médias se ficar muito apertado, ou reduzir flex-basis */
+        /* display: none; */ 
+    }
+}
+
+@media (max-width: 992px) { 
+    .dashboard-layout { flex-direction: column; padding: 0 15px; }
+    .dashboard-sidebar { flex: 0 0 auto; width:100%; margin-bottom:20px;}
+    
+    .user-list-item-enhanced { flex-wrap: wrap; /* Permite que o botão vá para baixo */ }
+    .user-list-item-enhanced .user-info-column { flex-basis: 100%; margin-bottom: 8px; }
+    .user-list-item-enhanced .server-info-column, 
+    .user-list-item-enhanced .last-update-column { 
+        flex-basis: calc(50% - 10px); /* Tenta colocar 2 por linha */
+        margin-bottom: 8px;
+    }
+    .user-list-item-enhanced .view-profile-btn { 
+        margin-left: 0; margin-top: 10px; width: 100%; text-align: center; 
+        flex-basis: 100%; /* Botão ocupa toda a largura */
+    }
+}
+
+@media (max-width: 576px) { 
+    #dashboardArea { padding: 10px; }
+    .dashboard-layout { gap: 15px; margin-top: 15px; padding: 0 10px;}
+    .dashboard-sidebar { padding: 15px; }
+    .dashboard-sidebar h3 { font-size: 1.3rem; margin-bottom: 15px; }
+    .dashboard-sidebar .dashboard-btn { padding: 10px 15px; font-size: 0.9rem; }
+    
+    .user-search-section-dashboard {flex-direction: column; gap: 10px; padding: 15px;}
+    .user-search-section-dashboard input[type="text"], 
+    .user-search-section-dashboard .dashboard-btn { width:100%;}
+    
+    #userContentArea { padding: 15px; }
+    #userContentArea .profile-section { padding: 15px; }
+    #userContentArea .profile-section h3 { font-size: 1.3rem; margin-bottom:15px; }
+    #userContentArea .history-avatar { width: 70px; height: 70px; }
+    #userContentArea .history-banner { width: 100%; max-height: 120px; }
+
+
+    .user-list-section-dashboard { padding: 15px; }
+    .user-list-section-dashboard h2 { font-size: 1.4rem; }
+    .user-list-item-enhanced { padding: 12px; }
+    .user-list-item-enhanced .user-avatar-small { width: 45px; height: 45px; margin-right: 15px; }
+    .user-list-item-enhanced .username { font-size: 1rem; }
+    .user-list-item-enhanced .info-value { font-size: 0.8rem; }
+    .user-list-item-enhanced .server-info-column, 
+    .user-list-item-enhanced .last-update-column { 
+        flex-basis: 100%; /* Uma info por linha abaixo do nome/ID */
+    }
+    .pagination-controls .dashboard-btn { font-size:0.8em; padding: 8px 10px; min-width: 80px;}
+    .pagination-controls span { font-size: 0.8em; }
+}
+
+/* === FIM DO NOVO CSS ESPECÍFICO PARA A DASHBOARD === */
