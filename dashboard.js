@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // !!!!! ATUALIZE ESTA URL PARA A URL DA SUA API NODE.JS NO RENDER !!!!!
-    const API_BASE_URL = 'https://celestial-api.onrender.com'; 
+    const API_BASE_URL = 'https://celestial-api.onrender.com'; // Use a sua URL correta da API
     // Exemplo: 'https://celestial-tracker-api-node.onrender.com'
 
     // Elementos do DOM
@@ -17,145 +17,159 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentPage = 0;
     const usersPerPage = 10; // Ajuste conforme a paginação da sua API
-    let currentUserData = null; 
-    let currentFilter = 'summary'; 
+    let currentUserData = null;
+    let currentFilter = 'summary';
 
+    // --- DEFINIÇÕES DAS FUNÇÕES AUXILIARES ---
     function showLoading(show = true) {
         if (loadingIndicator) loadingIndicator.style.display = show ? 'flex' : 'none';
     }
 
-function formatDate(dateStringOrObject) {
-    if (!dateStringOrObject) return 'N/A';
-    let date;
-    if (typeof dateStringOrObject === 'object' && dateStringOrObject !== null && '$date' in dateStringOrObject) {
-        date = new Date(dateStringOrObject.$date);
-    } else {
-        date = new Date(dateStringOrObject); // Para strings ISO ou timestamps diretos
-    }
-    // Verifica se a data é válida após a conversão
-    if (isNaN(date.getTime())) {
-        // Se a data for inválida, tente interpretar como timestamp (caso o $date não esteja presente e seja apenas o número)
-        const timestamp = parseInt(dateStringOrObject, 10);
-        if (!isNaN(timestamp)) {
-            date = new Date(timestamp);
-            // Verifica novamente se é uma data válida após tentar como timestamp
-            if (isNaN(date.getTime())) return 'Data Inválida';
+    function formatDate(dateStringOrObject) {
+        if (!dateStringOrObject) return 'N/A';
+        let date;
+        if (typeof dateStringOrObject === 'object' && dateStringOrObject !== null && '$date' in dateStringOrObject) {
+            date = new Date(dateStringOrObject.$date);
         } else {
-            return 'Data Inválida'; // Se não for nem objeto $date nem timestamp válido
+            date = new Date(dateStringOrObject);
+        }
+        if (isNaN(date.getTime())) {
+            const timestamp = parseInt(dateStringOrObject, 10);
+            if (!isNaN(timestamp)) {
+                date = new Date(timestamp);
+                if (isNaN(date.getTime())) return 'Data Inválida';
+            } else {
+                return 'Data Inválida';
+            }
+        }
+        return date.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    }
+
+    // --- DEFINIÇÕES DAS FUNÇÕES PRINCIPAIS DE FETCH E RENDERIZAÇÃO ---
+    async function fetchAllUsers(page = 0) {
+        showLoading(true);
+        const skip = page * usersPerPage;
+        try {
+            const response = await fetch(`${API_BASE_URL}/users?skip=${skip}&limit=${usersPerPage}`);
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ error: response.statusText }));
+                throw new Error(`HTTP ${response.status}: ${errorData.error || response.statusText}`);
+            }
+            const users = await response.json();
+            displayUserList(users);
+            currentPage = page;
+            if (currentPageSpan) currentPageSpan.textContent = `Página: ${currentPage + 1}`;
+        } catch (error) {
+            console.error('Erro ao buscar usuários:', error);
+            if (userListContainer) userListContainer.innerHTML = `<p class="error-message">Falha ao carregar usuários: ${error.message}</p>`;
+        } finally {
+            showLoading(false);
         }
     }
-    return date.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-}
 
-// SUBSTITUA SUA FUNÇÃO displayUserList POR ESTA:
-function displayUserList(users) {
-    if (!userListContainer) {
-        console.error("Elemento userListContainer não encontrado!");
-        return;
-    }
-    userListContainer.innerHTML = ''; // Limpa a lista anterior
+    function displayUserList(users) {
+        if (!userListContainer) {
+            console.error("Elemento userListContainer não encontrado!");
+            return;
+        }
+        userListContainer.innerHTML = '';
 
-    if (!users || users.length === 0) {
-        userListContainer.innerHTML = '<p class="placeholder-text" style="font-size:1em; padding:15px;">Nenhum usuário encontrado nesta página.</p>';
-        if (nextPageBtn) nextPageBtn.disabled = (currentPage === 0 || users.length === 0);
-        if (prevPageBtn) prevPageBtn.disabled = (currentPage === 0);
-        return;
-    }
+        if (!users || users.length === 0) {
+            userListContainer.innerHTML = '<p class="placeholder-text" style="font-size:1em; padding:15px;">Nenhum usuário encontrado nesta página.</p>';
+            if (nextPageBtn) nextPageBtn.disabled = (currentPage === 0 || users.length === 0);
+            if (prevPageBtn) prevPageBtn.disabled = (currentPage === 0);
+            return;
+        }
 
-    const ul = document.createElement('ul');
-    ul.className = 'user-list'; // Garanta que esta classe exista no seu CSS ou adapte
-    users.forEach(user => {
-        const li = document.createElement('li');
-        li.className = 'user-list-item-enhanced';
+        const ul = document.createElement('ul');
+        ul.className = 'user-list';
+        users.forEach(user => {
+            const li = document.createElement('li');
+            li.className = 'user-list-item-enhanced';
 
-        let userIdDisplayValue = 'N/A';
-        let dataUserIdValue = ''; // Para o atributo data-userid
+            let userIdDisplayValue = 'N/A';
+            let dataUserIdValue = '';
 
-        if (user.user_id) {
-            // A API Node.js com res.json() deve converter Long para string se > MAX_SAFE_INTEGER
-            // ou para número se <= MAX_SAFE_INTEGER.
-            if (typeof user.user_id === 'string' || typeof user.user_id === 'number') {
-                userIdDisplayValue = user.user_id.toString();
-                dataUserIdValue = user.user_id.toString();
-            } else if (typeof user.user_id === 'object' && user.user_id !== null) {
-                // Caso a API, por algum motivo, ainda envie um objeto Long BSON ou EJSON
-                if (user.user_id.$numberLong) { // Formato EJSON
-                    userIdDisplayValue = user.user_id.$numberLong.toString();
-                    dataUserIdValue = user.user_id.$numberLong.toString();
-                } else if (typeof user.user_id.toString === 'function' && user.user_id.toString() !== '[object Object]') {
-                    // Objeto Long BSON que tem um método toString() funcional
+            if (user.user_id) {
+                if (typeof user.user_id === 'string' || typeof user.user_id === 'number') {
                     userIdDisplayValue = user.user_id.toString();
                     dataUserIdValue = user.user_id.toString();
+                } else if (typeof user.user_id === 'object' && user.user_id !== null) {
+                    if (user.user_id.$numberLong) {
+                        userIdDisplayValue = user.user_id.$numberLong.toString();
+                        dataUserIdValue = user.user_id.$numberLong.toString();
+                    } else if (typeof user.user_id.toString === 'function' && user.user_id.toString() !== '[object Object]') {
+                        userIdDisplayValue = user.user_id.toString();
+                        dataUserIdValue = user.user_id.toString();
+                    } else {
+                        console.warn("Formato de user_id como objeto não reconhecido:", user.user_id);
+                        userIdDisplayValue = '[ID Obj Complexo]';
+                    }
                 } else {
-                    console.warn("Formato de user_id como objeto não reconhecido:", user.user_id);
-                    userIdDisplayValue = '[ID Obj Complexo]';
+                     console.warn("user_id não é string, número nem objeto esperado:", user.user_id);
+                     userIdDisplayValue = '[ID Inválido]';
                 }
-            } else {
-                 console.warn("user_id não é string, número nem objeto esperado:", user.user_id);
-                 userIdDisplayValue = '[ID Inválido]';
             }
-        }
+            
+            const latestAvatar = (user.avatar_urls && user.avatar_urls.length > 0) ? user.avatar_urls[user.avatar_urls.length - 1] : 'https://via.placeholder.com/55?text=?';
+
+            let lastServerDisplay = '<span class="info-value placeholder">Nenhum</span>';
+            if (user.servers && user.servers.length > 0) {
+                const lastServer = user.servers[user.servers.length - 1];
+                const serverName = lastServer.guild_name;
+                if (serverName && typeof serverName === 'string') {
+                    lastServerDisplay = `<span class="info-value">${serverName}</span>`;
+                } else {
+                    lastServerDisplay = '<span class="info-value placeholder">Nome Indisponível</span>';
+                     if (serverName !== undefined && serverName !== null) console.warn("guild_name não é uma string válida ou está ausente:", serverName);
+                }
+            }
+
+            let lastActivityDateDisplay = '<span class="info-value placeholder">Nenhuma</span>';
+            if (user.history && user.history.length > 0) {
+                const lastHistoryEntry = user.history[user.history.length - 1];
+                lastActivityDateDisplay = `<span class="info-value">${formatDate(lastHistoryEntry.changed_at)}</span>`;
+            }
+
+            li.innerHTML = `
+                <img src="${latestAvatar}" alt="Avatar de ${user.username_global || 'Usuário'}" class="user-avatar-small">
+                <div class="user-info-column">
+                    <span class="username">${user.username_global || 'Nome Desconhecido'}</span>
+                    <span class="user-id">ID: ${userIdDisplayValue}</span>
+                </div>
+                <div class="server-info-column">
+                    <span class="info-label"><i class="fas fa-server" style="margin-right: 5px;"></i>Último Servidor</span>
+                    ${lastServerDisplay}
+                </div>
+                <div class="last-update-column">
+                    <span class="info-label"><i class="fas fa-history" style="margin-right: 5px;"></i>Última Atividade</span>
+                    ${lastActivityDateDisplay}
+                </div>
+                <button class="dashboard-btn view-profile-btn" data-userid="${dataUserIdValue}">
+                    <i class="fas fa-eye" style="margin-right: 5px;"></i>Ver Perfil
+                </button>
+            `;
+
+            const viewProfileButton = li.querySelector('.view-profile-btn');
+            if (viewProfileButton) {
+                viewProfileButton.addEventListener('click', () => {
+                    const userIdToFetch = viewProfileButton.dataset.userid;
+                    if (userIdToFetch && userIdToFetch !== 'N/A' && !userIdToFetch.startsWith('[')) {
+                        fetchAndDisplayUser(userIdToFetch, 'summary');
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    } else {
+                        console.error("ID de usuário inválido ou placeholder de erro para buscar:", userIdToFetch);
+                        alert("Não é possível carregar o perfil: ID de usuário inválido.");
+                    }
+                });
+            }
+            ul.appendChild(li);
+        });
+        userListContainer.appendChild(ul);
         
-        const latestAvatar = (user.avatar_urls && user.avatar_urls.length > 0) ? user.avatar_urls[user.avatar_urls.length - 1] : 'https://via.placeholder.com/55?text=?';
-
-        let lastServerDisplay = '<span class="info-value placeholder">Nenhum</span>';
-        if (user.servers && user.servers.length > 0) {
-            const lastServer = user.servers[user.servers.length - 1];
-            const serverName = lastServer.guild_name;
-            if (serverName && typeof serverName === 'string') { // Checa se serverName é uma string válida
-                lastServerDisplay = `<span class="info-value">${serverName}</span>`;
-            } else {
-                lastServerDisplay = '<span class="info-value placeholder">Nome Indisponível</span>';
-                 if (serverName) console.warn("guild_name não é uma string válida:", serverName);
-            }
-        }
-
-        let lastActivityDateDisplay = '<span class="info-value placeholder">Nenhuma</span>';
-        if (user.history && user.history.length > 0) {
-            const lastHistoryEntry = user.history[user.history.length - 1];
-            lastActivityDateDisplay = `<span class="info-value">${formatDate(lastHistoryEntry.changed_at)}</span>`;
-        }
-
-        li.innerHTML = `
-            <img src="${latestAvatar}" alt="Avatar de ${user.username_global || 'Usuário'}" class="user-avatar-small">
-            <div class="user-info-column">
-                <span class="username">${user.username_global || 'Nome Desconhecido'}</span>
-                <span class="user-id">ID: ${userIdDisplayValue}</span>
-            </div>
-            <div class="server-info-column">
-                <span class="info-label"><i class="fas fa-server" style="margin-right: 5px;"></i>Último Servidor</span>
-                ${lastServerDisplay}
-            </div>
-            <div class="last-update-column">
-                <span class="info-label"><i class="fas fa-history" style="margin-right: 5px;"></i>Última Atividade</span>
-                ${lastActivityDateDisplay}
-            </div>
-            <button class="dashboard-btn view-profile-btn" data-userid="${dataUserIdValue}">
-                <i class="fas fa-eye" style="margin-right: 5px;"></i>Ver Perfil
-            </button>
-        `;
-
-        const viewProfileButton = li.querySelector('.view-profile-btn');
-        if (viewProfileButton) {
-            viewProfileButton.addEventListener('click', () => {
-                const userIdToFetch = viewProfileButton.dataset.userid;
-                if (userIdToFetch && userIdToFetch !== 'N/A' && !userIdToFetch.startsWith('[')) { // Verifica se não é um placeholder de erro
-                    fetchAndDisplayUser(userIdToFetch, 'summary');
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                } else {
-                    console.error("ID de usuário inválido ou placeholder de erro para buscar:", userIdToFetch);
-                    alert("Não é possível carregar o perfil: ID de usuário inválido.");
-                }
-            });
-        }
-        ul.appendChild(li);
-    });
-    userListContainer.appendChild(ul);
-    
-    if (prevPageBtn) prevPageBtn.disabled = (currentPage === 0);
-    if (nextPageBtn) nextPageBtn.disabled = (users.length < usersPerPage);
-}
-
+        if (prevPageBtn) prevPageBtn.disabled = (currentPage === 0);
+        if (nextPageBtn) nextPageBtn.disabled = (users.length < usersPerPage);
+    }
 
     async function fetchAndDisplayUser(userId, filterToShow = 'summary') {
         if (!userId) {
@@ -224,10 +238,20 @@ function displayUserList(users) {
         const latestBanner = (user.banner_urls && user.banner_urls.length > 0) ? user.banner_urls[user.banner_urls.length - 1] : '';
         const avatarCount = user.avatar_urls ? user.avatar_urls.length : 0;
         const bannerCount = user.banner_urls ? user.banner_urls.length : 0;
-        const nicknameCount = user.nicknames ? user.nicknames.length : 0;
+        // Para nicknameCount, vamos contar os nicknames únicos da lista principal, já que o histórico é mais complexo.
+        const nicknameCount = user.nicknames ? new Set(user.nicknames.filter(n => n)).size : 0; 
         const serverCount = user.servers ? user.servers.length : 0;
         const historyCount = user.history ? user.history.length : 0;
         
+        let userIdForDisplay = 'N/A';
+        if (user.user_id) {
+            if(typeof user.user_id === 'object' && user.user_id.$numberLong) {
+                userIdForDisplay = user.user_id.$numberLong.toString();
+            } else if (user.user_id.toString) {
+                 userIdForDisplay = user.user_id.toString();
+            }
+        }
+
         return `
             <div class="profile-section user-main-info">
                 ${latestBanner ? `<div class="profile-banner" style="height:180px; border-radius:12px 12px 0 0; background-image: url('${latestBanner}'); background-size:cover; background-position:center;"></div>` : '<div class="profile-banner-placeholder" style="height:120px; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.2); border-radius:12px 12px 0 0; color:#888;"><span>Sem Banner Registrado</span></div>'}
@@ -235,14 +259,14 @@ function displayUserList(users) {
                     <img src="${latestAvatar}" alt="Avatar" style="width:120px; height:120px; border-radius:50%; border:5px solid #18191c; background:#18191c;">
                     <div style="margin-left:20px; padding-bottom:10px;">
                         <h2 style="color:#fff; font-size:2em; margin:0 0 5px 0; text-shadow: 0 1px 3px rgba(0,0,0,0.5);">${user.username_global || 'N/A'}</h2>
-                        <p style="color:#b9bbbe; font-size:1.1em; margin:0;">ID: ${user.user_id ? user.user_id.toString() : 'N/A'}</p>
+                        <p style="color:#b9bbbe; font-size:1.1em; margin:0;">ID: ${userIdForDisplay}</p>
                     </div>
                 </div>
             </div>
             <div class="profile-section quick-stats" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); gap:20px;">
                 <div class="widget" style="text-align:center;"><h3><i class="fas fa-image"></i> Avatares</h3><p style="color:#06b6d4;">${avatarCount}</p></div>
                 <div class="widget" style="text-align:center;"><h3><i class="fas fa-images"></i> Banners</h3><p style="color:#06b6d4;">${bannerCount}</p></div>
-                <div class="widget" style="text-align:center;"><h3><i class="fas fa-signature"></i> Apelidos</h3><p style="color:#06b6d4;">${nicknameCount}</p></div>
+                <div class="widget" style="text-align:center;"><h3><i class="fas fa-signature"></i> Apelidos Únicos</h3><p style="color:#06b6d4;">${nicknameCount}</p></div>
                 <div class="widget" style="text-align:center;"><h3><i class="fas fa-server"></i> Servidores</h3><p style="color:#06b6d4;">${serverCount}</p></div>
                 <div class="widget" style="text-align:center;"><h3><i class="fas fa-history"></i> Registros Hist.</h3><p style="color:#06b6d4;">${historyCount}</p></div>
             </div>
@@ -250,7 +274,7 @@ function displayUserList(users) {
                 <h3><i class="fas fa-info-circle"></i> Informações Gerais (Baseado nos Últimos Dados)</h3>
                 <ul class="profile-list">
                     <li><strong>Último apelido conhecido (lista geral):</strong> ${user.nicknames && user.nicknames.length > 0 ? user.nicknames[user.nicknames.length -1] : 'N/A'}</li>
-                    <li><strong>Registrado pela primeira vez (rastreado):</strong> ${user.history && user.history.length > 0 ? formatDate(user.history[0].changed_at) : 'N/A'}</li>
+                    <li><strong>Registrado pela primeira vez (no histórico):</strong> ${user.history && user.history.length > 0 ? formatDate(user.history[0].changed_at) : 'N/A'}</li>
                     <li><strong>Última alteração detectada:</strong> ${user.history && user.history.length > 0 ? formatDate(user.history[user.history.length - 1].changed_at) : 'N/A'}</li>
                 </ul>
             </div>
@@ -289,7 +313,7 @@ function displayUserList(users) {
 
     function renderNicknamesView(user) {
         let html = '<div class="profile-section"><h3><i class="fas fa-signature"></i> Histórico de Nomes de Usuário/Apelidos</h3>';
-        html += '<p style="color:#ccc; font-size:0.9em; margin-bottom:15px;">Inclui nomes globais e apelidos de servidor (adicionados à lista geral), ordenados por data de alteração (mais recentes primeiro, quando disponível no histórico).</p>'
+        html += '<p style="color:#ccc; font-size:0.9em; margin-bottom:15px;">Inclui nomes globais e apelidos de servidor (adicionados à lista geral), ordenados por data de alteração (mais recentes primeiro, quando disponível no histórico).</p>';
         html += '<ul class="profile-list">';
         
         let allNames = [];
@@ -298,36 +322,37 @@ function displayUserList(users) {
                 if (entry.changes.username_global) {
                     allNames.push({ name: entry.changes.username_global, date: entry.changed_at, type: "Nome Global" });
                 }
-                if (entry.changes.nickname_added) { // 'nickname_added' é o que usamos no script do bot
+                if (entry.changes.nickname_added) {
                      allNames.push({ name: entry.changes.nickname_added, date: entry.changed_at, type: "Apelido (do Histórico)" });
                 }
             });
         }
-        // Adiciona a lista principal de nicknames se eles não estiverem já no histórico (pode haver redundância)
         if (user.nicknames && user.nicknames.length > 0) {
             user.nicknames.forEach(nick => {
-                // Verifica se um apelido similar já foi adicionado do histórico para evitar mostrar exatamente o mesmo dado duas vezes se a data for a mesma
-                // Esta lógica de desduplicação pode ser aprimorada
-                if (!allNames.some(n => n.name === nick && n.type === "Apelido (do Histórico)")) { 
+                if (nick && !allNames.some(n => n.name === nick && n.type === "Apelido (do Histórico)")) { 
                     allNames.push({ name: nick, date: null, type: "Apelido (Lista Geral)" });
                 }
             });
         }
         
         allNames.sort((a, b) => {
-            if (a.date && b.date) return new Date(b.date).getTime() - new Date(a.date).getTime();
-            if (a.date) return -1; // Coloca itens com data primeiro
-            if (b.date) return 1;  // Coloca itens com data primeiro
-            return 0; // Mantém a ordem para itens sem data
+            const dateA = a.date ? new Date(a.date).getTime() : 0;
+            const dateB = b.date ? new Date(b.date).getTime() : 0;
+            if (dateA !== dateB) return dateB - dateA; // Mais recentes primeiro
+            // Se as datas forem iguais (ou ambas nulas), priorize "Nome Global" e "Apelido (do Histórico)"
+            if (a.type !== "Apelido (Lista Geral)" && b.type === "Apelido (Lista Geral)") return -1;
+            if (a.type === "Apelido (Lista Geral)" && b.type !== "Apelido (Lista Geral)") return 1;
+            return 0;
         });
 
         const uniqueSortedNames = allNames.filter((item, index, self) =>
-            index === 0 || item.name !== self[index - 1].name // Remove duplicados consecutivos simples (pode ser melhorado)
+            index === 0 || item.name !== self[index - 1].name || (item.date && self[index-1].date && formatDate(item.date) !== formatDate(self[index-1].date))
         );
+
 
         if (uniqueSortedNames.length > 0) {
             uniqueSortedNames.forEach(nameEntry => {
-                html += `<li><strong>${nameEntry.name || 'N/A'}</strong> <small style="color:#888;">(${nameEntry.type}${nameEntry.date ? ' - ' + formatDate(nameEntry.date) : ''})</small></li>`;
+                html += `<li><strong>${nameEntry.name || 'N/A'}</strong> <small style="color:#8a909a;">(${nameEntry.type}${nameEntry.date ? ' - ' + formatDate(nameEntry.date) : ''})</small></li>`;
             });
         } else {
             html += '<li>Nenhum nome/apelido histórico encontrado.</li>';
@@ -340,10 +365,13 @@ function displayUserList(users) {
         let html = '<div class="profile-section"><h3><i class="fas fa-server"></i> Servidores Encontrados</h3>';
         if (user.servers && user.servers.length > 0) {
             html += '<ul class="profile-list">';
-            // Ordenar por data de "first_seen", mais recente primeiro, se essa data for confiável
-            const sortedServers = user.servers.slice().sort((a,b) => new Date(b.first_seen).getTime() - new Date(a.first_seen).getTime());
+            const sortedServers = user.servers.slice().sort((a,b) => {
+                const dateA = a.first_seen ? new Date(a.first_seen).getTime() : 0;
+                const dateB = b.first_seen ? new Date(b.first_seen).getTime() : 0;
+                return dateB - dateA; // Mais recente primeiro
+            });
             sortedServers.forEach(server => {
-                html += `<li><strong>${server.guild_name || 'Nome Desconhecido'}</strong> (ID: ${server.guild_id})<br><small style="color:#888;">Visto pela primeira vez em: ${formatDate(server.first_seen)}</small></li>`;
+                html += `<li><strong>${server.guild_name || 'Nome Desconhecido'}</strong> (ID: ${server.guild_id})<br><small style="color:#8a909a;">Visto pela primeira vez em: ${formatDate(server.first_seen)}</small></li>`;
             });
             html += '</ul>';
         } else {
@@ -357,7 +385,7 @@ function displayUserList(users) {
         let html = '<div class="profile-section"><h3><i class="fas fa-history"></i> Histórico Completo de Alterações</h3>';
         if (user.history && user.history.length > 0) {
             html += '<ul class="profile-history-log profile-list">';
-            user.history.slice().reverse().forEach(entry => { // Mais recentes primeiro
+            user.history.slice().reverse().forEach(entry => {
                 html += `
                     <li>
                         <strong style="color:#06b6d4;">Alterado em:</strong> ${formatDate(entry.changed_at)}
@@ -372,7 +400,7 @@ function displayUserList(users) {
         return html;
     }
 
-    // Event Listeners Iniciais
+    // --- EVENT LISTENERS E CHAMADA INICIAL ---
     filterButtons.forEach(button => {
         button.addEventListener('click', () => {
             currentFilter = button.dataset.filter;
@@ -403,6 +431,7 @@ function displayUserList(users) {
         nextPageBtn.addEventListener('click', () => fetchAllUsers(currentPage + 1));
     }
 
+    // Chamadas iniciais ao carregar a página
     fetchAllUsers(0);
     renderFilteredContent(); 
     updateActiveFilterButton(); 
