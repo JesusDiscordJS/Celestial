@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // !!!!! ATUALIZE ESTA URL PARA A URL DA SUA API NODE.JS NO RENDER !!!!!
-    const API_BASE_URL = 'https://seu-celestial-tracker-api.onrender.com'; 
+    const API_BASE_URL = 'https://celestial-api.onrender.com'; 
     // Exemplo: 'https://celestial-tracker-api-node.onrender.com'
 
     // Elementos do DOM
