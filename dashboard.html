@@ -161,8 +161,8 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const API_BASE_URL = 'https://celestial-api.onrender.com';
-            // !!! IMPORTANTE: Substitua pela URL real da sua página de login !!!
-            const FRONTEND_LOGIN_URL = 'SUA_URL_DE_LOGIN_FRONTEND'; 
+            // !!! URL de login atualizada com base no seu .env !!!
+            const FRONTEND_LOGIN_URL = 'https://jesusdiscordjs.github.io/Celestial/'; 
 
             const loggedInUsernameEl = document.getElementById('loggedInUsername');
             const loggedInUserAvatarEl = document.getElementById('loggedInUserAvatar');
@@ -182,7 +182,10 @@
                         ...options
                     });
                     if (response.status === 401) { // Não autorizado
-                        window.location.href = FRONTEND_LOGIN_URL;
+                        // Adiciona um parâmetro para indicar que o usuário precisa logar
+                        // e opcionalmente a página que ele tentava acessar, para redirecionamento pós-login
+                        const currentPath = window.location.pathname + window.location.search + window.location.hash;
+                        window.location.href = `${FRONTEND_LOGIN_URL}?unauthorized=true&redirect_to=${encodeURIComponent(currentPath)}`;
                         return null; 
                     }
                     if (!response.ok) {
@@ -219,11 +222,7 @@
                     loggedInUsernameEl.textContent = 'Não logado';
                     loggedInUserAvatarEl.style.display = 'none';
                     defaultAvatarIconEl.style.display = 'inline-flex';
-                    // Se o erro não for 401 (já tratado no fetchData), pode mostrar uma mensagem.
-                    // O redirecionamento para login já acontece em fetchData se for 401.
                     if (error.message && !error.message.includes("401")) {
-                        // trackerResultsEl.innerHTML = `<p class="error">Erro ao carregar dados do usuário: ${error.message}</p>`;
-                        // Não queremos poluir os resultados do tracker com erros de auth iniciais se não for 401
                         console.warn("Erro ao buscar /api/me, mas não foi 401:", error.message);
                     }
                 }
@@ -240,8 +239,8 @@
 
                 if (data.avatar_urls && data.avatar_urls.length > 0) {
                     content += `<h5>Avatares (${data.avatar_urls.length}):</h5><div class="avatar-list">`;
-                    data.avatar_urls.slice(0, 5).forEach(url => { // Mostra os últimos 5, por exemplo
-                        content += `<a href="${url}" target="_blank"><img src="${url}" alt="Avatar"></a>`;
+                    data.avatar_urls.slice(0, 5).forEach(url => { 
+                        content += `<a href="${url}" target="_blank"><img src="${url}" alt="Avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';"><span style="display:none; color: #ccc; font-size:0.8em;">[imagem indisponível]</span></a>`;
                     });
                     if (data.avatar_urls.length > 5) content += `<span>... e mais ${data.avatar_urls.length - 5}</span>`;
                     content += `</div>`;
@@ -251,8 +250,8 @@
 
                 if (data.banner_urls && data.banner_urls.length > 0) {
                     content += `<h5>Banners de Perfil (${data.banner_urls.length}):</h5><div class="banner-list">`;
-                    data.banner_urls.slice(0, 3).forEach(url => { // Mostra os últimos 3
-                        content += `<a href="${url}" target="_blank"><img src="${url}" alt="Banner"></a>`;
+                    data.banner_urls.slice(0, 3).forEach(url => { 
+                        content += `<a href="${url}" target="_blank"><img src="${url}" alt="Banner" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';"><span style="display:none; color: #ccc; font-size:0.8em;">[imagem indisponível]</span></a>`;
                     });
                     if (data.banner_urls.length > 3) content += `<span>... e mais ${data.banner_urls.length - 3}</span>`;
                     content += `</div>`;
@@ -263,7 +262,7 @@
                 if (data.nicknames && data.nicknames.length > 0) {
                     content += `<h5>Nicknames (${data.nicknames.length}):</h5>`;
                     data.nicknames.forEach(nick => {
-                        content += `<div class="nickname-entry"><p>${nick}</p></div>`;
+                        content += `<div class="nickname-entry"><p>${escapeHtml(nick)}</p></div>`;
                     });
                 } else {
                     content += `<p><strong>Nicknames:</strong> Nenhum registrado.</p>`;
@@ -273,7 +272,7 @@
                     content += `<h5>Servidores em Comum Conhecidos (${data.servers.length}):</h5>`;
                     data.servers.forEach(server => {
                         content += `<div class="server-entry">
-                                        <p><strong>${server.guild_name || 'Nome não disponível'}</strong> (ID: ${server.guild_id})</p>
+                                        <p><strong>${escapeHtml(server.guild_name) || 'Nome não disponível'}</strong> (ID: ${escapeHtml(server.guild_id)})</p>
                                         <p>Visto pela primeira vez: ${new Date(server.first_seen).toLocaleString()}</p>
                                     </div>`;
                     });
@@ -283,13 +282,12 @@
 
                 if (data.history && data.history.length > 0) {
                     content += `<h5>Histórico de Mudanças (${data.history.length}):</h5>`;
-                    // Mostrar as N entradas mais recentes do histórico
-                    const recentHistory = data.history.slice(-5).reverse(); // Pega as últimas 5 e inverte para mais recente primeiro
+                    const recentHistory = data.history.slice(-5).reverse(); 
                     recentHistory.forEach(entry => {
                         content += `<div class="history-entry">
                                         <p><strong>Data da Mudança:</strong> ${new Date(entry.changed_at).toLocaleString()}</p>`;
                         if (entry.changes.username_global) {
-                            content += `<p>Username Global alterado para: ${entry.changes.username_global}</p>`;
+                            content += `<p>Username Global alterado para: ${escapeHtml(entry.changes.username_global)}</p>`;
                         }
                         if (entry.changes.avatar_url) {
                             content += `<p>Novo Avatar: <a href="${entry.changes.avatar_url}" target="_blank">Ver Avatar</a></p>`;
@@ -298,10 +296,10 @@
                             content += `<p>Novo Banner: <a href="${entry.changes.banner_url}" target="_blank">Ver Banner</a></p>`;
                         }
                         if (entry.changes.nickname_added) {
-                            content += `<p>Nickname Adicionado: ${entry.changes.nickname_added}</p>`;
+                            content += `<p>Nickname Adicionado: ${escapeHtml(entry.changes.nickname_added)}</p>`;
                         }
                         if (entry.changes.server_joined) {
-                            content += `<p>Entrou no Servidor: ${entry.changes.server_joined.guild_name} (ID: ${entry.changes.server_joined.guild_id})</p>`;
+                            content += `<p>Entrou no Servidor: ${escapeHtml(entry.changes.server_joined.guild_name)} (ID: ${escapeHtml(entry.changes.server_joined.guild_id)})</p>`;
                         }
                         content += `</div>`;
                     });
@@ -311,6 +309,18 @@
                 }
                 trackerResultsEl.innerHTML += content;
             }
+            
+            // Função simples para escapar HTML e prevenir XSS básico
+            function escapeHtml(unsafe) {
+                if (typeof unsafe !== 'string') return unsafe;
+                return unsafe
+                     .replace(/&/g, "&amp;")
+                     .replace(/</g, "&lt;")
+                     .replace(/>/g, "&gt;")
+                     .replace(/"/g, "&quot;")
+                     .replace(/'/g, "&#039;");
+            }
+
 
             // Lidar com clique no botão "Rastrear"
             trackBtn.addEventListener('click', async () => {
@@ -330,11 +340,9 @@
                     if (trackingData) {
                         displayTrackerResults(trackingData);
                     } else {
-                         // Se fetchData retornou null (ex: por causa de um 401 já tratado com redirect), 
-                         // não precisa mostrar erro aqui, pois o redirect já ocorreu.
-                         // Se o erro não foi 401, ele teria sido lançado e pego no catch abaixo.
-                        if (window.location.href !== FRONTEND_LOGIN_URL) { // Evita mensagem se já estiver redirecionando
-                            trackerResultsEl.innerHTML = '<p class="error">Não foi possível obter os dados de rastreamento. Verifique o console para mais detalhes.</p>';
+                        const currentUrl = new URL(window.location.href);
+                        if (!currentUrl.searchParams.has('unauthorized')) { // Evita mensagem se já estiver redirecionando
+                             trackerResultsEl.innerHTML = '<p class="error">Não foi possível obter os dados de rastreamento. Verifique o console para mais detalhes.</p>';
                         }
                     }
                 } catch (error) {
@@ -352,16 +360,16 @@
             // Logout
             logoutBtn.addEventListener('click', async () => {
                 try {
-                    const logoutResult = await fetchData('/auth/logout', { method: 'GET' }); // GET como definido na API
-                    if(logoutResult && logoutResult.message === "Logout bem-sucedido") {
-                        // O servidor pode já redirecionar ou podemos forçar aqui
+                    const logoutResult = await fetchData('/auth/logout', { method: 'GET' }); 
+                    if(logoutResult && typeof logoutResult === 'object' && logoutResult.message === "Logout bem-sucedido") {
                          window.location.href = logoutResult.redirectTo || FRONTEND_LOGIN_URL;
-                    } else {
-                         // Se o servidor não especificou redirectTo, ou a mensagem foi inesperada.
+                    } else if (typeof logoutResult === 'string' && logoutResult.includes("Logout bem-sucedido")) { // Fallback se a API retornar string
+                        window.location.href = FRONTEND_LOGIN_URL; // Tenta extrair redirectTo se possível, senão default
+                    }
+                     else {
                         window.location.href = FRONTEND_LOGIN_URL;
                     }
                 } catch (error) {
-                    // Mesmo em erro, tentar redirecionar para o login pode ser uma boa fallback
                     trackerResultsEl.innerHTML = `<p class="error">Erro ao fazer logout: ${error.message}. Redirecionando para login...</p>`;
                     setTimeout(() => { window.location.href = FRONTEND_LOGIN_URL; }, 2000);
                 }
