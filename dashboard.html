@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Celestial Tracker</title>
-    <link rel="stylesheet" href="style.css"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* Estilos adicionais para melhor apresentação dos resultados e inputs */
         .dashboard-user-avatar {
@@ -25,7 +26,7 @@
         .dashboard-search-area {
             margin-top: 20px;
             padding: 15px;
-            background-color: #2c2f33; /* Um pouco mais escuro que o corpo */
+            background-color: #2c2f33;
             border-radius: 8px;
             display: flex;
             gap: 10px;
@@ -49,31 +50,33 @@
             border-radius: 8px;
             color: #dcddde;
             min-height: 50px;
-            white-space: pre-wrap; /* Para formatar JSON de exemplo */
+            white-space: pre-wrap;
             word-wrap: break-word;
         }
         #trackerResults h4 {
             margin-top: 0;
-            color: #7289da; /* Cor do Discord */
+            color: #7289da;
         }
         #trackerResults .error {
-            color: #f04747; /* Vermelho para erros */
+            color: #f04747;
         }
         #trackerResults .success {
-            color: #43b581; /* Verde para sucesso */
+            color: #43b581;
+        }
+        #trackerResults .info {
+            color: #b9bbbe;
         }
         .dashboard-user {
             display: flex;
             align-items: center;
         }
         .logout-btn {
-            background-color: #f04747; /* Vermelho para logout */
+            background-color: #f04747;
             color: white;
         }
         .logout-btn:hover {
             background-color: #c73b3b;
         }
-        /* Melhorias nos botões de ação */
         .dashboard-actions button {
             transition: background-color 0.2s ease-in-out, transform 0.1s ease;
         }
@@ -104,6 +107,16 @@
             border-radius: 4px;
             background-color: #23272a;
         }
+        #loginPromptBtn {
+            background-color: #5865F2; /* Cor do Discord */
+            color: white;
+        }
+        #loginPromptBtn:hover {
+            background-color: #4752c4;
+        }
+        #loginPromptBtn .fa-discord { /* Para o ícone do Discord no botão de login */
+            margin-right: 8px;
+        }
     </style>
 </head>
 <body class="dashboard-page-body">
@@ -113,22 +126,25 @@
                 <img src="" alt="Avatar" id="loggedInUserAvatar" class="dashboard-user-avatar" style="display: none;">
                 <i id="defaultAvatarIcon" class="fas fa-user-astronaut dashboard-avatar-icon"></i>
                 <span id="loggedInUsername" class="dashboard-username">Carregando...</span>
-                <span class="dashboard-user-status premium">Premium</span> </div>
-            <span class="dashboard-maintenance-notice">🚧 Plataforma em Manutenção</span> </div>
+                <span id="userStatusBadge" class="dashboard-user-status premium" style="display:none;">Premium</span>
+            </div>
+            <span class="dashboard-maintenance-notice">🚧 Plataforma em Manutenção</span>
+        </div>
 
         <div class="dashboard-search-area">
-            <input type="text" id="userIdToTrack" placeholder="Digite o ID do Usuário Discord para rastrear">
-            <button id="trackBtn" class="dashboard-btn"><i class="fas fa-search-location"></i> Rastrear</button>
+            <input type="text" id="userIdToTrack" placeholder="Digite o ID do Usuário Discord para rastrear" disabled>
+            <button id="trackBtn" class="dashboard-btn" disabled><i class="fas fa-search-location"></i> Rastrear</button>
             <button id="clearBtn" class="dashboard-btn dashboard-btn-clear"><i class="fas fa-broom"></i> Limpar</button>
         </div>
         
         <div class="dashboard-actions">
-            <button id="trackerPageBtn" class="dashboard-btn"><i class="fas fa-satellite-dish"></i> Tracker</button> <button id="logoutBtn" class="dashboard-btn logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
-        </div>
+            <button id="trackerPageBtn" class="dashboard-btn"><i class="fas fa-satellite-dish"></i> Tracker</button>
+            <button id="logoutBtn" class="dashboard-btn logout-btn" style="display: none;"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
 
         <div id="trackerResults">
             <h4>Resultados do Rastreamento:</h4>
-            <p>Insira um ID e clique em "Rastrear" para ver os dados.</p>
+            <p class="info">Carregando informações do dashboard...</p>
         </div>
 
         <main class="dashboard-main-content">
@@ -138,22 +154,26 @@
                 <div class="widget">
                     <i class="fas fa-users widget-icon"></i>
                     <h3>Usuários Ativos</h3>
-                    <p>1,234</p> </div>
+                    <p>1,234</p> 
+                </div>
                 <div class="widget">
                     <i class="fas fa-eye widget-icon"></i>
                     <h3>Alvos Monitorados</h3>
-                    <p>56</p> </div>
+                    <p>56</p> 
+                </div>
                 <div class="widget">
                     <i class="fas fa-history widget-icon"></i>
                     <h3>Eventos Recentes</h3>
-                    <p>789</p> </div>
+                    <p>789</p> 
+                </div>
                 <div class="widget data-stream-widget">
                     <i class="fas fa-wave-square widget-icon"></i>
                     <h3>Fluxo de Dados Galáctico</h3>
                     <div class="data-stream-animation">
                         <span></span><span></span><span></span><span></span><span></span>
                     </div>
-                    <p>Conectado ao Supercluster Laniakea...</p> </div>
+                    <p>Conectado ao Supercluster Laniakea...</p> 
+                </div>
             </div>
         </main>
     </div>
@@ -161,88 +181,152 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const API_BASE_URL = 'https://celestial-api.onrender.com';
-            // !!! URL de login atualizada com base no seu .env !!!
             const FRONTEND_LOGIN_URL = 'https://jesusdiscordjs.github.io/Celestial/'; 
 
             const loggedInUsernameEl = document.getElementById('loggedInUsername');
             const loggedInUserAvatarEl = document.getElementById('loggedInUserAvatar');
             const defaultAvatarIconEl = document.getElementById('defaultAvatarIcon');
+            const userStatusBadgeEl = document.getElementById('userStatusBadge');
             
             const userIdToTrackInput = document.getElementById('userIdToTrack');
             const trackBtn = document.getElementById('trackBtn');
             const clearBtn = document.getElementById('clearBtn');
             const logoutBtn = document.getElementById('logoutBtn');
             const trackerResultsEl = document.getElementById('trackerResults');
+            const actionsDiv = document.querySelector('.dashboard-actions');
 
-            // Função para buscar dados da API
-            async function fetchData(endpoint, options = {}) {
+            function setupLoggedOutState(message = "O rastreamento de IDs está disponível. Para outras funcionalidades, faça login.") {
+                loggedInUsernameEl.textContent = 'Visitante';
+                loggedInUserAvatarEl.style.display = 'none';
+                defaultAvatarIconEl.style.display = 'inline-flex';
+                userStatusBadgeEl.style.display = 'none';
+                
+                logoutBtn.style.display = 'none';
+
+                let loginPromptBtn = document.getElementById('loginPromptBtn');
+                if (!loginPromptBtn && actionsDiv) { // Verifica se actionsDiv existe
+                    loginPromptBtn = document.createElement('button');
+                    loginPromptBtn.id = 'loginPromptBtn';
+                    loginPromptBtn.className = 'dashboard-btn'; 
+                    // Usando ícone Font Awesome 6 para Discord (fab fa-discord)
+                    loginPromptBtn.innerHTML = '<i class="fab fa-discord"></i> Login com Discord';
+                    loginPromptBtn.addEventListener('click', () => {
+                        window.location.href = `${API_BASE_URL}/auth/discord`;
+                    });
+                    actionsDiv.appendChild(loginPromptBtn);
+                } else if (loginPromptBtn) {
+                    loginPromptBtn.style.display = 'inline-block';
+                }
+
+                trackBtn.disabled = false;
+                userIdToTrackInput.disabled = false;
+                userIdToTrackInput.placeholder = "Digite o ID do Usuário Discord para rastrear";
+                
+                trackerResultsEl.innerHTML = `<h4>Resultados do Rastreamento:</h4>
+                                             <p class="info">${message}</p>`;
+            }
+
+            function setupLoggedInState(userData) {
+                loggedInUsernameEl.textContent = userData.global_name || userData.username;
+                if (userData.avatar) {
+                    const avatarExtension = userData.avatar.startsWith('a_') ? 'gif' : 'png';
+                    loggedInUserAvatarEl.src = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.${avatarExtension}?size=40`;
+                    loggedInUserAvatarEl.style.display = 'inline-block';
+                    defaultAvatarIconEl.style.display = 'none';
+                } else {
+                    loggedInUserAvatarEl.style.display = 'none';
+                    defaultAvatarIconEl.style.display = 'inline-flex';
+                }
+                // userStatusBadgeEl.textContent = userData.status || 'Online'; 
+                // userStatusBadgeEl.style.display = 'inline-block'; // Descomente se API retornar status
+
+                logoutBtn.style.display = 'inline-block';
+                const loginPromptBtn = document.getElementById('loginPromptBtn');
+                if (loginPromptBtn) {
+                    loginPromptBtn.style.display = 'none';
+                }
+
+                trackBtn.disabled = false;
+                userIdToTrackInput.disabled = false;
+                userIdToTrackInput.placeholder = "Digite o ID do Usuário Discord para rastrear";
+                trackerResultsEl.innerHTML = `<h4>Resultados do Rastreamento:</h4>
+                                             <p class="info">Insira um ID e clique em "Rastrear" para ver os dados.</p>`;
+            }
+
+            async function checkAuth() {
+                try {
+                    const response = await fetch(`${API_BASE_URL}/api/me`, {
+                        credentials: 'include' 
+                    });
+
+                    if (response.ok) {
+                        const userData = await response.json();
+                        if (userData && userData.id) {
+                            setupLoggedInState(userData);
+                        } else {
+                            console.warn("/api/me response OK but no valid user data.", userData);
+                            setupLoggedOutState("Sessão inválida. O rastreamento está disponível. Para outras funcionalidades, faça login.");
+                        }
+                    } else if (response.status === 401) {
+                        console.log("/api/me returned 401 - User not logged in with API. Dashboard in public mode.");
+                        setupLoggedOutState(); 
+                    } else {
+                        const errorText = await response.text();
+                        console.error(`Error fetching /api/me: ${response.status}`, errorText);
+                        setupLoggedOutState(`Erro (${response.status}) ao verificar o status do login. O rastreamento está disponível.`);
+                    }
+                } catch (error) {
+                    console.error('Network or other error during checkAuth:', error);
+                    setupLoggedOutState("Não foi possível conectar ao servidor. O rastreamento está disponível.");
+                }
+            }
+
+            async function fetchDataForAction(endpoint, options = {}) {
                 try {
                     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-                        credentials: 'include', // Essencial para enviar cookies de sessão
+                        credentials: 'include',
                         ...options
                     });
-                    if (response.status === 401) { // Não autorizado
-                        // Adiciona um parâmetro para indicar que o usuário precisa logar
-                        // e opcionalmente a página que ele tentava acessar, para redirecionamento pós-login
+                    if (response.status === 401 && !endpoint.startsWith('/api/avatars/')) {
                         const currentPath = window.location.pathname + window.location.search + window.location.hash;
-                        window.location.href = `${FRONTEND_LOGIN_URL}?unauthorized=true&redirect_to=${encodeURIComponent(currentPath)}`;
+                        window.location.href = `${FRONTEND_LOGIN_URL}?unauthorized_action=true&redirect_to=${encodeURIComponent(currentPath)}`;
                         return null; 
                     }
                     if (!response.ok) {
-                        const errorData = await response.json().catch(() => ({ message: `Erro ${response.status}` }));
+                        // Se for um 401 de /api/avatars/ (o que não deveria acontecer por auth, mas talvez por outros motivos),
+                        // ou qualquer outro erro, não tente analisar como JSON se não for JSON.
+                        let errorData;
+                        try {
+                            errorData = await response.json();
+                        } catch (e) {
+                            errorData = { message: await response.text() || `Erro ${response.status}` };
+                        }
                         throw new Error(errorData.error || errorData.message || `HTTP error! status: ${response.status}`);
                     }
                     if (response.headers.get("content-type")?.includes("application/json")) {
                         return await response.json();
                     }
-                    return await response.text(); // Para logout que pode não retornar JSON
+                    return await response.text();
                 } catch (error) {
-                    console.error('Fetch error:', error);
-                    throw error; // Re-throw para ser pego pelo chamador
+                    console.error(`Fetch error for action ${endpoint}:`, error);
+                    throw error;
                 }
             }
-
-            // Verificar autenticação e buscar dados do usuário ao carregar a página
-            async function checkAuth() {
-                try {
-                    const userData = await fetchData('/api/me');
-                    if (userData && userData.id) {
-                        loggedInUsernameEl.textContent = userData.global_name || userData.username;
-                        if (userData.avatar) {
-                            const avatarExtension = userData.avatar.startsWith('a_') ? 'gif' : 'png';
-                            loggedInUserAvatarEl.src = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.${avatarExtension}?size=40`;
-                            loggedInUserAvatarEl.style.display = 'inline-block';
-                            defaultAvatarIconEl.style.display = 'none';
-                        } else {
-                            loggedInUserAvatarEl.style.display = 'none';
-                            defaultAvatarIconEl.style.display = 'inline-flex';
-                        }
-                    }
-                } catch (error) {
-                    loggedInUsernameEl.textContent = 'Não logado';
-                    loggedInUserAvatarEl.style.display = 'none';
-                    defaultAvatarIconEl.style.display = 'inline-flex';
-                    if (error.message && !error.message.includes("401")) {
-                        console.warn("Erro ao buscar /api/me, mas não foi 401:", error.message);
-                    }
-                }
-            }
-
-            // Função para exibir os resultados do rastreamento
+            
             function displayTrackerResults(data) {
                 trackerResultsEl.innerHTML = `<h4>Resultados para ${data.username_global || data.user_id}:</h4>`;
 
                 let content = `<p><strong>ID do Usuário:</strong> ${data.user_id}</p>`;
                 content += `<p><strong>Username Global:</strong> ${data.username_global || 'N/A'}</p>`;
-                content += `<p><strong>Registrado em:</strong> ${new Date(data.createdAt).toLocaleString()}</p>`;
-                content += `<p><strong>Última Atualização:</strong> ${new Date(data.updatedAt).toLocaleString()}</p>`;
+                content += `<p><strong>Registrado na API em:</strong> ${new Date(data.createdAt).toLocaleString()}</p>`;
+                content += `<p><strong>Última Atualização na API:</strong> ${new Date(data.updatedAt).toLocaleString()}</p>`;
 
                 if (data.avatar_urls && data.avatar_urls.length > 0) {
                     content += `<h5>Avatares (${data.avatar_urls.length}):</h5><div class="avatar-list">`;
-                    data.avatar_urls.slice(0, 5).forEach(url => { 
+                    data.avatar_urls.slice(-5).reverse().forEach(url => { 
                         content += `<a href="${url}" target="_blank"><img src="${url}" alt="Avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';"><span style="display:none; color: #ccc; font-size:0.8em;">[imagem indisponível]</span></a>`;
                     });
-                    if (data.avatar_urls.length > 5) content += `<span>... e mais ${data.avatar_urls.length - 5}</span>`;
+                    if (data.avatar_urls.length > 5) content += `<span>... e mais ${data.avatar_urls.length - 5} (mais antigos)</span>`;
                     content += `</div>`;
                 } else {
                     content += `<p><strong>Avatares:</strong> Nenhum registrado.</p>`;
@@ -250,10 +334,10 @@
 
                 if (data.banner_urls && data.banner_urls.length > 0) {
                     content += `<h5>Banners de Perfil (${data.banner_urls.length}):</h5><div class="banner-list">`;
-                    data.banner_urls.slice(0, 3).forEach(url => { 
+                    data.banner_urls.slice(-3).reverse().forEach(url => { 
                         content += `<a href="${url}" target="_blank"><img src="${url}" alt="Banner" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';"><span style="display:none; color: #ccc; font-size:0.8em;">[imagem indisponível]</span></a>`;
                     });
-                    if (data.banner_urls.length > 3) content += `<span>... e mais ${data.banner_urls.length - 3}</span>`;
+                    if (data.banner_urls.length > 3) content += `<span>... e mais ${data.banner_urls.length - 3} (mais antigos)</span>`;
                     content += `</div>`;
                 } else {
                     content += `<p><strong>Banners de Perfil:</strong> Nenhum registrado.</p>`;
@@ -261,9 +345,10 @@
                 
                 if (data.nicknames && data.nicknames.length > 0) {
                     content += `<h5>Nicknames (${data.nicknames.length}):</h5>`;
-                    data.nicknames.forEach(nick => {
+                    data.nicknames.slice(-5).reverse().forEach(nick => { 
                         content += `<div class="nickname-entry"><p>${escapeHtml(nick)}</p></div>`;
                     });
+                     if (data.nicknames.length > 5) content += `<p>... e mais ${data.nicknames.length - 5} nicknames.</p>`;
                 } else {
                     content += `<p><strong>Nicknames:</strong> Nenhum registrado.</p>`;
                 }
@@ -290,39 +375,31 @@
                             content += `<p>Username Global alterado para: ${escapeHtml(entry.changes.username_global)}</p>`;
                         }
                         if (entry.changes.avatar_url) {
-                            content += `<p>Novo Avatar: <a href="${entry.changes.avatar_url}" target="_blank">Ver Avatar</a></p>`;
+                            content += `<p>Novo Avatar: <a href="${entry.changes.avatar_url}" target="_blank"><img src="${entry.changes.avatar_url}" alt="Hist. Avatar" style="width:32px; height:32px; border-radius:50%; vertical-align:middle; margin-right:5px;">Ver Link</a></p>`;
                         }
                         if (entry.changes.banner_url) {
-                            content += `<p>Novo Banner: <a href="${entry.changes.banner_url}" target="_blank">Ver Banner</a></p>`;
+                            content += `<p>Novo Banner: <a href="${entry.changes.banner_url}" target="_blank">Ver Link</a></p>`;
                         }
                         if (entry.changes.nickname_added) {
-                            content += `<p>Nickname Adicionado: ${escapeHtml(entry.changes.nickname_added)}</p>`;
+                            content += `<p>Nickname Adicionado em Servidor: ${escapeHtml(entry.changes.nickname_added)}</p>`;
                         }
                         if (entry.changes.server_joined) {
                             content += `<p>Entrou no Servidor: ${escapeHtml(entry.changes.server_joined.guild_name)} (ID: ${escapeHtml(entry.changes.server_joined.guild_id)})</p>`;
                         }
                         content += `</div>`;
                     });
-                     if (data.history.length > 5) content += `<p>... e mais ${data.history.length - 5} entradas no histórico.</p>`;
+                     if (data.history.length > 5) content += `<p>... e mais ${data.history.length - 5} entradas no histórico (mais antigas).</p>`;
                 } else {
                     content += `<p><strong>Histórico:</strong> Nenhum histórico de mudanças registrado.</p>`;
                 }
                 trackerResultsEl.innerHTML += content;
             }
             
-            // Função simples para escapar HTML e prevenir XSS básico
             function escapeHtml(unsafe) {
                 if (typeof unsafe !== 'string') return unsafe;
-                return unsafe
-                     .replace(/&/g, "&amp;")
-                     .replace(/</g, "&lt;")
-                     .replace(/>/g, "&gt;")
-                     .replace(/"/g, "&quot;")
-                     .replace(/'/g, "&#039;");
+                return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
             }
 
-
-            // Lidar com clique no botão "Rastrear"
             trackBtn.addEventListener('click', async () => {
                 const userId = userIdToTrackInput.value.trim();
                 if (!userId) {
@@ -334,49 +411,50 @@
                     return;
                 }
 
-                trackerResultsEl.innerHTML = '<p>Buscando dados...</p>';
+                trackerResultsEl.innerHTML = '<p class="info">Buscando dados...</p>';
                 try {
-                    const trackingData = await fetchData(`/api/avatars/${userId}`);
-                    if (trackingData) {
+                    // Usa fetchDataForAction, que agora não redireciona para /api/avatars/ em caso de 401
+                    const trackingData = await fetchDataForAction(`/api/avatars/${userId}`);
+                    if (trackingData) { 
                         displayTrackerResults(trackingData);
+                    } else if (window.location.href.includes('unauthorized_action=true')) {
+                        // Se foi redirecionado por outra ação, não faça nada aqui, o redirecionamento cuidou disso.
                     } else {
-                        const currentUrl = new URL(window.location.href);
-                        if (!currentUrl.searchParams.has('unauthorized')) { // Evita mensagem se já estiver redirecionando
-                             trackerResultsEl.innerHTML = '<p class="error">Não foi possível obter os dados de rastreamento. Verifique o console para mais detalhes.</p>';
-                        }
+                        // Se trackingData for null por outro motivo (ex: erro de rede tratado em fetchDataForAction que não relançou)
+                        // ou se o erro não foi um redirecionamento por 401 em outra ação.
+                        trackerResultsEl.innerHTML = '<p class="error">Não foi possível obter os dados de rastreamento. Verifique o ID ou tente mais tarde.</p>';
                     }
                 } catch (error) {
                     trackerResultsEl.innerHTML = `<p class="error">Erro ao rastrear usuário: ${error.message}</p>`;
                 }
             });
 
-            // Limpar resultados
             clearBtn.addEventListener('click', () => {
                 userIdToTrackInput.value = '';
-                trackerResultsEl.innerHTML = `<h4>Resultados do Rastreamento:</h4>
-                                             <p>Insira um ID e clique em "Rastrear" para ver os dados.</p>`;
+                const loginPromptBtn = document.getElementById('loginPromptBtn');
+                if (loginPromptBtn && loginPromptBtn.style.display !== 'none') { 
+                     setupLoggedOutState(); 
+                } else {
+                    trackerResultsEl.innerHTML = `<h4>Resultados do Rastreamento:</h4>
+                                                 <p class="info">Insira um ID e clique em "Rastrear" para ver os dados.</p>`;
+                }
             });
             
-            // Logout
             logoutBtn.addEventListener('click', async () => {
                 try {
-                    const logoutResult = await fetchData('/auth/logout', { method: 'GET' }); 
-                    if(logoutResult && typeof logoutResult === 'object' && logoutResult.message === "Logout bem-sucedido") {
-                         window.location.href = logoutResult.redirectTo || FRONTEND_LOGIN_URL;
-                    } else if (typeof logoutResult === 'string' && logoutResult.includes("Logout bem-sucedido")) { // Fallback se a API retornar string
-                        window.location.href = FRONTEND_LOGIN_URL; // Tenta extrair redirectTo se possível, senão default
-                    }
-                     else {
-                        window.location.href = FRONTEND_LOGIN_URL;
+                    const logoutResponse = await fetchDataForAction('/auth/logout', { method: 'GET' }); 
+                    if (logoutResponse && typeof logoutResponse === 'object' && logoutResponse.redirectTo) {
+                        window.location.href = logoutResponse.redirectTo; 
+                    } else {
+                        window.location.href = FRONTEND_LOGIN_URL; 
                     }
                 } catch (error) {
-                    trackerResultsEl.innerHTML = `<p class="error">Erro ao fazer logout: ${error.message}. Redirecionando para login...</p>`;
+                    trackerResultsEl.innerHTML = `<p class="error">Erro ao fazer logout: ${error.message}. Redirecionando...</p>`;
                     setTimeout(() => { window.location.href = FRONTEND_LOGIN_URL; }, 2000);
                 }
             });
 
-            // Inicializar
-            checkAuth();
+            checkAuth(); 
         });
     </script>
 </body>
