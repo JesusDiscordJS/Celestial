@@ -24,108 +24,137 @@ document.addEventListener('DOMContentLoaded', () => {
         if (loadingIndicator) loadingIndicator.style.display = show ? 'flex' : 'none';
     }
 
-    function formatDate(dateStringOrObject) {
-        if (!dateStringOrObject) return 'N/A';
-        let date;
-        if (typeof dateStringOrObject === 'object' && dateStringOrObject !== null && '$date' in dateStringOrObject) {
-            date = new Date(dateStringOrObject.$date);
+function formatDate(dateStringOrObject) {
+    if (!dateStringOrObject) return 'N/A';
+    let date;
+    if (typeof dateStringOrObject === 'object' && dateStringOrObject !== null && '$date' in dateStringOrObject) {
+        date = new Date(dateStringOrObject.$date);
+    } else {
+        date = new Date(dateStringOrObject); // Para strings ISO ou timestamps diretos
+    }
+    // Verifica se a data é válida após a conversão
+    if (isNaN(date.getTime())) {
+        // Se a data for inválida, tente interpretar como timestamp (caso o $date não esteja presente e seja apenas o número)
+        const timestamp = parseInt(dateStringOrObject, 10);
+        if (!isNaN(timestamp)) {
+            date = new Date(timestamp);
+            // Verifica novamente se é uma data válida após tentar como timestamp
+            if (isNaN(date.getTime())) return 'Data Inválida';
         } else {
-            date = new Date(dateStringOrObject);
-        }
-        if (isNaN(date.getTime())) {
-            return 'Data inválida';
-        }
-        return date.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-    }
-
-    async function fetchAllUsers(page = 0) {
-        showLoading(true);
-        const skip = page * usersPerPage;
-        try {
-            const response = await fetch(`${API_BASE_URL}/users?skip=${skip}&limit=${usersPerPage}`);
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({ error: response.statusText }));
-                throw new Error(`HTTP ${response.status}: ${errorData.error || response.statusText}`);
-            }
-            const users = await response.json();
-            displayUserList(users); // Chama a função atualizada
-            currentPage = page;
-            if (currentPageSpan) currentPageSpan.textContent = `Página: ${currentPage + 1}`;
-        } catch (error) {
-            console.error('Erro ao buscar usuários:', error);
-            if (userListContainer) userListContainer.innerHTML = `<p class="error-message">Falha ao carregar usuários: ${error.message}</p>`;
-        } finally {
-            showLoading(false);
+            return 'Data Inválida'; // Se não for nem objeto $date nem timestamp válido
         }
     }
+    return date.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
 
-    function displayUserList(users) {
-        if (!userListContainer) return;
-        userListContainer.innerHTML = ''; 
+// SUBSTITUA SUA FUNÇÃO displayUserList POR ESTA:
+function displayUserList(users) {
+    if (!userListContainer) {
+        console.error("Elemento userListContainer não encontrado!");
+        return;
+    }
+    userListContainer.innerHTML = ''; // Limpa a lista anterior
 
-        if (!users || users.length === 0) {
-            userListContainer.innerHTML = '<p class="placeholder-text" style="font-size:1em; padding:15px;">Nenhum usuário encontrado nesta página.</p>';
-            if (nextPageBtn) nextPageBtn.disabled = (currentPage === 0 || users.length === 0); // Desabilita se não há usuários
-            if (prevPageBtn) prevPageBtn.disabled = (currentPage === 0);
-            return;
-        }
-
-        const ul = document.createElement('ul');
-        ul.className = 'user-list';
-        users.forEach(user => {
-            const li = document.createElement('li');
-            li.className = 'user-list-item-enhanced';
-
-            const userIdString = user.user_id ? user.user_id.toString() : 'N/A';
-            const latestAvatar = (user.avatar_urls && user.avatar_urls.length > 0) ? user.avatar_urls[user.avatar_urls.length - 1] : 'https://via.placeholder.com/55?text=?';
-
-            let lastServerName = '<span class="info-value placeholder">Nenhum</span>';
-            if (user.servers && user.servers.length > 0) {
-                const lastServer = user.servers[user.servers.length - 1];
-                lastServerName = `<span class="info-value">${lastServer.guild_name || 'Nome Desconhecido'}</span>`;
-            }
-
-            let lastActivityDate = '<span class="info-value placeholder">Nenhuma</span>';
-            if (user.history && user.history.length > 0) {
-                const lastHistoryEntry = user.history[user.history.length - 1];
-                lastActivityDate = `<span class="info-value">${formatDate(lastHistoryEntry.changed_at)}</span>`;
-            }
-
-            li.innerHTML = `
-                <img src="${latestAvatar}" alt="Avatar de ${user.username_global || 'Usuário'}" class="user-avatar-small">
-                <div class="user-info-column">
-                    <span class="username">${user.username_global || 'Nome Desconhecido'}</span>
-                    <span class="user-id">ID: ${userIdString}</span>
-                </div>
-                <div class="server-info-column">
-                    <span class="info-label"><i class="fas fa-server" style="margin-right: 5px;"></i>Último Servidor</span>
-                    ${lastServerName}
-                </div>
-                <div class="last-update-column">
-                    <span class="info-label"><i class="fas fa-history" style="margin-right: 5px;"></i>Última Atividade</span>
-                    ${lastActivityDate}
-                </div>
-                <button class="dashboard-btn view-profile-btn" data-userid="${userIdString}">
-                    <i class="fas fa-eye" style="margin-right: 5px;"></i>Ver Perfil
-                </button>
-            `;
-
-            const viewProfileButton = li.querySelector('.view-profile-btn');
-            if (viewProfileButton) {
-                viewProfileButton.addEventListener('click', () => {
-                    if (userIdString !== 'N/A') {
-                        fetchAndDisplayUser(userIdString, 'summary');
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }
-                });
-            }
-            ul.appendChild(li);
-        });
-        userListContainer.appendChild(ul);
-        
+    if (!users || users.length === 0) {
+        userListContainer.innerHTML = '<p class="placeholder-text" style="font-size:1em; padding:15px;">Nenhum usuário encontrado nesta página.</p>';
+        if (nextPageBtn) nextPageBtn.disabled = (currentPage === 0 || users.length === 0);
         if (prevPageBtn) prevPageBtn.disabled = (currentPage === 0);
-        if (nextPageBtn) nextPageBtn.disabled = (users.length < usersPerPage);
+        return;
     }
+
+    const ul = document.createElement('ul');
+    ul.className = 'user-list'; // Garanta que esta classe exista no seu CSS ou adapte
+    users.forEach(user => {
+        const li = document.createElement('li');
+        li.className = 'user-list-item-enhanced';
+
+        let userIdDisplayValue = 'N/A';
+        let dataUserIdValue = ''; // Para o atributo data-userid
+
+        if (user.user_id) {
+            // A API Node.js com res.json() deve converter Long para string se > MAX_SAFE_INTEGER
+            // ou para número se <= MAX_SAFE_INTEGER.
+            if (typeof user.user_id === 'string' || typeof user.user_id === 'number') {
+                userIdDisplayValue = user.user_id.toString();
+                dataUserIdValue = user.user_id.toString();
+            } else if (typeof user.user_id === 'object' && user.user_id !== null) {
+                // Caso a API, por algum motivo, ainda envie um objeto Long BSON ou EJSON
+                if (user.user_id.$numberLong) { // Formato EJSON
+                    userIdDisplayValue = user.user_id.$numberLong.toString();
+                    dataUserIdValue = user.user_id.$numberLong.toString();
+                } else if (typeof user.user_id.toString === 'function' && user.user_id.toString() !== '[object Object]') {
+                    // Objeto Long BSON que tem um método toString() funcional
+                    userIdDisplayValue = user.user_id.toString();
+                    dataUserIdValue = user.user_id.toString();
+                } else {
+                    console.warn("Formato de user_id como objeto não reconhecido:", user.user_id);
+                    userIdDisplayValue = '[ID Obj Complexo]';
+                }
+            } else {
+                 console.warn("user_id não é string, número nem objeto esperado:", user.user_id);
+                 userIdDisplayValue = '[ID Inválido]';
+            }
+        }
+        
+        const latestAvatar = (user.avatar_urls && user.avatar_urls.length > 0) ? user.avatar_urls[user.avatar_urls.length - 1] : 'https://via.placeholder.com/55?text=?';
+
+        let lastServerDisplay = '<span class="info-value placeholder">Nenhum</span>';
+        if (user.servers && user.servers.length > 0) {
+            const lastServer = user.servers[user.servers.length - 1];
+            const serverName = lastServer.guild_name;
+            if (serverName && typeof serverName === 'string') { // Checa se serverName é uma string válida
+                lastServerDisplay = `<span class="info-value">${serverName}</span>`;
+            } else {
+                lastServerDisplay = '<span class="info-value placeholder">Nome Indisponível</span>';
+                 if (serverName) console.warn("guild_name não é uma string válida:", serverName);
+            }
+        }
+
+        let lastActivityDateDisplay = '<span class="info-value placeholder">Nenhuma</span>';
+        if (user.history && user.history.length > 0) {
+            const lastHistoryEntry = user.history[user.history.length - 1];
+            lastActivityDateDisplay = `<span class="info-value">${formatDate(lastHistoryEntry.changed_at)}</span>`;
+        }
+
+        li.innerHTML = `
+            <img src="${latestAvatar}" alt="Avatar de ${user.username_global || 'Usuário'}" class="user-avatar-small">
+            <div class="user-info-column">
+                <span class="username">${user.username_global || 'Nome Desconhecido'}</span>
+                <span class="user-id">ID: ${userIdDisplayValue}</span>
+            </div>
+            <div class="server-info-column">
+                <span class="info-label"><i class="fas fa-server" style="margin-right: 5px;"></i>Último Servidor</span>
+                ${lastServerDisplay}
+            </div>
+            <div class="last-update-column">
+                <span class="info-label"><i class="fas fa-history" style="margin-right: 5px;"></i>Última Atividade</span>
+                ${lastActivityDateDisplay}
+            </div>
+            <button class="dashboard-btn view-profile-btn" data-userid="${dataUserIdValue}">
+                <i class="fas fa-eye" style="margin-right: 5px;"></i>Ver Perfil
+            </button>
+        `;
+
+        const viewProfileButton = li.querySelector('.view-profile-btn');
+        if (viewProfileButton) {
+            viewProfileButton.addEventListener('click', () => {
+                const userIdToFetch = viewProfileButton.dataset.userid;
+                if (userIdToFetch && userIdToFetch !== 'N/A' && !userIdToFetch.startsWith('[')) { // Verifica se não é um placeholder de erro
+                    fetchAndDisplayUser(userIdToFetch, 'summary');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    console.error("ID de usuário inválido ou placeholder de erro para buscar:", userIdToFetch);
+                    alert("Não é possível carregar o perfil: ID de usuário inválido.");
+                }
+            });
+        }
+        ul.appendChild(li);
+    });
+    userListContainer.appendChild(ul);
+    
+    if (prevPageBtn) prevPageBtn.disabled = (currentPage === 0);
+    if (nextPageBtn) nextPageBtn.disabled = (users.length < usersPerPage);
+}
 
 
     async function fetchAndDisplayUser(userId, filterToShow = 'summary') {
