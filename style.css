@@ -675,16 +675,237 @@ body {
 }
 
 
-/* Ajustes responsivos para a Dashboard */
+/* Estilo para o body da página da dashboard */
+.dashboard-page-body {
+    background-color: #0a0510; /* Um fundo escuro e simples da paleta */
+    color: #e0e0e0;
+    font-family: 'Arial', sans-serif; /* Garante a mesma fonte */
+    overflow-x: hidden; /* Previne overflow na dashboard também */
+}
+
+
+/* Estilos da Dashboard (Alguns já podem existir, verifique e ajuste) */
+#dashboardArea {
+    padding: 20px;
+    min-height: 100vh; /* Para ocupar a tela toda */
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboard-header-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 25px;
+    background: rgba(26, 11, 46, 0.85); /* Um pouco mais opaco */
+    backdrop-filter: blur(8px); /* Reduzido o blur se ainda for pesado */
+    border-radius: 12px;
+    margin-bottom: 30px;
+    border: 1px solid rgba(124, 58, 237, 0.5); /* Borda um pouco mais visível */
+    box-shadow: 0 5px 25px rgba(124, 58, 237, 0.15);
+}
+
+.dashboard-user {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* Ajuste no gap */
+}
+
+.dashboard-avatar-icon {
+    font-size: 42px; /* Ajuste no tamanho */
+    color: #7c3aed;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 50%;
+    padding: 8px; /* Aumentado padding */
+    border: 2px solid #7c3aed;
+    line-height: 1; /* Para alinhar melhor o ícone */
+}
+
+.dashboard-username {
+    font-size: 1.4rem; /* Ajuste no tamanho */
+    font-weight: bold;
+    color: #fff;
+}
+
+.dashboard-user-status {
+    font-size: 0.8rem;
+    font-weight: bold;
+    padding: 4px 10px;
+    border-radius: 15px;
+    margin-left: 5px; /* Espaçamento do nome */
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.dashboard-user-status.premium {
+    background: linear-gradient(45deg, #f59e0b, #ffc107); /* Dourado para premium */
+    color: #1f1235;
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+}
+
+.dashboard-user-status.free {
+    background-color: #555; /* Cinza para free */
+    color: #ddd;
+}
+
+
+.dashboard-maintenance-notice {
+    font-size: 0.9rem;
+    background-color: #f59e0b;
+    color: #0f0820;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+.dashboard-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px; /* Ajustado o gap */
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+.dashboard-btn {
+    background: linear-gradient(45deg, #7c3aed, #8b5cf6);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(124, 58, 237, 0.2); /* Sombra mais suave */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dashboard-btn:hover {
+    background: linear-gradient(45deg, #8b5cf6, #7c3aed);
+    transform: translateY(-2px) scale(1.02); /* Efeito de hover sutil */
+    box-shadow: 0 6px 20px rgba(124, 58, 237, 0.3);
+}
+
+.dashboard-btn-clear {
+    background: linear-gradient(45deg, #ef4444, #f59e0b);
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
+}
+.dashboard-btn-clear:hover {
+    background: linear-gradient(45deg, #f59e0b, #ef4444);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
+}
+
+
+.dashboard-main-content {
+    background: rgba(20, 10, 35, 0.75); /* Fundo um pouco mais claro que o body da dash */
+    backdrop-filter: blur(5px); /* Mantido, mas pode ser removido se necessário para performance */
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    border: 1px solid rgba(124, 58, 237, 0.25);
+    flex-grow: 1; /* Faz o conteúdo principal ocupar o espaço restante */
+}
+
+.dashboard-main-content h2 {
+    font-size: 2rem;
+    margin-bottom: 15px;
+    background: linear-gradient(45deg, #10b981, #06b6d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+}
+
+.dashboard-main-content p {
+    font-size: 1.1rem;
+    color: #b0b0b0;
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+.dashboard-widgets {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); /* Ajustado minmax */
+    gap: 20px; /* Ajustado gap */
+}
+
+.widget {
+    background: rgba(26, 11, 46, 0.65);
+    padding: 20px; /* Ajustado padding */
+    border-radius: 10px;
+    border: 1px solid rgba(124, 58, 237, 0.35);
+    box-shadow: 0 4px 15px rgba(0,0,0, 0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.widget:hover {
+    transform: translateY(-4px); /* Ajustado hover */
+    box-shadow: 0 6px 20px rgba(124, 58, 237, 0.15);
+}
+
+.widget-icon {
+    font-size: 2.2rem; /* Ajustado tamanho */
+    color: #7c3aed;
+    margin-bottom: 12px; /* Ajustado margin */
+    display: block;
+}
+
+.widget h3 {
+    font-size: 1.2rem; /* Ajustado tamanho */
+    color: #fff;
+    margin-bottom: 8px; /* Ajustado margin */
+}
+
+.widget p {
+    font-size: 1.4rem; /* Ajustado tamanho */
+    font-weight: bold;
+    color: #06b6d4;
+    margin-bottom: 0;
+}
+
+.data-stream-widget .data-stream-animation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 35px; /* Ajustado altura */
+    margin-bottom: 8px; /* Ajustado margin */
+    overflow: hidden;
+}
+.data-stream-animation span {
+    display: inline-block;
+    width: 7px; /* Ajustado largura */
+    height: 25px; /* Ajustado altura */
+    margin: 0 2px;
+    background-color: #7c3aed;
+    border-radius: 3px;
+    animation: dataStream 1.2s infinite ease-in-out;
+}
+/* As nth-child para esconder spans em mobile já estão na media query abaixo */
+
+@keyframes dataStream {
+    0%, 100% { transform: scaleY(0.3); opacity: 0.5; }
+    50% { transform: scaleY(1); opacity: 1; }
+}
+.data-stream-widget p {
+    font-size: 0.85rem; /* Ajustado tamanho */
+    color: #888;
+}
+
+
+/* Ajustes responsivos para a Dashboard (já existentes e podem ser ajustados) */
 @media (max-width: 768px) {
-    #dashboardArea {
-        padding: 15px;
-    }
+    /* Os estilos para #dashboardArea, .dashboard-header-info, etc., já foram definidos acima */
+    /* e serão aplicados. Esta media query pode refinar mais se necessário. */
     .dashboard-header-info {
         flex-direction: column;
         gap: 15px;
         padding: 15px;
         text-align: center;
+    }
+    .dashboard-user { /* Centralizar o user info no mobile quando empilhado */
+        flex-direction: column;
+        gap: 8px;
     }
     .dashboard-username {
         font-size: 1.3rem;
@@ -695,17 +916,17 @@ body {
     .dashboard-btn {
         padding: 10px 18px;
         font-size: 0.9rem;
-        width: calc(50% - 10px); /* Dois botões por linha */
+        width: calc(50% - 10px);
         justify-content: center;
     }
-    .dashboard-btn:last-child { /* Para o caso de 3 botões, o último ocupa a linha toda */
-        /* width: 100%; */ /* Descomente se quiser que o terceiro botão ocupe 100% */
+     .dashboard-btn:nth-child(3) { /* Para o caso de 3 botões, o último ocupa a linha toda se necessário */
+         /* width: 100%; */ /* Descomente se quiser que o terceiro botão ocupe 100% em 2 colunas */
     }
 
     .dashboard-main-content h2 {
         font-size: 1.8rem;
     }
-    .data-stream-animation span:nth-child(n+6) { /* Mostra menos barras da animação em mobile */
+    .data-stream-animation span:nth-child(n+6) { /* Esconde mais barras em mobile */
         display: none;
     }
 }
