@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const API_BASE_URL = 'https://celestial-api.onrender.com'; // ATUALIZE COM SUA URL DA API NODE.JS
+    // !!!!! ATUALIZE ESTA URL PARA A URL DA SUA API NODE.JS NO RENDER !!!!!
+    const API_BASE_URL = 'https://seu-celestial-tracker-api.onrender.com'; 
+    // Exemplo: 'https://celestial-tracker-api-node.onrender.com'
 
     // Elementos do DOM
     const userListContainer = document.getElementById('userListContainer');
@@ -14,9 +16,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentPageSpan = document.getElementById('currentPageSpan');
 
     let currentPage = 0;
-    const usersPerPage = 10;
-    let currentUserData = null; // Armazena os dados do usuário selecionado/pesquisado
-    let currentFilter = 'summary'; // Filtro ativo inicialmente
+    const usersPerPage = 10; // Ajuste conforme a paginação da sua API
+    let currentUserData = null; 
+    let currentFilter = 'summary'; 
 
     function showLoading(show = true) {
         if (loadingIndicator) loadingIndicator.style.display = show ? 'flex' : 'none';
@@ -28,9 +30,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeof dateStringOrObject === 'object' && dateStringOrObject !== null && '$date' in dateStringOrObject) {
             date = new Date(dateStringOrObject.$date);
         } else {
-            date = new Date(dateStringOrObject); // Para strings ISO ou timestamps diretos
+            date = new Date(dateStringOrObject);
         }
-        return date.toLocaleString('pt-BR', { dateStyle: 'medium', timeStyle: 'short' });
+        if (isNaN(date.getTime())) {
+            return 'Data inválida';
+        }
+        return date.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
     }
 
     async function fetchAllUsers(page = 0) {
@@ -43,11 +48,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(`HTTP ${response.status}: ${errorData.error || response.statusText}`);
             }
             const users = await response.json();
-            displayUserList(users);
+            displayUserList(users); // Chama a função atualizada
             currentPage = page;
             if (currentPageSpan) currentPageSpan.textContent = `Página: ${currentPage + 1}`;
-            if (prevPageBtn) prevPageBtn.disabled = (currentPage === 0);
-            if (nextPageBtn) nextPageBtn.disabled = (users.length < usersPerPage);
         } catch (error) {
             console.error('Erro ao buscar usuários:', error);
             if (userListContainer) userListContainer.innerHTML = `<p class="error-message">Falha ao carregar usuários: ${error.message}</p>`;
@@ -58,33 +61,72 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function displayUserList(users) {
         if (!userListContainer) return;
-        userListContainer.innerHTML = '';
+        userListContainer.innerHTML = ''; 
+
         if (!users || users.length === 0) {
             userListContainer.innerHTML = '<p class="placeholder-text" style="font-size:1em; padding:15px;">Nenhum usuário encontrado nesta página.</p>';
-            if (nextPageBtn && currentPage > 0) nextPageBtn.disabled = true; // Desabilita se não houver mais usuários e não for a primeira página
-            else if (nextPageBtn && currentPage === 0) nextPageBtn.disabled = true; // Também desabilita se não houver usuários na primeira página.
+            if (nextPageBtn) nextPageBtn.disabled = (currentPage === 0 || users.length === 0); // Desabilita se não há usuários
+            if (prevPageBtn) prevPageBtn.disabled = (currentPage === 0);
             return;
         }
 
         const ul = document.createElement('ul');
-        ul.className = 'user-list'; // Adapte a classe CSS se necessário
+        ul.className = 'user-list';
         users.forEach(user => {
             const li = document.createElement('li');
-            li.className = 'user-list-item'; // Adapte a classe CSS
-            const latestAvatar = (user.avatar_urls && user.avatar_urls.length > 0) ? user.avatar_urls[user.avatar_urls.length - 1] : 'https://via.placeholder.com/40?text=?';
+            li.className = 'user-list-item-enhanced';
+
+            const userIdString = user.user_id ? user.user_id.toString() : 'N/A';
+            const latestAvatar = (user.avatar_urls && user.avatar_urls.length > 0) ? user.avatar_urls[user.avatar_urls.length - 1] : 'https://via.placeholder.com/55?text=?';
+
+            let lastServerName = '<span class="info-value placeholder">Nenhum</span>';
+            if (user.servers && user.servers.length > 0) {
+                const lastServer = user.servers[user.servers.length - 1];
+                lastServerName = `<span class="info-value">${lastServer.guild_name || 'Nome Desconhecido'}</span>`;
+            }
+
+            let lastActivityDate = '<span class="info-value placeholder">Nenhuma</span>';
+            if (user.history && user.history.length > 0) {
+                const lastHistoryEntry = user.history[user.history.length - 1];
+                lastActivityDate = `<span class="info-value">${formatDate(lastHistoryEntry.changed_at)}</span>`;
+            }
+
             li.innerHTML = `
-                <img src="${latestAvatar}" alt="Avatar" class="user-avatar-small" style="width:40px; height:40px; border-radius:50%; margin-right:10px;">
-                <span>${user.username_global || 'N/A'} (ID: ${user.user_id})</span>
-                <button class="dashboard-btn" data-userid="${user.user_id}" style="margin-left:auto; padding: 5px 10px; font-size:0.8em;">Ver Perfil</button>
+                <img src="${latestAvatar}" alt="Avatar de ${user.username_global || 'Usuário'}" class="user-avatar-small">
+                <div class="user-info-column">
+                    <span class="username">${user.username_global || 'Nome Desconhecido'}</span>
+                    <span class="user-id">ID: ${userIdString}</span>
+                </div>
+                <div class="server-info-column">
+                    <span class="info-label"><i class="fas fa-server" style="margin-right: 5px;"></i>Último Servidor</span>
+                    ${lastServerName}
+                </div>
+                <div class="last-update-column">
+                    <span class="info-label"><i class="fas fa-history" style="margin-right: 5px;"></i>Última Atividade</span>
+                    ${lastActivityDate}
+                </div>
+                <button class="dashboard-btn view-profile-btn" data-userid="${userIdString}">
+                    <i class="fas fa-eye" style="margin-right: 5px;"></i>Ver Perfil
+                </button>
             `;
-            li.querySelector('button').addEventListener('click', () => {
-                fetchAndDisplayUser(user.user_id, 'summary');
-                 window.scrollTo({ top: 0, behavior: 'smooth' }); // Rola para o topo da página
-            });
+
+            const viewProfileButton = li.querySelector('.view-profile-btn');
+            if (viewProfileButton) {
+                viewProfileButton.addEventListener('click', () => {
+                    if (userIdString !== 'N/A') {
+                        fetchAndDisplayUser(userIdString, 'summary');
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                });
+            }
             ul.appendChild(li);
         });
         userListContainer.appendChild(ul);
+        
+        if (prevPageBtn) prevPageBtn.disabled = (currentPage === 0);
+        if (nextPageBtn) nextPageBtn.disabled = (users.length < usersPerPage);
     }
+
 
     async function fetchAndDisplayUser(userId, filterToShow = 'summary') {
         if (!userId) {
@@ -92,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         showLoading(true);
-        currentUserData = null; // Limpa dados anteriores
+        currentUserData = null;
         try {
             const response = await fetch(`${API_BASE_URL}/users/${userId}`);
             if (!response.ok) {
@@ -119,17 +161,13 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function updateActiveFilterButton() {
         filterButtons.forEach(btn => {
-            if (btn.dataset.filter === currentFilter) {
-                btn.classList.add('active');
-            } else {
-                btn.classList.remove('active');
-            }
+            btn.classList.toggle('active', btn.dataset.filter === currentFilter);
         });
     }
 
     function renderFilteredContent() {
         if (!userContentArea) return;
-        userContentArea.innerHTML = ''; // Limpa antes de renderizar
+        userContentArea.innerHTML = ''; 
 
         if (!currentUserData) {
             userContentArea.innerHTML = `<p class="placeholder-text">
@@ -141,37 +179,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let contentHTML = '';
         switch (currentFilter) {
-            case 'summary':
-                contentHTML = renderSummaryView(currentUserData);
-                break;
-            case 'avatars':
-                contentHTML = renderAvatarsView(currentUserData);
-                break;
-            case 'banners':
-                contentHTML = renderBannersView(currentUserData);
-                break;
-            case 'nicknames':
-                contentHTML = renderNicknamesView(currentUserData);
-                break;
-            case 'servers':
-                contentHTML = renderServersView(currentUserData);
-                break;
-            case 'fullHistory':
-                contentHTML = renderFullHistoryView(currentUserData);
-                break;
-            default:
-                contentHTML = '<p class="error-message">Filtro desconhecido.</p>';
+            case 'summary': contentHTML = renderSummaryView(currentUserData); break;
+            case 'avatars': contentHTML = renderAvatarsView(currentUserData); break;
+            case 'banners': contentHTML = renderBannersView(currentUserData); break;
+            case 'nicknames': contentHTML = renderNicknamesView(currentUserData); break;
+            case 'servers': contentHTML = renderServersView(currentUserData); break;
+            case 'fullHistory': contentHTML = renderFullHistoryView(currentUserData); break;
+            default: contentHTML = '<p class="error-message">Filtro desconhecido.</p>';
         }
         userContentArea.innerHTML = contentHTML;
     }
 
-    // --- Funções de Renderização para cada Filtro ---
-
     function renderSummaryView(user) {
         const latestAvatar = (user.avatar_urls && user.avatar_urls.length > 0) ? user.avatar_urls[user.avatar_urls.length - 1] : 'https://via.placeholder.com/128?text=?';
         const latestBanner = (user.banner_urls && user.banner_urls.length > 0) ? user.banner_urls[user.banner_urls.length - 1] : '';
-
-        // Contagem de itens para o resumo
         const avatarCount = user.avatar_urls ? user.avatar_urls.length : 0;
         const bannerCount = user.banner_urls ? user.banner_urls.length : 0;
         const nicknameCount = user.nicknames ? user.nicknames.length : 0;
@@ -180,27 +201,29 @@ document.addEventListener('DOMContentLoaded', () => {
         
         return `
             <div class="profile-section user-main-info">
-                ${latestBanner ? `<div class="profile-banner" style="height:150px; border-radius:8px 8px 0 0; background-image: url('${latestBanner}'); background-size:cover; background-position:center;"></div>` : '<div class="profile-banner-placeholder" style="height:100px; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.2); border-radius:8px 8px 0 0;"><span>Sem Banner</span></div>'}
-                <div style="display:flex; align-items:flex-end; margin-top:-50px; padding:0 20px 20px 20px; position:relative; z-index:1;">
-                    <img src="${latestAvatar}" alt="Avatar" style="width:100px; height:100px; border-radius:50%; border:4px solid #0f0820; background:#0f0820;">
-                    <div style="margin-left:15px;">
-                        <h2 style="color:#fff; font-size:1.8em; margin:0 0 5px 0;">${user.username_global || 'N/A'}</h2>
-                        <p style="color:#ccc; font-size:1em; margin:0;">ID: ${user.user_id}</p>
+                ${latestBanner ? `<div class="profile-banner" style="height:180px; border-radius:12px 12px 0 0; background-image: url('${latestBanner}'); background-size:cover; background-position:center;"></div>` : '<div class="profile-banner-placeholder" style="height:120px; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.2); border-radius:12px 12px 0 0; color:#888;"><span>Sem Banner Registrado</span></div>'}
+                <div style="display:flex; align-items:flex-end; margin-top:-60px; padding:0 25px 25px 25px; position:relative; z-index:1;">
+                    <img src="${latestAvatar}" alt="Avatar" style="width:120px; height:120px; border-radius:50%; border:5px solid #18191c; background:#18191c;">
+                    <div style="margin-left:20px; padding-bottom:10px;">
+                        <h2 style="color:#fff; font-size:2em; margin:0 0 5px 0; text-shadow: 0 1px 3px rgba(0,0,0,0.5);">${user.username_global || 'N/A'}</h2>
+                        <p style="color:#b9bbbe; font-size:1.1em; margin:0;">ID: ${user.user_id ? user.user_id.toString() : 'N/A'}</p>
                     </div>
                 </div>
             </div>
-            <div class="profile-section quick-stats" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:15px;">
-                <div class="widget" style="text-align:center;"><h3><i class="fas fa-image"></i> Avatares</h3><p>${avatarCount}</p></div>
-                <div class="widget" style="text-align:center;"><h3><i class="fas fa-images"></i> Banners</h3><p>${bannerCount}</p></div>
-                <div class="widget" style="text-align:center;"><h3><i class="fas fa-signature"></i> Apelidos</h3><p>${nicknameCount}</p></div>
-                <div class="widget" style="text-align:center;"><h3><i class="fas fa-server"></i> Servidores</h3><p>${serverCount}</p></div>
-                <div class="widget" style="text-align:center;"><h3><i class="fas fa-history"></i> Registros</h3><p>${historyCount}</p></div>
+            <div class="profile-section quick-stats" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); gap:20px;">
+                <div class="widget" style="text-align:center;"><h3><i class="fas fa-image"></i> Avatares</h3><p style="color:#06b6d4;">${avatarCount}</p></div>
+                <div class="widget" style="text-align:center;"><h3><i class="fas fa-images"></i> Banners</h3><p style="color:#06b6d4;">${bannerCount}</p></div>
+                <div class="widget" style="text-align:center;"><h3><i class="fas fa-signature"></i> Apelidos</h3><p style="color:#06b6d4;">${nicknameCount}</p></div>
+                <div class="widget" style="text-align:center;"><h3><i class="fas fa-server"></i> Servidores</h3><p style="color:#06b6d4;">${serverCount}</p></div>
+                <div class="widget" style="text-align:center;"><h3><i class="fas fa-history"></i> Registros Hist.</h3><p style="color:#06b6d4;">${historyCount}</p></div>
             </div>
             <div class="profile-section">
-                <h3><i class="fas fa-info-circle"></i> Sobre (Último Registro)</h3>
-                <p><strong>Último apelido conhecido:</strong> ${user.nicknames && user.nicknames.length > 0 ? user.nicknames[user.nicknames.length -1] : 'N/A'}</p>
-                <p><strong>Registrado pela primeira vez em um servidor (rastreado):</strong> ${user.servers && user.servers.length > 0 ? `${user.servers[0].guild_name} em ${formatDate(user.servers[0].first_seen)}` : 'N/A'}</p>
-                <p><strong>Última alteração detectada:</strong> ${user.history && user.history.length > 0 ? formatDate(user.history[user.history.length - 1].changed_at) : 'N/A'}</p>
+                <h3><i class="fas fa-info-circle"></i> Informações Gerais (Baseado nos Últimos Dados)</h3>
+                <ul class="profile-list">
+                    <li><strong>Último apelido conhecido (lista geral):</strong> ${user.nicknames && user.nicknames.length > 0 ? user.nicknames[user.nicknames.length -1] : 'N/A'}</li>
+                    <li><strong>Registrado pela primeira vez (rastreado):</strong> ${user.history && user.history.length > 0 ? formatDate(user.history[0].changed_at) : 'N/A'}</li>
+                    <li><strong>Última alteração detectada:</strong> ${user.history && user.history.length > 0 ? formatDate(user.history[user.history.length - 1].changed_at) : 'N/A'}</li>
+                </ul>
             </div>
         `;
     }
@@ -209,13 +232,12 @@ document.addEventListener('DOMContentLoaded', () => {
         let html = '<div class="profile-section"><h3><i class="fas fa-image"></i> Galeria de Avatares</h3>';
         if (user.avatar_urls && user.avatar_urls.length > 0) {
             html += '<div class="avatar-gallery">';
-            // Mostra do mais recente para o mais antigo
             user.avatar_urls.slice().reverse().forEach(url => {
-                html += `<img src="${url}" alt="Avatar Histórico" class="history-avatar" onclick="window.open('${url}', '_blank')">`;
+                html += `<img src="${url}" alt="Avatar Histórico" class="history-avatar" onclick="window.open('${url}', '_blank')" title="Clique para abrir em nova aba">`;
             });
             html += '</div>';
         } else {
-            html += '<p>Nenhum avatar histórico encontrado.</p>';
+            html += '<p class="placeholder-text" style="font-size:1em;">Nenhum avatar histórico encontrado.</p>';
         }
         html += '</div>';
         return html;
@@ -226,11 +248,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (user.banner_urls && user.banner_urls.length > 0) {
             html += '<div class="banner-gallery">';
             user.banner_urls.slice().reverse().forEach(url => {
-                html += `<img src="${url}" alt="Banner Histórico" class="history-banner" onclick="window.open('${url}', '_blank')">`;
+                html += `<img src="${url}" alt="Banner Histórico" class="history-banner" onclick="window.open('${url}', '_blank')" title="Clique para abrir em nova aba">`;
             });
             html += '</div>';
         } else {
-            html += '<p>Nenhum banner histórico encontrado.</p>';
+            html += '<p class="placeholder-text" style="font-size:1em;">Nenhum banner histórico encontrado.</p>';
         }
         html += '</div>';
         return html;
@@ -238,46 +260,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderNicknamesView(user) {
         let html = '<div class="profile-section"><h3><i class="fas fa-signature"></i> Histórico de Nomes de Usuário/Apelidos</h3>';
-        html += '<p style="color:#ccc; font-size:0.9em; margin-bottom:15px;">Inclui nomes globais e apelidos de servidor, ordenados do mais recente (se disponível no histórico) para o mais antigo.</p>'
+        html += '<p style="color:#ccc; font-size:0.9em; margin-bottom:15px;">Inclui nomes globais e apelidos de servidor (adicionados à lista geral), ordenados por data de alteração (mais recentes primeiro, quando disponível no histórico).</p>'
         html += '<ul class="profile-list">';
         
-        // Coletar e ordenar todos os nomes e apelidos do histórico
         let allNames = [];
         if (user.history && user.history.length > 0) {
             user.history.forEach(entry => {
                 if (entry.changes.username_global) {
                     allNames.push({ name: entry.changes.username_global, date: entry.changed_at, type: "Nome Global" });
                 }
-                if (entry.changes.nickname_added) {
-                     allNames.push({ name: entry.changes.nickname_added, date: entry.changed_at, type: "Apelido Adicionado" });
+                if (entry.changes.nickname_added) { // 'nickname_added' é o que usamos no script do bot
+                     allNames.push({ name: entry.changes.nickname_added, date: entry.changed_at, type: "Apelido (do Histórico)" });
                 }
             });
         }
-        // Adicionar a lista principal de nicknames se não estiverem já no histórico (pode haver redundância, mas garante que todos apareçam)
+        // Adiciona a lista principal de nicknames se eles não estiverem já no histórico (pode haver redundância)
         if (user.nicknames && user.nicknames.length > 0) {
             user.nicknames.forEach(nick => {
-                if (!allNames.some(n => n.name === nick && n.type === "Apelido Adicionado")) { // Evita duplicados simples
+                // Verifica se um apelido similar já foi adicionado do histórico para evitar mostrar exatamente o mesmo dado duas vezes se a data for a mesma
+                // Esta lógica de desduplicação pode ser aprimorada
+                if (!allNames.some(n => n.name === nick && n.type === "Apelido (do Histórico)")) { 
                     allNames.push({ name: nick, date: null, type: "Apelido (Lista Geral)" });
                 }
             });
         }
-        // Ordenar por data (os sem data específica ficam no final ou início, dependendo da lógica de sort)
+        
         allNames.sort((a, b) => {
-            if (a.date && b.date) return new Date(b.date) - new Date(a.date); // Mais recentes primeiro
-            if (a.date) return -1;
-            if (b.date) return 1;
-            return 0;
+            if (a.date && b.date) return new Date(b.date).getTime() - new Date(a.date).getTime();
+            if (a.date) return -1; // Coloca itens com data primeiro
+            if (b.date) return 1;  // Coloca itens com data primeiro
+            return 0; // Mantém a ordem para itens sem data
         });
 
-        // Remover duplicados consecutivos após ordenação (mantendo o mais recente)
         const uniqueSortedNames = allNames.filter((item, index, self) =>
-            index === 0 || item.name !== self[index - 1].name || item.type !== self[index - 1].type
+            index === 0 || item.name !== self[index - 1].name // Remove duplicados consecutivos simples (pode ser melhorado)
         );
-
 
         if (uniqueSortedNames.length > 0) {
             uniqueSortedNames.forEach(nameEntry => {
-                html += `<li><strong>${nameEntry.name}</strong> <small>(${nameEntry.type}${nameEntry.date ? ' - ' + formatDate(nameEntry.date) : ''})</small></li>`;
+                html += `<li><strong>${nameEntry.name || 'N/A'}</strong> <small style="color:#888;">(${nameEntry.type}${nameEntry.date ? ' - ' + formatDate(nameEntry.date) : ''})</small></li>`;
             });
         } else {
             html += '<li>Nenhum nome/apelido histórico encontrado.</li>';
@@ -290,12 +311,14 @@ document.addEventListener('DOMContentLoaded', () => {
         let html = '<div class="profile-section"><h3><i class="fas fa-server"></i> Servidores Encontrados</h3>';
         if (user.servers && user.servers.length > 0) {
             html += '<ul class="profile-list">';
-            user.servers.forEach(server => {
-                html += `<li><strong>${server.guild_name}</strong> (ID: ${server.guild_id})<br><small>Visto pela primeira vez em: ${formatDate(server.first_seen)}</small></li>`;
+            // Ordenar por data de "first_seen", mais recente primeiro, se essa data for confiável
+            const sortedServers = user.servers.slice().sort((a,b) => new Date(b.first_seen).getTime() - new Date(a.first_seen).getTime());
+            sortedServers.forEach(server => {
+                html += `<li><strong>${server.guild_name || 'Nome Desconhecido'}</strong> (ID: ${server.guild_id})<br><small style="color:#888;">Visto pela primeira vez em: ${formatDate(server.first_seen)}</small></li>`;
             });
             html += '</ul>';
         } else {
-            html += '<p>Nenhum servidor registrado para este usuário.</p>';
+            html += '<p class="placeholder-text" style="font-size:1em;">Nenhum servidor registrado para este usuário.</p>';
         }
         html += '</div>';
         return html;
@@ -304,24 +327,23 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderFullHistoryView(user) {
         let html = '<div class="profile-section"><h3><i class="fas fa-history"></i> Histórico Completo de Alterações</h3>';
         if (user.history && user.history.length > 0) {
-            html += '<ul class="profile-history-log profile-list">'; // Reutiliza .profile-list para consistência
-            // Mostra do mais recente para o mais antigo
-            user.history.slice().reverse().forEach(entry => {
+            html += '<ul class="profile-history-log profile-list">';
+            user.history.slice().reverse().forEach(entry => { // Mais recentes primeiro
                 html += `
                     <li>
-                        <strong>Alterado em:</strong> ${formatDate(entry.changed_at)}
+                        <strong style="color:#06b6d4;">Alterado em:</strong> ${formatDate(entry.changed_at)}
                         <pre>${JSON.stringify(entry.changes, null, 2)}</pre>
                     </li>`;
             });
             html += '</ul>';
         } else {
-            html += '<p>Nenhum histórico de alterações detalhado encontrado.</p>';
+            html += '<p class="placeholder-text" style="font-size:1em;">Nenhum histórico de alterações detalhado encontrado.</p>';
         }
         html += '</div>';
         return html;
     }
 
-    // Event Listeners
+    // Event Listeners Iniciais
     filterButtons.forEach(button => {
         button.addEventListener('click', () => {
             currentFilter = button.dataset.filter;
@@ -352,8 +374,7 @@ document.addEventListener('DOMContentLoaded', () => {
         nextPageBtn.addEventListener('click', () => fetchAllUsers(currentPage + 1));
     }
 
-    // Carrega a lista inicial de usuários e o estado inicial da UI
     fetchAllUsers(0);
-    renderFilteredContent(); // Mostra o placeholder inicial
-    updateActiveFilterButton(); // Define o botão 'summary' como ativo
+    renderFilteredContent(); 
+    updateActiveFilterButton(); 
 });
