@@ -106,57 +106,9 @@
         </main>
     </div>
 
-    <div id="dashboardArea" style="display: none; position: relative; z-index: 10;">
-        <div class="dashboard-header-info">
-            <div class="dashboard-user">
-                <i class="fas fa-user-circle dashboard-avatar-icon"></i> <span class="dashboard-username">Usuário Teste</span>
-            </div>
-            <span class="dashboard-maintenance-notice">🚧 Plataforma em Manutenção</span>
-        </div>
-
-        <div class="dashboard-actions">
-            <button class="dashboard-btn"><i class="fas fa-satellite-dish"></i> Tracker</button>
-            <button class="dashboard-btn"><i class="fas fa-search-location"></i> Rastrear</button>
-            <button class="dashboard-btn dashboard-btn-clear"><i class="fas fa-broom"></i> Limpar</button>
-        </div>
-
-        <main class="dashboard-main-content">
-            <h2>Central de Rastreamento Celestial</h2>
-            <p>Bem-vindo à sua central de comando. Monitore e analise dados de toda a galáxia Discord.</p>
-            <div class="dashboard-widgets">
-                <div class="widget">
-                    <i class="fas fa-users widget-icon"></i>
-                    <h3>Usuários Ativos</h3>
-                    <p>1,234</p>
-                </div>
-                <div class="widget">
-                    <i class="fas fa-eye widget-icon"></i>
-                    <h3>Alvos Monitorados</h3>
-                    <p>56</p>
-                </div>
-                <div class="widget">
-                    <i class="fas fa-history widget-icon"></i>
-                    <h3>Eventos Recentes</h3>
-                    <p>789</p>
-                </div>
-                <div class="widget data-stream-widget">
-                    <i class="fas fa-wave-square widget-icon"></i>
-                    <h3>Fluxo de Dados Galáctico</h3>
-                    <div class="data-stream-animation">
-                        <span></span><span></span><span></span><span></span><span></span>
-                        <span></span><span></span><span></span><span></span><span></span>
-                    </div>
-                    <p>Conectado ao Supercluster Laniakea...</p>
-                </div>
-            </div>
-        </main>
-    </div>
-
-
     <script>
         const isMobile = window.innerWidth <= 768;
 
-        // Função para criar estrelas (mantida)
         function createStars() {
             const starsContainer = document.getElementById('stars');
             if (!starsContainer) return;
@@ -179,7 +131,6 @@
             }
         }
 
-        // Função para criar meteoros (mantida)
         function createMeteor() {
             if (isMobile) return;
             const meteor = document.createElement('div');
@@ -201,33 +152,13 @@
             setTimeout(meteorShower, Math.random() * 15000 + 10000);
         }
 
-        // Lógica para o botão de login e exibição da dashboard
         const loginButton = document.getElementById('discordLoginBtn');
-        const landingPageContent = document.getElementById('landingPageContent');
-        const dashboardArea = document.getElementById('dashboardArea');
-        const orbitalSystem = document.querySelector('.orbital-system'); // Seleciona o sistema orbital
-
-        if (loginButton && landingPageContent && dashboardArea) {
-            loginButton.addEventListener('click', function() {
-                // Oculta conteúdo da landing page
-                landingPageContent.style.display = 'none';
-                if (orbitalSystem) {
-                    orbitalSystem.style.display = 'none'; // Opcional: oculta sistema orbital também
-                }
-
-
-                // Exibe a dashboard
-                dashboardArea.style.display = 'block'; // Ou 'flex'/'grid' dependendo do layout interno da dashboard
-
-                // Alerta de desenvolvimento (opcional, pode remover)
-                // alert('🚀 Dashboard em desenvolvimento! Funcionalidades em breve.');
-
-                // Opcional: Alterar o texto do botão ou ocultá-lo
-                // loginButton.textContent = 'Acessar Dashboard';
-                // loginButton.style.display = 'none'; // Se não quiser mais o botão visível
+        if (loginButton) {
+            loginButton.addEventListener('click', function(event) {
+                event.preventDefault(); // Previne qualquer comportamento padrão do botão, se houver
+                window.location.href = 'dashboard.html'; // Redireciona para a página da dashboard
             });
         }
-
 
         window.addEventListener('load', function() {
             createStars();
