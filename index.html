@@ -182,36 +182,42 @@
     </main>
 
     <script>
+        const isMobile = window.innerWidth <= 768;
+
         // Criar estrelas animadas diversificadas
         function createStars() {
             const starsContainer = document.getElementById('stars');
-            if (!starsContainer) return; // Adiciona verificação se o elemento existe
-            const numStars = 150;
+            if (!starsContainer) return;
+            const numStars = isMobile ? 30 : 150; // Menos estrelas em mobile
 
             for (let i = 0; i < numStars; i++) {
                 const star = document.createElement('div');
                 star.className = 'star';
 
-                // Diferentes tipos de estrelas
-                const types = ['small', 'medium', 'large'];
-                const colors = ['', 'blue', 'purple', 'gold'];
-
+                const types = isMobile ? ['small', 'medium'] : ['small', 'medium', 'large'];
                 star.classList.add(types[Math.floor(Math.random() * types.length)]);
 
+                const colors = ['', 'blue', 'purple', 'gold'];
                 const color = colors[Math.floor(Math.random() * colors.length)];
                 if (color) star.classList.add(color);
 
                 star.style.left = Math.random() * 100 + '%';
                 star.style.top = Math.random() * 100 + '%';
-                star.style.animationDuration = (Math.random() * 4 + 2) + 's';
-                star.style.animationDelay = Math.random() * 3 + 's';
 
+                // A animação CSS será desabilitada em mobile via style.css
+                // Estas linhas são para a versão desktop
+                if (!isMobile) {
+                    star.style.animationDuration = (Math.random() * 4 + 2) + 's';
+                    star.style.animationDelay = Math.random() * 3 + 's';
+                }
                 starsContainer.appendChild(star);
             }
         }
 
         // Criar meteoros ocasionais
         function createMeteor() {
+            if (isMobile) return; // Não cria meteoros em mobile (também desabilitado no CSS)
+
             const meteor = document.createElement('div');
             meteor.className = 'meteor';
             meteor.style.left = Math.random() * 100 + '%';
@@ -220,7 +226,6 @@
 
             document.body.appendChild(meteor);
 
-            // Remove meteoro após animação
             setTimeout(() => {
                 if (meteor.parentNode) {
                     meteor.parentNode.removeChild(meteor);
@@ -230,6 +235,8 @@
 
         // Criar meteoros periodicamente
         function meteorShower() {
+            if (isMobile) return; // Não inicia a chuva de meteoros em mobile
+
             createMeteor();
             setTimeout(meteorShower, Math.random() * 15000 + 10000); // Entre 10-25 segundos
         }
@@ -237,75 +244,67 @@
         // Inicializar efeitos
         window.addEventListener('load', function() {
             createStars();
-            meteorShower();
+            if (!isMobile) {
+                meteorShower();
+            }
         });
 
 
         // Efeito no botão de login
         const loginButton = document.querySelector('.discord-login');
-        if (loginButton) { // Adiciona verificação
+        if (loginButton) {
             loginButton.addEventListener('click', function() {
-                this.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    this.style.transform = '';
-                }, 150);
-
+                if (!isMobile) { // Mantém animação de clique para desktop
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                }
                 alert('🚀 Celestial Tracker em desenvolvimento!\n🌌 Sistema de login será ativado em breve.\n⭐ Prepare-se para a experiência galáctica!');
             });
         }
 
 
-        // Efeito hover nos cards de feature
-        document.querySelectorAll('.feature-card').forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                this.style.background = 'rgba(124, 58, 237, 0.1)';
-            });
+        // Efeito hover nos cards de feature (manter apenas para desktop)
+        if (!isMobile) {
+            document.querySelectorAll('.feature-card').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.background = 'rgba(124, 58, 237, 0.1)';
+                });
 
-            card.addEventListener('mouseleave', function() {
-                this.style.background = 'rgba(15, 8, 32, 0.8)';
+                card.addEventListener('mouseleave', function() {
+                    this.style.background = 'rgba(15, 8, 32, 0.8)';
+                });
             });
-        });
+        }
+
 
         // Animação de contadores nas stats
         function animateCounters() {
+            if (isMobile) { // Desabilitar lógica JS de animação de contadores para mobile
+                const statNumbers = document.querySelectorAll('.stat-number');
+                statNumbers.forEach(element => {
+                    element.style.animation = ''; // Garante que não haja overrides de JS
+                });
+                return;
+            }
+
             const statNumbers = document.querySelectorAll('.stat-number');
-            if (statNumbers.length === 0) return; // Adiciona verificação
+            if (statNumbers.length === 0) return;
 
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         const element = entry.target;
-                        // Reinicia a animação (opcional, mas pode ser bom para re-trigger)
-                        element.style.animation = 'none';
+                        element.style.animation = 'none'; // Reset animation
                         element.offsetHeight; // Trigger reflow
-                        element.style.animation = ''; // Re-aplica a animação definida no CSS
-                        // Se a animação heroGradient for específica para cá, defina-a explicitamente:
-                        // element.style.animation = 'heroGradient 2s ease infinite';
-                        // No entanto, como .stat-number já tem uma animação de background,
-                        // esta lógica de IntersectionObserver pode ser simplificada ou removida
-                        // se o objetivo é apenas que a animação CSS padrão seja executada.
-                        // Se a intenção era re-iniciar a animação de texto gradiente ao rolar,
-                        // e a animação de texto é 'heroGradient', então o código está correto.
-                        // Para este caso, vamos assumir que a animação CSS já existente é suficiente
-                        // e o IntersectionObserver pode ser para garantir que a animação comece
-                        // quando o elemento entra na tela.
-                        // Para a animação de gradiente de texto, já existe no CSS.
-                        // Este observer pode ser usado para outros tipos de animação de contagem se necessário.
-                        // Por ora, apenas garantindo que a animação CSS seja aplicada quando visível.
-                         if (element.classList.contains('stat-number')) { // Garante que é um stat-number
-                            // A animação já está no CSS, esta lógica pode ser para re-trigger
-                            // ou apenas garantir que ela execute quando visível.
-                            // Se a animação já roda por padrão, este observer pode ser redundante
-                            // para este elemento específico.
-                        }
+                        element.style.animation = ''; // Re-apply CSS animation (e.g., heroGradient or statGradient)
                     }
                 });
-            }, { threshold: 0.5 }); // Aciona quando 50% do elemento estiver visível
+            }, { threshold: 0.5 });
 
             statNumbers.forEach(stat => observer.observe(stat));
         }
-
-        // Inicializar animações quando a página carregar
         document.addEventListener('DOMContentLoaded', animateCounters);
     </script>
 </body>
