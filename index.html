@@ -3,198 +3,459 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Celestial Tracker - Discord Tracker</title>
+    <title>Dashboard - Celestial Tracker</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Estilos adicionais para melhor apresentação dos resultados e inputs */
+        .dashboard-user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            vertical-align: middle;
+            background-color: #30353b; /* Cor de fundo para o ícone padrão */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .dashboard-avatar-icon.fa-user-astronaut {
+             font-size: 20px; /* Tamanho do ícone se a imagem não carregar */
+             color: #fff;
+        }
+        .dashboard-search-area {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #2c2f33;
+            border-radius: 8px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .dashboard-search-area input[type="text"] {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #4f545c;
+            border-radius: 4px;
+            background-color: #40444b;
+            color: #dcddde;
+        }
+        .dashboard-search-area input[type="text"]::placeholder {
+            color: #b9bbbe;
+        }
+        #trackerResults {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #23272a;
+            border-radius: 8px;
+            color: #dcddde;
+            min-height: 50px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        #trackerResults h4 {
+            margin-top: 0;
+            color: #7289da;
+        }
+        #trackerResults .error {
+            color: #f04747;
+        }
+        #trackerResults .success {
+            color: #43b581;
+        }
+        #trackerResults .info {
+            color: #b9bbbe;
+        }
+        .dashboard-user {
+            display: flex;
+            align-items: center;
+        }
+        .logout-btn {
+            background-color: #f04747;
+            color: white;
+        }
+        .logout-btn:hover {
+            background-color: #c73b3b;
+        }
+        .dashboard-actions button {
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease;
+        }
+        .dashboard-actions button:hover {
+            transform: translateY(-2px);
+        }
+        .dashboard-actions button:active {
+            transform: translateY(0px);
+        }
+        .history-entry, .server-entry, .nickname-entry, .avatar-entry, .banner-entry {
+            background-color: #2c2f33;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 5px;
+            border-left: 3px solid #7289da;
+        }
+        .history-entry p, .server-entry p, .nickname-entry p, .avatar-entry p, .banner-entry p {
+            margin: 5px 0;
+            font-size: 0.9em;
+        }
+        .history-entry strong, .server-entry strong {
+            color: #b9bbbe;
+        }
+        .avatar-list img, .banner-list img {
+            max-width: 100px;
+            max-height: 100px;
+            margin: 5px;
+            border-radius: 4px;
+            background-color: #23272a;
+        }
+        #loginPromptBtn {
+            background-color: #5865F2; /* Cor do Discord */
+            color: white;
+        }
+        #loginPromptBtn:hover {
+            background-color: #4752c4;
+        }
+        #loginPromptBtn .fa-discord { /* Para o ícone do Discord no botão de login */
+            margin-right: 8px;
+        }
+    </style>
 </head>
-<body>
-    <div class="galaxy">
-        <div class="nebula"></div>
-        <div class="nebula"></div>
-        <div class="nebula"></div>
-    </div>
-
-    <div class="stars" id="stars"></div>
-
-    <div class="orbital-system">
-        <div class="orbit">
-            <div class="planet"></div>
-        </div>
-        <div class="orbit">
-            <div class="planet"></div>
-        </div>
-        <div class="orbit">
-            <div class="planet"></div>
-        </div>
-    </div>
-
-    <header class="header">
-        <div class="logo">
-            <img src="https://cdn.discordapp.com/attachments/1375545742675935314/1377352293313282068/CelestialDevRoleBadge.png?ex=6839f848&is=6838a6c8&hm=e0462cb5e20b1ce7313ed86a3e7df7aa10a86f5bff11c106ba566d2dcaadd105&" alt="Celestial Bot">
-            <h1>Celestial Tracker</h1>
-        </div>
-        <button class="discord-login" id="discordLoginBtn">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z"/>
-            </svg>
-            Login pelo Discord
-        </button>
-    </header>
-
-    <div id="landingPageContent">
-        <div class="dev-section">
-            <div class="dev-card">
-                <div class="dev-banner"></div>
-                <div class="dev-content">
-                    <div class="dev-avatar-container">
-                        <img src="https://cdn.discordapp.com/attachments/1375545742675935314/1377797069888159764/1074ce8a92ce3502866000130942abff.png?ex=683a4503&is=6838f383&hm=b8a6123d154182e4f1a22c5b586bf65d84e564966c834a0c217343e7dda143a7&" alt="chicomoedass" class="dev-avatar">
-                        <div class="status-indicator"></div>
-                    </div>
-                    <div class="dev-username">chicomoedass</div>
-                    <div class="dev-discriminator">new.user</div>
-                    <div class="dev-badges">
-                        <div class="dev-badge">
-                            <div class="badge-icon"></div>
-                            Bot Developer
-                        </div>
-                    </div>
-                    <div class="dev-roles">
-                        <div class="roles-title">Roles</div>
-                        <div class="role-tag">🌌 Celestial Dev</div>
-                        <div class="role-tag">⚡ Creator</div>
-                        <div class="role-tag">🎯 Tracker Master</div>
-                    </div>
-                    <div class="dev-about">
-                        <div class="about-title">Sobre mim</div>
-                        <div class="about-text">Desenvolvedor do Celestial Tracker - O sistema de rastreamento Discord mais avançado da galáxia 🌌✨ Especializando em tracking de usuários e análise de dados.</div>
-                    </div>
-                </div>
+<body class="dashboard-page-body">
+    <div id="dashboardArea">
+        <div class="dashboard-header-info">
+            <div class="dashboard-user">
+                <img src="" alt="Avatar" id="loggedInUserAvatar" class="dashboard-user-avatar" style="display: none;">
+                <i id="defaultAvatarIcon" class="fas fa-user-astronaut dashboard-avatar-icon"></i>
+                <span id="loggedInUsername" class="dashboard-username">Carregando...</span>
+                <span id="userStatusBadge" class="dashboard-user-status premium" style="display:none;">Premium</span>
             </div>
+            <span class="dashboard-maintenance-notice">🚧 Plataforma em Manutenção</span>
         </div>
 
-        <main class="main-content">
-            <div class="hero-section">
-                <span class="status-badge">🚧 EM MANUTENÇÃO - LANÇAMENTO EM BREVE</span>
-                <h1 class="hero-title">Celestial Tracker</h1>
-                <p class="hero-subtitle">
-                    🌟 O mais avançado sistema de rastreamento Discord do universo 🌟<br>
-                    Monitore usuários, avatares, calls e atividades com precisão celestial através de nossa tecnologia galáctica.
-                </p>
-                <div class="tracker-stats">
-                    <div class="stat-item"><div class="stat-number">∞</div><div class="stat-label">Usuários Rastreados</div></div>
-                    <div class="stat-item"><div class="stat-number">24/7</div><div class="stat-label">Monitoramento</div></div>
-                    <div class="stat-item"><div class="stat-number">100%</div><div class="stat-label">Precisão</div></div>
-                    <div class="stat-item"><div class="stat-number">⚡</div><div class="stat-label">Velocidade</div></div>
+        <div class="dashboard-search-area">
+            <input type="text" id="userIdToTrack" placeholder="Digite o ID do Usuário Discord para rastrear" disabled>
+            <button id="trackBtn" class="dashboard-btn" disabled><i class="fas fa-search-location"></i> Rastrear</button>
+            <button id="clearBtn" class="dashboard-btn dashboard-btn-clear"><i class="fas fa-broom"></i> Limpar</button>
+        </div>
+        
+        <div class="dashboard-actions">
+            <button id="trackerPageBtn" class="dashboard-btn"><i class="fas fa-satellite-dish"></i> Tracker</button>
+            <button id="logoutBtn" class="dashboard-btn logout-btn" style="display: none;"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+
+        <div id="trackerResults">
+            <h4>Resultados do Rastreamento:</h4>
+            <p class="info">Carregando informações do dashboard...</p>
+        </div>
+
+        <main class="dashboard-main-content">
+            <h2>Central de Rastreamento Celestial</h2>
+            <p>Bem-vindo à sua central de comando. Monitore e analise dados de toda a galáxia Discord.</p>
+            <div class="dashboard-widgets">
+                <div class="widget">
+                    <i class="fas fa-users widget-icon"></i>
+                    <h3>Usuários Ativos</h3>
+                    <p>1,234</p> 
                 </div>
-                <div class="features">
-                    <div class="feature-card"><span class="feature-icon">👤</span><h3 class="feature-title">Histórico de Usuários</h3><p class="feature-description">Archive completo de perfis Discord com histórico detalhado...</p></div>
-                    <div class="feature-card"><span class="feature-icon">🖼️</span><h3 class="feature-title">Galeria de Avatares</h3><p class="feature-description">Coleção completa de todos os avatares já utilizados...</p></div>
-                    <div class="feature-card"><span class="feature-icon">📞</span><h3 class="feature-title">Log de Chamadas</h3><p class="feature-description">Registro detalhado de calls com participantes...</p></div>
-                    <div class="feature-card"><span class="feature-icon">🎯</span><h3 class="feature-title">Tracker Inteligente</h3><p class="feature-description">IA avançada para rastreamento em tempo real...</p></div>
-                    <div class="feature-card"><span class="feature-icon">📊</span><h3 class="feature-title">Analytics Galáctico</h3><p class="feature-description">Dashboards interativos com estatísticas avançadas...</p></div>
-                    <div class="feature-card"><span class="feature-icon">🔒</span><h3 class="feature-title">Segurança Quântica</h3><p class="feature-description">Criptografia militar de ponta com proteção de dados...</p></div>
-                    <div class="feature-card"><span class="feature-icon">🌐</span><h3 class="feature-title">Multi-Servidor</h3><p class="feature-description">Rastreamento simultâneo em múltiplos servidores...</p></div>
-                    <div class="feature-card"><span class="feature-icon">⚡</span><h3 class="feature-title">API Celestial</h3><p class="feature-description">Interface de programação robusta para desenvolvedores...</p></div>
+                <div class="widget">
+                    <i class="fas fa-eye widget-icon"></i>
+                    <h3>Alvos Monitorados</h3>
+                    <p>56</p> 
                 </div>
-                <div class="pricing-section">
-                    <h2 class="pricing-title">💫 Acesso Beta Gratuito</h2>
-                    <p class="pricing-text">🎉 Todos os nossos sistemas galácticos estão disponíveis gratuitamente...</p>
-                    <p class="pricing-text">Seja um dos primeiros exploradores a testar nossa tecnologia...</p>
-                    <p class="pricing-warning">⚠️ Sistema premium será lançado após beta - Aproveite o acesso gratuito!</p>
+                <div class="widget">
+                    <i class="fas fa-history widget-icon"></i>
+                    <h3>Eventos Recentes</h3>
+                    <p>789</p> 
+                </div>
+                <div class="widget data-stream-widget">
+                    <i class="fas fa-wave-square widget-icon"></i>
+                    <h3>Fluxo de Dados Galáctico</h3>
+                    <div class="data-stream-animation">
+                        <span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                    <p>Conectado ao Supercluster Laniakea...</p> 
                 </div>
             </div>
         </main>
     </div>
 
     <script>
-        const isMobile = window.innerWidth <= 768;
+        document.addEventListener('DOMContentLoaded', () => {
+            const API_BASE_URL = 'https://celestial-api.onrender.com';
+            const FRONTEND_LOGIN_URL = 'https://jesusdiscordjs.github.io/Celestial/'; 
 
-        function createStars() {
-            const starsContainer = document.getElementById('stars');
-            if (!starsContainer) return;
-            const numStars = isMobile ? 30 : 150;
-            for (let i = 0; i < numStars; i++) {
-                const star = document.createElement('div');
-                star.className = 'star';
-                const types = isMobile ? ['small', 'medium'] : ['small', 'medium', 'large'];
-                star.classList.add(types[Math.floor(Math.random() * types.length)]);
-                const colors = ['', 'blue', 'purple', 'gold'];
-                const color = colors[Math.floor(Math.random() * colors.length)];
-                if (color) star.classList.add(color);
-                star.style.left = Math.random() * 100 + '%';
-                star.style.top = Math.random() * 100 + '%';
-                if (!isMobile) {
-                    star.style.animationDuration = (Math.random() * 4 + 2) + 's';
-                    star.style.animationDelay = Math.random() * 3 + 's';
+            const loggedInUsernameEl = document.getElementById('loggedInUsername');
+            const loggedInUserAvatarEl = document.getElementById('loggedInUserAvatar');
+            const defaultAvatarIconEl = document.getElementById('defaultAvatarIcon');
+            const userStatusBadgeEl = document.getElementById('userStatusBadge');
+            
+            const userIdToTrackInput = document.getElementById('userIdToTrack');
+            const trackBtn = document.getElementById('trackBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const trackerResultsEl = document.getElementById('trackerResults');
+            const actionsDiv = document.querySelector('.dashboard-actions');
+
+            function setupLoggedOutState(message = "O rastreamento de IDs está disponível. Para outras funcionalidades, faça login.") {
+                loggedInUsernameEl.textContent = 'Visitante';
+                loggedInUserAvatarEl.style.display = 'none';
+                defaultAvatarIconEl.style.display = 'inline-flex';
+                userStatusBadgeEl.style.display = 'none';
+                
+                logoutBtn.style.display = 'none';
+
+                let loginPromptBtn = document.getElementById('loginPromptBtn');
+                if (!loginPromptBtn && actionsDiv) { // Verifica se actionsDiv existe
+                    loginPromptBtn = document.createElement('button');
+                    loginPromptBtn.id = 'loginPromptBtn';
+                    loginPromptBtn.className = 'dashboard-btn'; 
+                    // Usando ícone Font Awesome 6 para Discord (fab fa-discord)
+                    loginPromptBtn.innerHTML = '<i class="fab fa-discord"></i> Login com Discord';
+                    loginPromptBtn.addEventListener('click', () => {
+                        window.location.href = `${API_BASE_URL}/auth/discord`;
+                    });
+                    actionsDiv.appendChild(loginPromptBtn);
+                } else if (loginPromptBtn) {
+                    loginPromptBtn.style.display = 'inline-block';
                 }
-                starsContainer.appendChild(star);
-            }
-        }
 
-        function createMeteor() {
-            if (isMobile) return;
-            const meteor = document.createElement('div');
-            meteor.className = 'meteor';
-            meteor.style.left = Math.random() * 100 + '%';
-            meteor.style.top = Math.random() * 50 + '%';
-            meteor.style.animationDelay = Math.random() * 2 + 's';
-            document.body.appendChild(meteor);
-            setTimeout(() => {
-                if (meteor.parentNode) {
-                    meteor.parentNode.removeChild(meteor);
+                trackBtn.disabled = false;
+                userIdToTrackInput.disabled = false;
+                userIdToTrackInput.placeholder = "Digite o ID do Usuário Discord para rastrear";
+                
+                trackerResultsEl.innerHTML = `<h4>Resultados do Rastreamento:</h4>
+                                             <p class="info">${message}</p>`;
+            }
+
+            function setupLoggedInState(userData) {
+                loggedInUsernameEl.textContent = userData.global_name || userData.username;
+                if (userData.avatar) {
+                    const avatarExtension = userData.avatar.startsWith('a_') ? 'gif' : 'png';
+                    loggedInUserAvatarEl.src = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.${avatarExtension}?size=40`;
+                    loggedInUserAvatarEl.style.display = 'inline-block';
+                    defaultAvatarIconEl.style.display = 'none';
+                } else {
+                    loggedInUserAvatarEl.style.display = 'none';
+                    defaultAvatarIconEl.style.display = 'inline-flex';
                 }
-            }, 8000);
-        }
+                // userStatusBadgeEl.textContent = userData.status || 'Online'; 
+                // userStatusBadgeEl.style.display = 'inline-block'; // Descomente se API retornar status
 
-        function meteorShower() {
-            if (isMobile) return;
-            createMeteor();
-            setTimeout(meteorShower, Math.random() * 15000 + 10000);
-        }
+                logoutBtn.style.display = 'inline-block';
+                const loginPromptBtn = document.getElementById('loginPromptBtn');
+                if (loginPromptBtn) {
+                    loginPromptBtn.style.display = 'none';
+                }
 
-        const loginButton = document.getElementById('discordLoginBtn');
-        if (loginButton) {
-            loginButton.addEventListener('click', function(event) {
-                event.preventDefault(); // Previne qualquer comportamento padrão do botão, se houver
-                window.location.href = 'dashboard.html'; // Redireciona para a página da dashboard
-            });
-        }
-
-        window.addEventListener('load', function() {
-            createStars();
-            if (!isMobile) {
-                meteorShower();
+                trackBtn.disabled = false;
+                userIdToTrackInput.disabled = false;
+                userIdToTrackInput.placeholder = "Digite o ID do Usuário Discord para rastrear";
+                trackerResultsEl.innerHTML = `<h4>Resultados do Rastreamento:</h4>
+                                             <p class="info">Insira um ID e clique em "Rastrear" para ver os dados.</p>`;
             }
-        });
 
-        if (!isMobile) {
-            document.querySelectorAll('.feature-card').forEach(card => {
-                card.addEventListener('mouseenter', function() { this.style.background = 'rgba(124, 58, 237, 0.1)'; });
-                card.addEventListener('mouseleave', function() { this.style.background = 'rgba(15, 8, 32, 0.8)'; });
-            });
-        }
+            async function checkAuth() {
+                try {
+                    const response = await fetch(`${API_BASE_URL}/api/me`, {
+                        credentials: 'include' 
+                    });
 
-        function animateCounters() {
-            if (isMobile) {
-                const statNumbers = document.querySelectorAll('.stat-number');
-                statNumbers.forEach(element => { element.style.animation = ''; });
-                return;
-            }
-            const statNumbers = document.querySelectorAll('.stat-number');
-            if (statNumbers.length === 0) return;
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const element = entry.target;
-                        element.style.animation = 'none';
-                        element.offsetHeight;
-                        element.style.animation = '';
+                    if (response.ok) {
+                        const userData = await response.json();
+                        if (userData && userData.id) {
+                            setupLoggedInState(userData);
+                        } else {
+                            console.warn("/api/me response OK but no valid user data.", userData);
+                            setupLoggedOutState("Sessão inválida. O rastreamento está disponível. Para outras funcionalidades, faça login.");
+                        }
+                    } else if (response.status === 401) {
+                        console.log("/api/me returned 401 - User not logged in with API. Dashboard in public mode.");
+                        setupLoggedOutState(); 
+                    } else {
+                        const errorText = await response.text();
+                        console.error(`Error fetching /api/me: ${response.status}`, errorText);
+                        setupLoggedOutState(`Erro (${response.status}) ao verificar o status do login. O rastreamento está disponível.`);
                     }
-                });
-            }, { threshold: 0.5 });
-            statNumbers.forEach(stat => observer.observe(stat));
-        }
-        document.addEventListener('DOMContentLoaded', animateCounters);
+                } catch (error) {
+                    console.error('Network or other error during checkAuth:', error);
+                    setupLoggedOutState("Não foi possível conectar ao servidor. O rastreamento está disponível.");
+                }
+            }
+
+            async function fetchDataForAction(endpoint, options = {}) {
+                try {
+                    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+                        credentials: 'include',
+                        ...options
+                    });
+                    if (response.status === 401 && !endpoint.startsWith('/api/avatars/')) {
+                        const currentPath = window.location.pathname + window.location.search + window.location.hash;
+                        window.location.href = `${FRONTEND_LOGIN_URL}?unauthorized_action=true&redirect_to=${encodeURIComponent(currentPath)}`;
+                        return null; 
+                    }
+                    if (!response.ok) {
+                        // Se for um 401 de /api/avatars/ (o que não deveria acontecer por auth, mas talvez por outros motivos),
+                        // ou qualquer outro erro, não tente analisar como JSON se não for JSON.
+                        let errorData;
+                        try {
+                            errorData = await response.json();
+                        } catch (e) {
+                            errorData = { message: await response.text() || `Erro ${response.status}` };
+                        }
+                        throw new Error(errorData.error || errorData.message || `HTTP error! status: ${response.status}`);
+                    }
+                    if (response.headers.get("content-type")?.includes("application/json")) {
+                        return await response.json();
+                    }
+                    return await response.text();
+                } catch (error) {
+                    console.error(`Fetch error for action ${endpoint}:`, error);
+                    throw error;
+                }
+            }
+            
+            function displayTrackerResults(data) {
+                trackerResultsEl.innerHTML = `<h4>Resultados para ${data.username_global || data.user_id}:</h4>`;
+
+                let content = `<p><strong>ID do Usuário:</strong> ${data.user_id}</p>`;
+                content += `<p><strong>Username Global:</strong> ${data.username_global || 'N/A'}</p>`;
+                content += `<p><strong>Registrado na API em:</strong> ${new Date(data.createdAt).toLocaleString()}</p>`;
+                content += `<p><strong>Última Atualização na API:</strong> ${new Date(data.updatedAt).toLocaleString()}</p>`;
+
+                if (data.avatar_urls && data.avatar_urls.length > 0) {
+                    content += `<h5>Avatares (${data.avatar_urls.length}):</h5><div class="avatar-list">`;
+                    data.avatar_urls.slice(-5).reverse().forEach(url => { 
+                        content += `<a href="${url}" target="_blank"><img src="${url}" alt="Avatar" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';"><span style="display:none; color: #ccc; font-size:0.8em;">[imagem indisponível]</span></a>`;
+                    });
+                    if (data.avatar_urls.length > 5) content += `<span>... e mais ${data.avatar_urls.length - 5} (mais antigos)</span>`;
+                    content += `</div>`;
+                } else {
+                    content += `<p><strong>Avatares:</strong> Nenhum registrado.</p>`;
+                }
+
+                if (data.banner_urls && data.banner_urls.length > 0) {
+                    content += `<h5>Banners de Perfil (${data.banner_urls.length}):</h5><div class="banner-list">`;
+                    data.banner_urls.slice(-3).reverse().forEach(url => { 
+                        content += `<a href="${url}" target="_blank"><img src="${url}" alt="Banner" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';"><span style="display:none; color: #ccc; font-size:0.8em;">[imagem indisponível]</span></a>`;
+                    });
+                    if (data.banner_urls.length > 3) content += `<span>... e mais ${data.banner_urls.length - 3} (mais antigos)</span>`;
+                    content += `</div>`;
+                } else {
+                    content += `<p><strong>Banners de Perfil:</strong> Nenhum registrado.</p>`;
+                }
+                
+                if (data.nicknames && data.nicknames.length > 0) {
+                    content += `<h5>Nicknames (${data.nicknames.length}):</h5>`;
+                    data.nicknames.slice(-5).reverse().forEach(nick => { 
+                        content += `<div class="nickname-entry"><p>${escapeHtml(nick)}</p></div>`;
+                    });
+                     if (data.nicknames.length > 5) content += `<p>... e mais ${data.nicknames.length - 5} nicknames.</p>`;
+                } else {
+                    content += `<p><strong>Nicknames:</strong> Nenhum registrado.</p>`;
+                }
+
+                if (data.servers && data.servers.length > 0) {
+                    content += `<h5>Servidores em Comum Conhecidos (${data.servers.length}):</h5>`;
+                    data.servers.forEach(server => {
+                        content += `<div class="server-entry">
+                                        <p><strong>${escapeHtml(server.guild_name) || 'Nome não disponível'}</strong> (ID: ${escapeHtml(server.guild_id)})</p>
+                                        <p>Visto pela primeira vez: ${new Date(server.first_seen).toLocaleString()}</p>
+                                    </div>`;
+                    });
+                } else {
+                    content += `<p><strong>Servidores:</strong> Nenhum servidor em comum registrado.</p>`;
+                }
+
+                if (data.history && data.history.length > 0) {
+                    content += `<h5>Histórico de Mudanças (${data.history.length}):</h5>`;
+                    const recentHistory = data.history.slice(-5).reverse(); 
+                    recentHistory.forEach(entry => {
+                        content += `<div class="history-entry">
+                                        <p><strong>Data da Mudança:</strong> ${new Date(entry.changed_at).toLocaleString()}</p>`;
+                        if (entry.changes.username_global) {
+                            content += `<p>Username Global alterado para: ${escapeHtml(entry.changes.username_global)}</p>`;
+                        }
+                        if (entry.changes.avatar_url) {
+                            content += `<p>Novo Avatar: <a href="${entry.changes.avatar_url}" target="_blank"><img src="${entry.changes.avatar_url}" alt="Hist. Avatar" style="width:32px; height:32px; border-radius:50%; vertical-align:middle; margin-right:5px;">Ver Link</a></p>`;
+                        }
+                        if (entry.changes.banner_url) {
+                            content += `<p>Novo Banner: <a href="${entry.changes.banner_url}" target="_blank">Ver Link</a></p>`;
+                        }
+                        if (entry.changes.nickname_added) {
+                            content += `<p>Nickname Adicionado em Servidor: ${escapeHtml(entry.changes.nickname_added)}</p>`;
+                        }
+                        if (entry.changes.server_joined) {
+                            content += `<p>Entrou no Servidor: ${escapeHtml(entry.changes.server_joined.guild_name)} (ID: ${escapeHtml(entry.changes.server_joined.guild_id)})</p>`;
+                        }
+                        content += `</div>`;
+                    });
+                     if (data.history.length > 5) content += `<p>... e mais ${data.history.length - 5} entradas no histórico (mais antigas).</p>`;
+                } else {
+                    content += `<p><strong>Histórico:</strong> Nenhum histórico de mudanças registrado.</p>`;
+                }
+                trackerResultsEl.innerHTML += content;
+            }
+            
+            function escapeHtml(unsafe) {
+                if (typeof unsafe !== 'string') return unsafe;
+                return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+            }
+
+            trackBtn.addEventListener('click', async () => {
+                const userId = userIdToTrackInput.value.trim();
+                if (!userId) {
+                    trackerResultsEl.innerHTML = '<p class="error">Por favor, insira um ID de usuário.</p>';
+                    return;
+                }
+                if (!/^\d{17,20}$/.test(userId)) {
+                    trackerResultsEl.innerHTML = '<p class="error">Formato de ID de usuário inválido. Deve conter de 17 a 20 dígitos.</p>';
+                    return;
+                }
+
+                trackerResultsEl.innerHTML = '<p class="info">Buscando dados...</p>';
+                try {
+                    // Usa fetchDataForAction, que agora não redireciona para /api/avatars/ em caso de 401
+                    const trackingData = await fetchDataForAction(`/api/avatars/${userId}`);
+                    if (trackingData) { 
+                        displayTrackerResults(trackingData);
+                    } else if (window.location.href.includes('unauthorized_action=true')) {
+                        // Se foi redirecionado por outra ação, não faça nada aqui, o redirecionamento cuidou disso.
+                    } else {
+                        // Se trackingData for null por outro motivo (ex: erro de rede tratado em fetchDataForAction que não relançou)
+                        // ou se o erro não foi um redirecionamento por 401 em outra ação.
+                        trackerResultsEl.innerHTML = '<p class="error">Não foi possível obter os dados de rastreamento. Verifique o ID ou tente mais tarde.</p>';
+                    }
+                } catch (error) {
+                    trackerResultsEl.innerHTML = `<p class="error">Erro ao rastrear usuário: ${error.message}</p>`;
+                }
+            });
+
+            clearBtn.addEventListener('click', () => {
+                userIdToTrackInput.value = '';
+                const loginPromptBtn = document.getElementById('loginPromptBtn');
+                if (loginPromptBtn && loginPromptBtn.style.display !== 'none') { 
+                     setupLoggedOutState(); 
+                } else {
+                    trackerResultsEl.innerHTML = `<h4>Resultados do Rastreamento:</h4>
+                                                 <p class="info">Insira um ID e clique em "Rastrear" para ver os dados.</p>`;
+                }
+            });
+            
+            logoutBtn.addEventListener('click', async () => {
+                try {
+                    const logoutResponse = await fetchDataForAction('/auth/logout', { method: 'GET' }); 
+                    if (logoutResponse && typeof logoutResponse === 'object' && logoutResponse.redirectTo) {
+                        window.location.href = logoutResponse.redirectTo; 
+                    } else {
+                        window.location.href = FRONTEND_LOGIN_URL; 
+                    }
+                } catch (error) {
+                    trackerResultsEl.innerHTML = `<p class="error">Erro ao fazer logout: ${error.message}. Redirecionando...</p>`;
+                    setTimeout(() => { window.location.href = FRONTEND_LOGIN_URL; }, 2000);
+                }
+            });
+
+            checkAuth(); 
+        });
     </script>
 </body>
 </html>
