@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Celestial Tracker - Discord Tracker</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <div class="galaxy">
@@ -32,7 +33,7 @@
             <img src="https://cdn.discordapp.com/attachments/1375545742675935314/1377352293313282068/CelestialDevRoleBadge.png?ex=6839f848&is=6838a6c8&hm=e0462cb5e20b1ce7313ed86a3e7df7aa10a86f5bff11c106ba566d2dcaadd105&" alt="Celestial Bot">
             <h1>Celestial Tracker</h1>
         </div>
-        <button class="discord-login">
+        <button class="discord-login" id="discordLoginBtn">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z"/>
             </svg>
@@ -40,172 +41,136 @@
         </button>
     </header>
 
-    <div class="dev-section">
-        <div class="dev-card">
-            <div class="dev-banner"></div>
-            <div class="dev-content">
-                <div class="dev-avatar-container">
-                    <img src="https://cdn.discordapp.com/attachments/1375545742675935314/1377797069888159764/1074ce8a92ce3502866000130942abff.png?ex=683a4503&is=6838f383&hm=b8a6123d154182e4f1a22c5b586bf65d84e564966c834a0c217343e7dda143a7&" alt="chicomoedass" class="dev-avatar">
-                    <div class="status-indicator"></div>
-                </div>
-                <div class="dev-username">chicomoedass</div>
-                <div class="dev-discriminator">new.user</div>
-                <div class="dev-badges">
-                    <div class="dev-badge">
-                        <div class="badge-icon"></div>
-                        Bot Developer
+    <div id="landingPageContent">
+        <div class="dev-section">
+            <div class="dev-card">
+                <div class="dev-banner"></div>
+                <div class="dev-content">
+                    <div class="dev-avatar-container">
+                        <img src="https://cdn.discordapp.com/attachments/1375545742675935314/1377797069888159764/1074ce8a92ce3502866000130942abff.png?ex=683a4503&is=6838f383&hm=b8a6123d154182e4f1a22c5b586bf65d84e564966c834a0c217343e7dda143a7&" alt="chicomoedass" class="dev-avatar">
+                        <div class="status-indicator"></div>
+                    </div>
+                    <div class="dev-username">chicomoedass</div>
+                    <div class="dev-discriminator">new.user</div>
+                    <div class="dev-badges">
+                        <div class="dev-badge">
+                            <div class="badge-icon"></div>
+                            Bot Developer
+                        </div>
+                    </div>
+                    <div class="dev-roles">
+                        <div class="roles-title">Roles</div>
+                        <div class="role-tag">🌌 Celestial Dev</div>
+                        <div class="role-tag">⚡ Creator</div>
+                        <div class="role-tag">🎯 Tracker Master</div>
+                    </div>
+                    <div class="dev-about">
+                        <div class="about-title">Sobre mim</div>
+                        <div class="about-text">Desenvolvedor do Celestial Tracker - O sistema de rastreamento Discord mais avançado da galáxia 🌌✨ Especializando em tracking de usuários e análise de dados.</div>
                     </div>
                 </div>
-                <div class="dev-roles">
-                    <div class="roles-title">Roles</div>
-                    <div class="role-tag">🌌 Celestial Dev</div>
-                    <div class="role-tag">⚡ Creator</div>
-                    <div class="role-tag">🎯 Tracker Master</div>
-                </div>
-                <div class="dev-about">
-                    <div class="about-title">Sobre mim</div>
-                    <div class="about-text">Desenvolvedor do Celestial Tracker - O sistema de rastreamento Discord mais avançado da galáxia 🌌✨ Especializando em tracking de usuários e análise de dados.</div>
-                </div>
             </div>
         </div>
+
+        <main class="main-content">
+            <div class="hero-section">
+                <span class="status-badge">🚧 EM MANUTENÇÃO - LANÇAMENTO EM BREVE</span>
+                <h1 class="hero-title">Celestial Tracker</h1>
+                <p class="hero-subtitle">
+                    🌟 O mais avançado sistema de rastreamento Discord do universo 🌟<br>
+                    Monitore usuários, avatares, calls e atividades com precisão celestial através de nossa tecnologia galáctica.
+                </p>
+                <div class="tracker-stats">
+                    <div class="stat-item"><div class="stat-number">∞</div><div class="stat-label">Usuários Rastreados</div></div>
+                    <div class="stat-item"><div class="stat-number">24/7</div><div class="stat-label">Monitoramento</div></div>
+                    <div class="stat-item"><div class="stat-number">100%</div><div class="stat-label">Precisão</div></div>
+                    <div class="stat-item"><div class="stat-number">⚡</div><div class="stat-label">Velocidade</div></div>
+                </div>
+                <div class="features">
+                    <div class="feature-card"><span class="feature-icon">👤</span><h3 class="feature-title">Histórico de Usuários</h3><p class="feature-description">Archive completo de perfis Discord com histórico detalhado...</p></div>
+                    <div class="feature-card"><span class="feature-icon">🖼️</span><h3 class="feature-title">Galeria de Avatares</h3><p class="feature-description">Coleção completa de todos os avatares já utilizados...</p></div>
+                    <div class="feature-card"><span class="feature-icon">📞</span><h3 class="feature-title">Log de Chamadas</h3><p class="feature-description">Registro detalhado de calls com participantes...</p></div>
+                    <div class="feature-card"><span class="feature-icon">🎯</span><h3 class="feature-title">Tracker Inteligente</h3><p class="feature-description">IA avançada para rastreamento em tempo real...</p></div>
+                    <div class="feature-card"><span class="feature-icon">📊</span><h3 class="feature-title">Analytics Galáctico</h3><p class="feature-description">Dashboards interativos com estatísticas avançadas...</p></div>
+                    <div class="feature-card"><span class="feature-icon">🔒</span><h3 class="feature-title">Segurança Quântica</h3><p class="feature-description">Criptografia militar de ponta com proteção de dados...</p></div>
+                    <div class="feature-card"><span class="feature-icon">🌐</span><h3 class="feature-title">Multi-Servidor</h3><p class="feature-description">Rastreamento simultâneo em múltiplos servidores...</p></div>
+                    <div class="feature-card"><span class="feature-icon">⚡</span><h3 class="feature-title">API Celestial</h3><p class="feature-description">Interface de programação robusta para desenvolvedores...</p></div>
+                </div>
+                <div class="pricing-section">
+                    <h2 class="pricing-title">💫 Acesso Beta Gratuito</h2>
+                    <p class="pricing-text">🎉 Todos os nossos sistemas galácticos estão disponíveis gratuitamente...</p>
+                    <p class="pricing-text">Seja um dos primeiros exploradores a testar nossa tecnologia...</p>
+                    <p class="pricing-warning">⚠️ Sistema premium será lançado após beta - Aproveite o acesso gratuito!</p>
+                </div>
+            </div>
+        </main>
     </div>
 
-    <main class="main-content">
-        <div class="hero-section">
-            <span class="status-badge">🚧 EM MANUTENÇÃO - LANÇAMENTO EM BREVE</span>
-
-            <h1 class="hero-title">Celestial Tracker</h1>
-
-            <p class="hero-subtitle">
-                🌟 O mais avançado sistema de rastreamento Discord do universo 🌟<br>
-                Monitore usuários, avatares, calls e atividades com precisão celestial através de nossa tecnologia galáctica.
-            </p>
-
-            <div class="tracker-stats">
-                <div class="stat-item">
-                    <div class="stat-number">∞</div>
-                    <div class="stat-label">Usuários Rastreados</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">24/7</div>
-                    <div class="stat-label">Monitoramento</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">100%</div>
-                    <div class="stat-label">Precisão</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">⚡</div>
-                    <div class="stat-label">Velocidade</div>
-                </div>
+    <div id="dashboardArea" style="display: none; position: relative; z-index: 10;">
+        <div class="dashboard-header-info">
+            <div class="dashboard-user">
+                <i class="fas fa-user-circle dashboard-avatar-icon"></i> <span class="dashboard-username">Usuário Teste</span>
             </div>
-
-            <div class="features">
-                <div class="feature-card">
-                    <span class="feature-icon">👤</span>
-                    <h3 class="feature-title">Histórico de Usuários</h3>
-                    <p class="feature-description">
-                        Archive completo de perfis Discord com histórico detalhado de mudanças de username, discriminator, status e muito mais. Nunca perca rastro de ninguém.
-                    </p>
-                </div>
-
-                <div class="feature-card">
-                    <span class="feature-icon">🖼️</span>
-                    <h3 class="feature-title">Galeria de Avatares</h3>
-                    <p class="feature-description">
-                        Coleção completa de todos os avatares já utilizados por qualquer usuário. Visualize a evolução visual com timestamps precisos e qualidade HD.
-                    </p>
-                </div>
-
-                <div class="feature-card">
-                    <span class="feature-icon">📞</span>
-                    <h3 class="feature-title">Log de Chamadas</h3>
-                    <p class="feature-description">
-                        Registro detalhado de calls com participantes, duração, horários e canais. Monitore atividades de voz com precisão milimétrica.
-                    </p>
-                </div>
-
-                <div class="feature-card">
-                    <span class="feature-icon">🎯</span>
-                    <h3 class="feature-title">Tracker Inteligente</h3>
-                    <p class="feature-description">
-                        IA avançada para rastreamento em tempo real com alertas personalizáveis, detecção de padrões e análise comportamental profunda.
-                    </p>
-                </div>
-
-                <div class="feature-card">
-                    <span class="feature-icon">📊</span>
-                    <h3 class="feature-title">Analytics Galáctico</h3>
-                    <p class="feature-description">
-                        Dashboards interativos com estatísticas avançadas, gráficos em tempo real e relatórios detalhados sobre atividades e comportamentos.
-                    </p>
-                </div>
-
-                <div class="feature-card">
-                    <span class="feature-icon">🔒</span>
-                    <h3 class="feature-title">Segurança Quântica</h3>
-                    <p class="feature-description">
-                        Criptografia militar de ponta com proteção de dados multinível. Seus dados protegidos com tecnologia de segurança espacial.
-                    </p>
-                </div>
-
-                <div class="feature-card">
-                    <span class="feature-icon">🌐</span>
-                    <h3 class="feature-title">Multi-Servidor</h3>
-                    <p class="feature-description">
-                        Rastreamento simultâneo em múltiplos servidores Discord com sincronização em tempo real e backup automático na nuvem.
-                    </p>
-                </div>
-
-                <div class="feature-card">
-                    <span class="feature-icon">⚡</span>
-                    <h3 class="feature-title">API Celestial</h3>
-                    <p class="feature-description">
-                        Interface de programação robusta para desenvolvedores com documentação completa e endpoints otimizados para máxima performance.
-                    </p>
-                </div>
-            </div>
-
-            <div class="pricing-section">
-                <h2 class="pricing-title">💫 Acesso Beta Gratuito</h2>
-                <p class="pricing-text">
-                    🎉 Todos os nossos sistemas galácticos estão disponíveis gratuitamente durante a fase beta exclusiva!
-                </p>
-                <p class="pricing-text">
-                    Seja um dos primeiros exploradores a testar nossa tecnologia de rastreamento celestial.
-                </p>
-                <p class="pricing-warning">
-                    ⚠️ Sistema premium será lançado após beta - Aproveite o acesso gratuito!
-                </p>
-            </div>
+            <span class="dashboard-maintenance-notice">🚧 Plataforma em Manutenção</span>
         </div>
-    </main>
+
+        <div class="dashboard-actions">
+            <button class="dashboard-btn"><i class="fas fa-satellite-dish"></i> Tracker</button>
+            <button class="dashboard-btn"><i class="fas fa-search-location"></i> Rastrear</button>
+            <button class="dashboard-btn dashboard-btn-clear"><i class="fas fa-broom"></i> Limpar</button>
+        </div>
+
+        <main class="dashboard-main-content">
+            <h2>Central de Rastreamento Celestial</h2>
+            <p>Bem-vindo à sua central de comando. Monitore e analise dados de toda a galáxia Discord.</p>
+            <div class="dashboard-widgets">
+                <div class="widget">
+                    <i class="fas fa-users widget-icon"></i>
+                    <h3>Usuários Ativos</h3>
+                    <p>1,234</p>
+                </div>
+                <div class="widget">
+                    <i class="fas fa-eye widget-icon"></i>
+                    <h3>Alvos Monitorados</h3>
+                    <p>56</p>
+                </div>
+                <div class="widget">
+                    <i class="fas fa-history widget-icon"></i>
+                    <h3>Eventos Recentes</h3>
+                    <p>789</p>
+                </div>
+                <div class="widget data-stream-widget">
+                    <i class="fas fa-wave-square widget-icon"></i>
+                    <h3>Fluxo de Dados Galáctico</h3>
+                    <div class="data-stream-animation">
+                        <span></span><span></span><span></span><span></span><span></span>
+                        <span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                    <p>Conectado ao Supercluster Laniakea...</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
 
     <script>
         const isMobile = window.innerWidth <= 768;
 
-        // Criar estrelas animadas diversificadas
+        // Função para criar estrelas (mantida)
         function createStars() {
             const starsContainer = document.getElementById('stars');
             if (!starsContainer) return;
-            const numStars = isMobile ? 30 : 150; // Menos estrelas em mobile
-
+            const numStars = isMobile ? 30 : 150;
             for (let i = 0; i < numStars; i++) {
                 const star = document.createElement('div');
                 star.className = 'star';
-
                 const types = isMobile ? ['small', 'medium'] : ['small', 'medium', 'large'];
                 star.classList.add(types[Math.floor(Math.random() * types.length)]);
-
                 const colors = ['', 'blue', 'purple', 'gold'];
                 const color = colors[Math.floor(Math.random() * colors.length)];
                 if (color) star.classList.add(color);
-
                 star.style.left = Math.random() * 100 + '%';
                 star.style.top = Math.random() * 100 + '%';
-
-                // A animação CSS será desabilitada em mobile via style.css
-                // Estas linhas são para a versão desktop
                 if (!isMobile) {
                     star.style.animationDuration = (Math.random() * 4 + 2) + 's';
                     star.style.animationDelay = Math.random() * 3 + 's';
@@ -214,18 +179,15 @@
             }
         }
 
-        // Criar meteoros ocasionais
+        // Função para criar meteoros (mantida)
         function createMeteor() {
-            if (isMobile) return; // Não cria meteoros em mobile (também desabilitado no CSS)
-
+            if (isMobile) return;
             const meteor = document.createElement('div');
             meteor.className = 'meteor';
             meteor.style.left = Math.random() * 100 + '%';
             meteor.style.top = Math.random() * 50 + '%';
             meteor.style.animationDelay = Math.random() * 2 + 's';
-
             document.body.appendChild(meteor);
-
             setTimeout(() => {
                 if (meteor.parentNode) {
                     meteor.parentNode.removeChild(meteor);
@@ -233,15 +195,40 @@
             }, 8000);
         }
 
-        // Criar meteoros periodicamente
         function meteorShower() {
-            if (isMobile) return; // Não inicia a chuva de meteoros em mobile
-
+            if (isMobile) return;
             createMeteor();
-            setTimeout(meteorShower, Math.random() * 15000 + 10000); // Entre 10-25 segundos
+            setTimeout(meteorShower, Math.random() * 15000 + 10000);
         }
 
-        // Inicializar efeitos
+        // Lógica para o botão de login e exibição da dashboard
+        const loginButton = document.getElementById('discordLoginBtn');
+        const landingPageContent = document.getElementById('landingPageContent');
+        const dashboardArea = document.getElementById('dashboardArea');
+        const orbitalSystem = document.querySelector('.orbital-system'); // Seleciona o sistema orbital
+
+        if (loginButton && landingPageContent && dashboardArea) {
+            loginButton.addEventListener('click', function() {
+                // Oculta conteúdo da landing page
+                landingPageContent.style.display = 'none';
+                if (orbitalSystem) {
+                    orbitalSystem.style.display = 'none'; // Opcional: oculta sistema orbital também
+                }
+
+
+                // Exibe a dashboard
+                dashboardArea.style.display = 'block'; // Ou 'flex'/'grid' dependendo do layout interno da dashboard
+
+                // Alerta de desenvolvimento (opcional, pode remover)
+                // alert('🚀 Dashboard em desenvolvimento! Funcionalidades em breve.');
+
+                // Opcional: Alterar o texto do botão ou ocultá-lo
+                // loginButton.textContent = 'Acessar Dashboard';
+                // loginButton.style.display = 'none'; // Se não quiser mais o botão visível
+            });
+        }
+
+
         window.addEventListener('load', function() {
             createStars();
             if (!isMobile) {
@@ -249,60 +236,31 @@
             }
         });
 
-
-        // Efeito no botão de login
-        const loginButton = document.querySelector('.discord-login');
-        if (loginButton) {
-            loginButton.addEventListener('click', function() {
-                if (!isMobile) { // Mantém animação de clique para desktop
-                    this.style.transform = 'scale(0.95)';
-                    setTimeout(() => {
-                        this.style.transform = '';
-                    }, 150);
-                }
-                alert('🚀 Celestial Tracker em desenvolvimento!\n🌌 Sistema de login será ativado em breve.\n⭐ Prepare-se para a experiência galáctica!');
-            });
-        }
-
-
-        // Efeito hover nos cards de feature (manter apenas para desktop)
         if (!isMobile) {
             document.querySelectorAll('.feature-card').forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    this.style.background = 'rgba(124, 58, 237, 0.1)';
-                });
-
-                card.addEventListener('mouseleave', function() {
-                    this.style.background = 'rgba(15, 8, 32, 0.8)';
-                });
+                card.addEventListener('mouseenter', function() { this.style.background = 'rgba(124, 58, 237, 0.1)'; });
+                card.addEventListener('mouseleave', function() { this.style.background = 'rgba(15, 8, 32, 0.8)'; });
             });
         }
 
-
-        // Animação de contadores nas stats
         function animateCounters() {
-            if (isMobile) { // Desabilitar lógica JS de animação de contadores para mobile
+            if (isMobile) {
                 const statNumbers = document.querySelectorAll('.stat-number');
-                statNumbers.forEach(element => {
-                    element.style.animation = ''; // Garante que não haja overrides de JS
-                });
+                statNumbers.forEach(element => { element.style.animation = ''; });
                 return;
             }
-
             const statNumbers = document.querySelectorAll('.stat-number');
             if (statNumbers.length === 0) return;
-
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         const element = entry.target;
-                        element.style.animation = 'none'; // Reset animation
-                        element.offsetHeight; // Trigger reflow
-                        element.style.animation = ''; // Re-apply CSS animation (e.g., heroGradient or statGradient)
+                        element.style.animation = 'none';
+                        element.offsetHeight;
+                        element.style.animation = '';
                     }
                 });
             }, { threshold: 0.5 });
-
             statNumbers.forEach(stat => observer.observe(stat));
         }
         document.addEventListener('DOMContentLoaded', animateCounters);
