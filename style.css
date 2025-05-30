@@ -891,3 +891,250 @@ body {
     font-size: 0.85rem; /* Ajustado tamanho */
     color: #888;
 }
+
+/* Adicione ao seu dashboard.css ou style.css */
+
+/* Layout Principal da Dashboard */
+.dashboard-layout {
+    display: flex;
+    gap: 25px; /* Espaço entre a barra lateral e o conteúdo principal */
+    margin-top: 25px;
+    padding: 0 20px; /* Adiciona um pouco de padding lateral geral */
+}
+
+/* Barra Lateral de Navegação */
+.dashboard-sidebar {
+    flex: 0 0 280px; /* Largura da barra lateral, não cresce/encolhe */
+    background: rgba(24, 25, 28, 0.85); /* Estilo similar ao .dev-card */
+    backdrop-filter: blur(15px);
+    padding: 25px;
+    border-radius: 15px;
+    border: 1px solid rgba(124, 58, 237, 0.3);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    height: fit-content; /* Altura se ajusta ao conteúdo */
+    align-self: flex-start; /* Alinha a sidebar ao topo do flex container */
+}
+
+.dashboard-sidebar h3 {
+    font-size: 1.6rem;
+    color: #fff;
+    margin-bottom: 25px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid rgba(124, 58, 237, 0.5);
+    text-align: center;
+    background: linear-gradient(45deg, #7c3aed, #06b6d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+}
+
+/* Reutilizando e adaptando .dashboard-btn do seu CSS existente para os botões de filtro */
+.dashboard-sidebar .dashboard-btn {
+    display: block;
+    width: 100%;
+    margin-bottom: 12px;
+    text-align: left;
+    padding: 12px 20px; /* Ajuste no padding para mais espaço interno */
+    font-size: 1rem; /* Garantindo o tamanho da fonte */
+}
+
+.dashboard-sidebar .dashboard-btn i { /* Para ícones, se você adicionar */
+    margin-right: 10px;
+    width: 18px; /* Largura fixa para alinhar o texto */
+    text-align: center;
+}
+
+
+.dashboard-sidebar .dashboard-btn.active {
+    background: linear-gradient(45deg, #10b981, #06b6d4); /* Destaque verde/ciano */
+    color: #0f0820 !important; /* Texto escuro para contraste */
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.6), inset 0 0 10px rgba(255,255,255,0.2);
+    transform: translateY(-2px) scale(1.01); /* Pequeno efeito de elevação */
+}
+.dashboard-sidebar .dashboard-btn.active:hover {
+    background: linear-gradient(45deg, #10b981, #06b6d4); /* Mantém a cor no hover do ativo */
+}
+
+/* Área de Visualização Principal do Conteúdo */
+.dashboard-main-view {
+    flex-grow: 1; /* Ocupa o espaço restante */
+    min-width: 0; /* Necessário para flex items que podem encolher */
+}
+
+/* Seção de Pesquisa (Dentro do .dashboard-main-view) */
+.user-search-section-dashboard { /* Nome diferenciado para evitar conflito com CSS global se houver */
+    background: rgba(24, 25, 28, 0.75);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+    border: 1px solid rgba(124, 58, 237, 0.2);
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.user-search-section-dashboard input[type="text"] {
+    flex-grow: 1;
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 1px solid rgba(124, 58, 237, 0.4);
+    background-color: rgba(15, 8, 32, 0.9);
+    color: #fff;
+    font-size: 1rem;
+}
+.user-search-section-dashboard input[type="text"]::placeholder {
+    color: #888;
+}
+.user-search-section-dashboard .dashboard-btn { /* Reutiliza seu estilo .dashboard-btn */
+    padding: 12px 20px; /* Consistência com outros botões */
+}
+
+
+/* Área de Conteúdo do Usuário (Dentro do .dashboard-main-view) */
+#userContentArea {
+    background: rgba(15, 8, 32, 0.8); /* Um pouco mais escuro que a sidebar */
+    backdrop-filter: blur(10px);
+    padding: 30px;
+    border-radius: 15px;
+    min-height: 400px; /* Altura mínima para a área de conteúdo */
+    border: 1px solid rgba(124, 58, 237, 0.25);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+}
+
+#userContentArea .profile-section {
+    background: rgba(24, 25, 28, 0.6); /* Fundo para cada seção dentro da área de conteúdo */
+    padding: 25px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    border: 1px solid rgba(124, 58, 237, 0.2);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+#userContentArea .profile-section h3 { /* Estilo para títulos de seção */
+    font-size: 1.6rem;
+    color: #06b6d4; /* Ciano do seu tema */
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(124, 58, 237, 0.4);
+}
+
+#userContentArea .profile-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+#userContentArea .profile-list li {
+    background: rgba(124, 58, 237, 0.1); /* Fundo levemente roxo */
+    padding: 12px 15px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    color: #ddd;
+    border-left: 3px solid #7c3aed; /* Destaque roxo na lateral */
+    transition: background-color 0.3s ease;
+}
+#userContentArea .profile-list li:hover {
+    background-color: rgba(124, 58, 237, 0.2);
+}
+
+
+/* Galerias de Avatar e Banner (Dentro do .profile-section) */
+#userContentArea .avatar-gallery,
+#userContentArea .banner-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px; /* Espaçamento entre imagens */
+}
+
+#userContentArea .history-avatar { /* Seu CSS já tem .dev-avatar, mas este é para a galeria */
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 12px; /* Bordas mais arredondadas */
+    border: 3px solid rgba(124, 58, 237, 0.5);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+#userContentArea .history-avatar:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(124, 58, 237, 0.7);
+}
+
+#userContentArea .history-banner {
+    width: 220px; /* Banners são geralmente mais largos */
+    height: auto; /* Mantém a proporção */
+    object-fit: contain; /* Mostra o banner inteiro */
+    border-radius: 8px;
+    border: 2px solid rgba(124, 58, 237, 0.4);
+    background-color: rgba(0,0,0,0.2); /* Fundo caso a imagem não carregue ou tenha transparência */
+}
+
+/* Log de Histórico Completo (Dentro do .profile-section) */
+#userContentArea .profile-history-log pre {
+    background-color: rgba(0,0,0,0.3);
+    padding: 15px;
+    border-radius: 8px;
+    color: #e0e0e0;
+    font-family: 'Courier New', Courier, monospace; /* Fonte monoespaçada para <pre> */
+    font-size: 0.9rem;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    border: 1px solid rgba(124, 58, 237, 0.2);
+}
+#userContentArea .profile-history-log li {
+    border-bottom: 1px dashed rgba(124,58,237,0.2);
+    padding-bottom: 10px;
+}
+#userContentArea .profile-history-log li:last-child {
+    border-bottom: none;
+}
+
+
+/* Placeholder e mensagens de erro */
+.placeholder-text, .error-message {
+    padding: 40px;
+    text-align: center;
+    font-size: 1.2rem;
+    color: #aaa;
+    background: rgba(24, 25, 28, 0.7);
+    border-radius: 10px;
+    border: 1px dashed rgba(124, 58, 237, 0.4);
+}
+.error-message {
+    color: #ff6b6b; /* Cor de erro */
+    border-color: rgba(239, 68, 68, 0.5);
+}
+
+/* Estilos para lista de usuários e paginação (se mantiver na dashboard) */
+.user-list-section-dashboard { /* Nome diferenciado */
+    margin-top: 30px;
+    background: rgba(24, 25, 28, 0.75);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid rgba(124, 58, 237, 0.2);
+}
+.user-list-section-dashboard h2 {
+    /* Use seu estilo de .dashboard-main-content h2 ou defina um novo */
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    background: linear-gradient(45deg, #7c3aed, #06b6d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+/* Estilos para .user-list, .user-list-item, .user-avatar-small, pagination-controls podem ser reutilizados ou adaptados do seu JS anterior */
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+.pagination-controls button { /* Reutiliza .dashboard-btn */
+    min-width: 100px;
+}
+.pagination-controls span {
+    color: #ccc;
+    font-weight: bold;
+}
