@@ -34,32 +34,111 @@ document.addEventListener('DOMContentLoaded', () => {
             .replace(/'/g, '&#039;');
     }
 
-    function formatDate(dateSource) {
-        if (!dateSource) return 'N/A';
-        let date;
-        // Verifica se é um objeto EJSON de data (comum vindo do MongoDB via API)
-        if (typeof dateSource === 'object' && dateSource !== null && '$date' in dateSource) {
-            const dateValue = dateSource.$date.$numberLong ? parseInt(dateSource.$date.$numberLong) : dateSource.$date;
-            date = new Date(dateValue);
-        } else if (typeof dateSource === 'string' || typeof dateSource === 'number') {
-            // Tenta converter diretamente se for string ou número (timestamp)
-            const timestamp = parseInt(dateSource, 10);
-            if (!isNaN(timestamp) && new Date(timestamp).getTime() > 0) { // Verifica se é um timestamp válido
-                 date = new Date(timestamp);
-            } else if (!isNaN(new Date(dateSource).getTime())) { // Tenta como string de data
-                 date = new Date(dateSource);
+Sim, você tem razão em apontar se as datas estão aparecendo incorretamente. O problema provavelmente está na forma como a função formatDate no seu dashboard.js está interpretando as strings de data que vêm da API.
+
+Se a sua API está retornando datas como strings no formato ISO 8601 (ex: "2025-06-01T21:21:08.147Z"), como no exemplo que você mostrou, a versão anterior da função formatDate poderia interpretá-las incorretamente ao tentar usar parseInt diretamente na string ISO.
+
+Vamos corrigir a função formatDate e também a formatDateForSort (usada para ordenar os usuários por data) no seu dashboard.js para lidar de forma mais robusta com os formatos de data que sua API pode estar enviando (sejam strings ISO ou timestamps numéricos).
+
+Substitua as funções formatDate e formatDateForSort no seu arquivo dashboard.js pelas seguintes:
+
+JavaScript
+
+// Coloque estas funções dentro do seu `dashboard.js`
+// (substituindo as versões antigas delas)
+
+function formatDate(dateSource) {
+    if (!dateSource) return 'N/A';
+    let date;
+
+    // 1. Se for um objeto EJSON (formato interno do MongoDB antes da conversão da API)
+    if (typeof dateSource === 'object' && dateSource !== null && '$date' in dateSource) {
+        const dateValue = dateSource.$date.$numberLong ? parseInt(dateSource.$date.$numberLong, 10) : dateSource.$date;
+        date = new Date(dateValue);
+    }
+    // 2. Se for um número (timestamp em milissegundos, como a API deveria retornar)
+    else if (typeof dateSource === 'number') {
+        date = new Date(dateSource);
+    }
+    // 3. Se for uma string (pode ser ISO 8601 ou um timestamp como string)
+    else if (typeof dateSource === 'string') {
+        // Tenta identificar se é uma string ISO ou similar, ou um timestamp numérico como string
+        if (dateSource.includes('-') || dateSource.includes(':') || dateSource.includes('T') || dateSource.includes('Z')) {
+            date = new Date(dateSource); // Tenta parsear como string de data complexa (ISO)
+        } else {
+            // Se for uma string puramente numérica, trata como timestamp
+            const parsedTimestamp = parseInt(dateSource, 10);
+            if (!isNaN(parsedTimestamp) && parsedTimestamp.toString().length === dateSource.length) {
+                date = new Date(parsedTimestamp);
             } else {
-                return 'Data Inválida';
+                // Se não for puramente numérica, mas também não parece ISO, tenta parsear como string de data mesmo assim
+                date = new Date(dateSource);
+            }
+        }
+    }
+    // 4. Se não for nenhum dos formatos esperados
+    else {
+        return 'Formato Desconhecido';
+    }
+
+    // Validação final da data
+    if (!date || isNaN(date.getTime()) || date.getTime() <= 0) {
+        // Se a data ainda for inválida, e a fonte original era uma string,
+        // faz uma última tentativa de parse direto, pois pode ser um formato que new Date() entende mas nossa heurística não.
+        if (typeof dateSource === 'string') {
+            let lastAttemptDate = new Date(dateSource);
+            if (lastAttemptDate && !isNaN(lastAttemptDate.getTime()) && lastAttemptDate.getTime() > 0) {
+                date = lastAttemptDate;
+            } else {
+                 return `Data Inválida [${typeof dateSource}: ${dateSource}]`;
             }
         } else {
-            return 'Formato Desconhecido';
+            return `Data Inválida [${typeof dateSource}]`;
         }
-
-        if (isNaN(date.getTime())) {
-            return 'Data Inválida';
-        }
-        return date.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' });
     }
+
+    return date.toLocaleString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+        // timeZone: 'UTC' // Descomente se quiser forçar a exibição em UTC
+    });
+}
+
+function formatDateForSort(dateSource) {
+    if (!dateSource) return 0; // Retorna 0 para ordenação (data mais antiga)
+
+    // 1. EJSON
+    if (typeof dateSource === 'object' && dateSource !== null && '$date' in dateSource) {
+        // Se $numberLong existir, é um timestamp. Senão, dateSource.$date pode ser uma string ISO.
+        const potentialTimestamp = dateSource.$date.$numberLong ? parseInt(dateSource.$date.$numberLong, 10) : dateSource.$date;
+        if (typeof potentialTimestamp === 'number') return potentialTimestamp;
+        // Se potentialTimestamp for uma string (ISO), converte para timestamp
+        const d = new Date(potentialTimestamp);
+        return !isNaN(d.getTime()) ? d.getTime() : 0;
+    }
+    // 2. Number (já é timestamp)
+    if (typeof dateSource === 'number') {
+        return dateSource;
+    }
+    // 3. String (pode ser ISO ou timestamp como string)
+    if (typeof dateSource === 'string') {
+        // Tenta converter para data e pegar o timestamp
+        const d = new Date(dateSource);
+        if (!isNaN(d.getTime()) && d.getTime() > 0) { // Se for uma string de data válida (ex: ISO)
+            return d.getTime();
+        }
+        // Se for uma string puramente numérica
+        const n = parseInt(dateSource, 10);
+        if (!isNaN(n) && n.toString().length === dateSource.length) {
+            return n;
+        }
+    }
+    return 0; // Fallback para formatos não reconhecidos ou datas inválidas
+}
 
     async function fetchAllTrackedUsers() { // Renomeada e modificada para buscar todos
         showLoading(true);
