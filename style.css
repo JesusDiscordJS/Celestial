@@ -851,3 +851,64 @@ body.dashboard-page-body { /* Se você usa esta classe no body da dashboard */
 }
 
 /* === FIM DO NOVO CSS ESPECÍFICO PARA A DASHBOARD === */
+
+/* === NOVOS ESTILOS PARA A SEÇÃO DE MENSAGENS === */
+.messages-list .message-item {
+    border-left-color: #06b6d4; /* Cor diferente para destacar itens de mensagem */
+    margin-bottom: 15px;
+    padding: 15px;
+}
+
+.messages-list .message-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid rgba(124, 58, 237, 0.2);
+}
+
+.messages-list .message-header strong {
+    font-size: 1.1em;
+}
+
+.messages-list .message-timestamp {
+    font-size: 0.8em;
+    color: #8a909a;
+}
+
+.messages-list .message-content {
+    margin-bottom: 8px;
+}
+
+.messages-list .message-text {
+    margin: 0 0 8px 0;
+    line-height: 1.6;
+    color: #d1d5db;
+    white-space: pre-wrap; /* Para respeitar quebras de linha do conteúdo da mensagem */
+    word-wrap: break-word;
+}
+.messages-list .message-text.placeholder-text{ /* Estilo para placeholder dentro da mensagem */
+    color: #7e828a;
+    font-style: italic;
+}
+
+
+.messages-list .message-image {
+    max-width: 100%;
+    height: auto;
+    max-height: 300px; /* Limita a altura da imagem para não ocupar muito espaço */
+    border-radius: 6px;
+    margin-top: 8px;
+    border: 1px solid rgba(124, 58, 237, 0.2);
+    display: block; /* Para centralizar ou aplicar margens se necessário */
+}
+.messages-list .message-image-link {
+    display: inline-block; /* Para que a imagem não quebre o fluxo de forma estranha */
+}
+
+
+.messages-list .message-footer small {
+    font-size: 0.75em;
+    color: #6b7280;
+}
