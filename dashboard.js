@@ -1,71 +1,102 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // !!!!! ATUALIZE ESTA URL PARA A URL DA SUA API NODE.JS NO RENDER !!!!!
-    const API_BASE_URL = 'https://celestial-api.onrender.com'; // Use a sua URL correta da API
-    // Exemplo: 'https://celestial-tracker-api-node.onrender.com'
+    const API_BASE_URL = 'https://celestial-api.onrender.com';
 
-    // Elementos do DOM
     const userListContainer = document.getElementById('userListContainer');
     const userContentArea = document.getElementById('userContentArea');
     const searchUserIdInput = document.getElementById('searchUserIdInput');
     const searchUserBtn = document.getElementById('searchUserBtn');
     const loadingIndicator = document.getElementById('loadingIndicator');
     const filterButtons = document.querySelectorAll('.dashboard-sidebar .filter-btn');
+    const paginationControlsDiv = document.querySelector('.pagination-controls'); // Para ocultar
 
-    const prevPageBtn = document.getElementById('prevPageBtn');
-    const nextPageBtn = document.getElementById('nextPageBtn');
-    const currentPageSpan = document.getElementById('currentPageSpan');
+    // Elementos de paginação (não serão mais usados para a lista principal)
+    // const prevPageBtn = document.getElementById('prevPageBtn');
+    // const nextPageBtn = document.getElementById('nextPageBtn');
+    // const currentPageSpan = document.getElementById('currentPageSpan');
 
-    let currentPage = 0;
-    const usersPerPage = 10; // Ajuste conforme a paginação da sua API
+    // let currentPage = 0; // Não mais necessário para a lista principal
+    // const usersPerPage = 10; // Não mais necessário para a lista principal
+
     let currentUserData = null;
     let currentFilter = 'summary';
 
-    // --- DEFINIÇÕES DAS FUNÇÕES AUXILIARES ---
     function showLoading(show = true) {
         if (loadingIndicator) loadingIndicator.style.display = show ? 'flex' : 'none';
     }
 
-    function formatDate(dateStringOrObject) {
-        if (!dateStringOrObject) return 'N/A';
+    function escapeHTML(str) {
+        if (str === null || str === undefined) return '';
+        return str.toString()
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    function formatDate(dateSource) {
+        if (!dateSource) return 'N/A';
         let date;
-        if (typeof dateStringOrObject === 'object' && dateStringOrObject !== null && '$date' in dateStringOrObject) {
-            date = new Date(dateStringOrObject.$date);
-        } else {
-            date = new Date(dateStringOrObject);
-        }
-        if (isNaN(date.getTime())) {
-            const timestamp = parseInt(dateStringOrObject, 10);
-            if (!isNaN(timestamp)) {
-                date = new Date(timestamp);
-                if (isNaN(date.getTime())) return 'Data Inválida';
+        // Verifica se é um objeto EJSON de data (comum vindo do MongoDB via API)
+        if (typeof dateSource === 'object' && dateSource !== null && '$date' in dateSource) {
+            const dateValue = dateSource.$date.$numberLong ? parseInt(dateSource.$date.$numberLong) : dateSource.$date;
+            date = new Date(dateValue);
+        } else if (typeof dateSource === 'string' || typeof dateSource === 'number') {
+            // Tenta converter diretamente se for string ou número (timestamp)
+            const timestamp = parseInt(dateSource, 10);
+            if (!isNaN(timestamp) && new Date(timestamp).getTime() > 0) { // Verifica se é um timestamp válido
+                 date = new Date(timestamp);
+            } else if (!isNaN(new Date(dateSource).getTime())) { // Tenta como string de data
+                 date = new Date(dateSource);
             } else {
                 return 'Data Inválida';
             }
+        } else {
+            return 'Formato Desconhecido';
         }
-        return date.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+        if (isNaN(date.getTime())) {
+            return 'Data Inválida';
+        }
+        return date.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' });
     }
 
-    // --- DEFINIÇÕES DAS FUNÇÕES PRINCIPAIS DE FETCH E RENDERIZAÇÃO ---
-    async function fetchAllUsers(page = 0) {
+    async function fetchAllTrackedUsers() { // Renomeada e modificada para buscar todos
         showLoading(true);
-        const skip = page * usersPerPage;
+        if (paginationControlsDiv) paginationControlsDiv.style.display = 'none'; // Oculta controles de paginação
+
         try {
-            const response = await fetch(`${API_BASE_URL}/users?skip=${skip}&limit=${usersPerPage}`);
+            // Remove skip e limit para buscar todos os usuários
+            const response = await fetch(`${API_BASE_URL}/users`);
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({ error: response.statusText }));
                 throw new Error(`HTTP ${response.status}: ${errorData.error || response.statusText}`);
             }
             const users = await response.json();
+            // Ordenar usuários pela 'last_seen_overall_at' mais recente primeiro
+            users.sort((a, b) => {
+                const dateA = a.last_seen_overall_at ? new Date(formatDateForSort(a.last_seen_overall_at)).getTime() : 0;
+                const dateB = b.last_seen_overall_at ? new Date(formatDateForSort(b.last_seen_overall_at)).getTime() : 0;
+                return dateB - dateA;
+            });
             displayUserList(users);
-            currentPage = page;
-            if (currentPageSpan) currentPageSpan.textContent = `Página: ${currentPage + 1}`;
         } catch (error) {
-            console.error('Erro ao buscar usuários:', error);
+            console.error('Erro ao buscar todos os usuários:', error);
             if (userListContainer) userListContainer.innerHTML = `<p class="error-message">Falha ao carregar usuários: ${error.message}</p>`;
         } finally {
             showLoading(false);
         }
     }
+    
+    // Função auxiliar para converter datas antes de ordenar, pois formatDate pode retornar 'N/A'
+    function formatDateForSort(dateSource) {
+        if (!dateSource) return 0; // ou uma data muito antiga para ir para o fim
+        if (typeof dateSource === 'object' && dateSource !== null && '$date' in dateSource) {
+            return dateSource.$date.$numberLong ? parseInt(dateSource.$date.$numberLong) : dateSource.$date;
+        }
+        return dateSource; // Assume que já é um timestamp ou string de data ISO
+    }
+
 
     function displayUserList(users) {
         if (!userListContainer) {
@@ -75,9 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
         userListContainer.innerHTML = '';
 
         if (!users || users.length === 0) {
-            userListContainer.innerHTML = '<p class="placeholder-text" style="font-size:1em; padding:15px;">Nenhum usuário encontrado nesta página.</p>';
-            if (nextPageBtn) nextPageBtn.disabled = (currentPage === 0 || users.length === 0);
-            if (prevPageBtn) prevPageBtn.disabled = (currentPage === 0);
+            userListContainer.innerHTML = '<p class="placeholder-text" style="font-size:1em; padding:15px;">Nenhum usuário rastreado encontrado.</p>';
             return;
         }
 
@@ -91,61 +120,49 @@ document.addEventListener('DOMContentLoaded', () => {
             let dataUserIdValue = '';
 
             if (user.user_id) {
-                if (typeof user.user_id === 'string' || typeof user.user_id === 'number') {
-                    userIdDisplayValue = user.user_id.toString();
-                    dataUserIdValue = user.user_id.toString();
-                } else if (typeof user.user_id === 'object' && user.user_id !== null) {
-                    if (user.user_id.$numberLong) {
-                        userIdDisplayValue = user.user_id.$numberLong.toString();
-                        dataUserIdValue = user.user_id.$numberLong.toString();
-                    } else if (typeof user.user_id.toString === 'function' && user.user_id.toString() !== '[object Object]') {
-                        userIdDisplayValue = user.user_id.toString();
-                        dataUserIdValue = user.user_id.toString();
-                    } else {
-                        console.warn("Formato de user_id como objeto não reconhecido:", user.user_id);
-                        userIdDisplayValue = '[ID Obj Complexo]';
-                    }
-                } else {
-                     console.warn("user_id não é string, número nem objeto esperado:", user.user_id);
-                     userIdDisplayValue = '[ID Inválido]';
-                }
+                 userIdDisplayValue = user.user_id.toString(); // API já deve retornar como string
+                 dataUserIdValue = user.user_id.toString();
             }
             
-            const latestAvatar = (user.avatar_urls && user.avatar_urls.length > 0) ? user.avatar_urls[user.avatar_urls.length - 1] : 'https://via.placeholder.com/55?text=?';
+            const latestAvatar = (user.current_avatar_url || (user.avatar_url_history && user.avatar_url_history.length > 0 ? user.avatar_url_history[user.avatar_url_history.length - 1] : null)) || 'https://via.placeholder.com/55?text=?';
+            const currentUsername = user.current_username_global || user.username_global_history?.slice(-1)[0] || 'Nome Desconhecido';
+
 
             let lastServerDisplay = '<span class="info-value placeholder">Nenhum</span>';
             if (user.servers && user.servers.length > 0) {
-                const lastServer = user.servers[user.servers.length - 1];
+                const lastServer = user.servers.slice().sort((a,b) => new Date(formatDateForSort(b.last_message_at || b.first_message_at)).getTime() - new Date(formatDateForSort(a.last_message_at || a.first_message_at)).getTime())[0];
                 const serverName = lastServer.guild_name;
                 if (serverName && typeof serverName === 'string') {
-                    lastServerDisplay = `<span class="info-value">${serverName}</span>`;
+                    lastServerDisplay = `<span class="info-value">${escapeHTML(serverName)}</span>`;
                 } else {
                     lastServerDisplay = '<span class="info-value placeholder">Nome Indisponível</span>';
-                     if (serverName !== undefined && serverName !== null) console.warn("guild_name não é uma string válida ou está ausente:", serverName);
                 }
             }
 
             let lastActivityDateDisplay = '<span class="info-value placeholder">Nenhuma</span>';
-            if (user.history && user.history.length > 0) {
-                const lastHistoryEntry = user.history[user.history.length - 1];
-                lastActivityDateDisplay = `<span class="info-value">${formatDate(lastHistoryEntry.changed_at)}</span>`;
+            if (user.last_seen_overall_at) {
+                 lastActivityDateDisplay = `<span class="info-value">${formatDate(user.last_seen_overall_at)}</span>`;
+            } else if (user.recent_messages && user.recent_messages.length > 0) {
+                // Fallback para a última mensagem se last_seen_overall_at não estiver disponível
+                lastActivityDateDisplay = `<span class="info-value">${formatDate(user.recent_messages.slice().sort((a,b) => new Date(formatDateForSort(b.timestamp)).getTime() - new Date(formatDateForSort(a.timestamp)).getTime())[0].timestamp)}</span>`;
             }
 
+
             li.innerHTML = `
-                <img src="${latestAvatar}" alt="Avatar de ${user.username_global || 'Usuário'}" class="user-avatar-small">
+                <img src="${latestAvatar}" alt="Avatar de ${escapeHTML(currentUsername)}" class="user-avatar-small">
                 <div class="user-info-column">
-                    <span class="username">${user.username_global || 'Nome Desconhecido'}</span>
-                    <span class="user-id">ID: ${userIdDisplayValue}</span>
+                    <span class="username">${escapeHTML(currentUsername)}</span>
+                    <span class="user-id">ID: ${escapeHTML(userIdDisplayValue)}</span>
                 </div>
                 <div class="server-info-column">
-                    <span class="info-label"><i class="fas fa-server" style="margin-right: 5px;"></i>Último Servidor</span>
+                    <span class="info-label"><i class="fas fa-server" style="margin-right: 5px;"></i>Último Servidor Ativo</span>
                     ${lastServerDisplay}
                 </div>
                 <div class="last-update-column">
-                    <span class="info-label"><i class="fas fa-history" style="margin-right: 5px;"></i>Última Atividade</span>
+                    <span class="info-label"><i class="fas fa-history" style="margin-right: 5px;"></i>Última Atividade Geral</span>
                     ${lastActivityDateDisplay}
                 </div>
-                <button class="dashboard-btn view-profile-btn" data-userid="${dataUserIdValue}">
+                <button class="dashboard-btn view-profile-btn" data-userid="${escapeHTML(dataUserIdValue)}">
                     <i class="fas fa-eye" style="margin-right: 5px;"></i>Ver Perfil
                 </button>
             `;
@@ -158,7 +175,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         fetchAndDisplayUser(userIdToFetch, 'summary');
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                     } else {
-                        console.error("ID de usuário inválido ou placeholder de erro para buscar:", userIdToFetch);
                         alert("Não é possível carregar o perfil: ID de usuário inválido.");
                     }
                 });
@@ -166,9 +182,6 @@ document.addEventListener('DOMContentLoaded', () => {
             ul.appendChild(li);
         });
         userListContainer.appendChild(ul);
-        
-        if (prevPageBtn) prevPageBtn.disabled = (currentPage === 0);
-        if (nextPageBtn) nextPageBtn.disabled = (users.length < usersPerPage);
     }
 
     async function fetchAndDisplayUser(userId, filterToShow = 'summary') {
@@ -183,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({ error: response.statusText }));
                  if (response.status === 404) {
-                    userContentArea.innerHTML = `<p class="error-message">Usuário com ID ${userId} não encontrado.</p>`;
+                    userContentArea.innerHTML = `<p class="error-message">Usuário com ID ${escapeHTML(userId)} não encontrado.</p>`;
                 } else {
                     throw new Error(`HTTP ${response.status}: ${errorData.error || response.statusText}`);
                 }
@@ -227,6 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'banners': contentHTML = renderBannersView(currentUserData); break;
             case 'nicknames': contentHTML = renderNicknamesView(currentUserData); break;
             case 'servers': contentHTML = renderServersView(currentUserData); break;
+            case 'messages': contentHTML = renderMessagesView(currentUserData); break; // NOVA CASE
             case 'fullHistory': contentHTML = renderFullHistoryView(currentUserData); break;
             default: contentHTML = '<p class="error-message">Filtro desconhecido.</p>';
         }
@@ -234,23 +248,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderSummaryView(user) {
-        const latestAvatar = (user.avatar_urls && user.avatar_urls.length > 0) ? user.avatar_urls[user.avatar_urls.length - 1] : 'https://via.placeholder.com/128?text=?';
+        const latestAvatar = user.current_avatar_url || (user.avatar_url_history && user.avatar_url_history.length > 0 ? user.avatar_url_history[user.avatar_url_history.length - 1] : 'https://via.placeholder.com/128?text=?');
+        // Para banner, a API pode não ter um current_banner_url explícito, então pegamos o último do histórico se existir
         const latestBanner = (user.banner_urls && user.banner_urls.length > 0) ? user.banner_urls[user.banner_urls.length - 1] : '';
-        const avatarCount = user.avatar_urls ? user.avatar_urls.length : 0;
+        const avatarCount = user.avatar_url_history ? user.avatar_url_history.length : 0;
         const bannerCount = user.banner_urls ? user.banner_urls.length : 0;
-        // Para nicknameCount, vamos contar os nicknames únicos da lista principal, já que o histórico é mais complexo.
-        const nicknameCount = user.nicknames ? new Set(user.nicknames.filter(n => n)).size : 0; 
+        const nicknameCount = user.username_global_history ? new Set(user.username_global_history.filter(n => n)).size : 0; 
         const serverCount = user.servers ? user.servers.length : 0;
-        const historyCount = user.history ? user.history.length : 0;
+        const historyCount = user.history ? user.history.length : 0; // 'history' é o log de alterações, não de apelidos de servidor
+        const messageCount = user.recent_messages ? user.recent_messages.length : 0;
         
-        let userIdForDisplay = 'N/A';
-        if (user.user_id) {
-            if(typeof user.user_id === 'object' && user.user_id.$numberLong) {
-                userIdForDisplay = user.user_id.$numberLong.toString();
-            } else if (user.user_id.toString) {
-                 userIdForDisplay = user.user_id.toString();
-            }
-        }
+        let userIdForDisplay = user.user_id ? user.user_id.toString() : 'N/A';
+        const currentUsername = user.current_username_global || user.username_global_history?.slice(-1)[0] || 'N/A';
 
         return `
             <div class="profile-section user-main-info">
@@ -258,24 +267,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div style="display:flex; align-items:flex-end; margin-top:-60px; padding:0 25px 25px 25px; position:relative; z-index:1;">
                     <img src="${latestAvatar}" alt="Avatar" style="width:120px; height:120px; border-radius:50%; border:5px solid #18191c; background:#18191c;">
                     <div style="margin-left:20px; padding-bottom:10px;">
-                        <h2 style="color:#fff; font-size:2em; margin:0 0 5px 0; text-shadow: 0 1px 3px rgba(0,0,0,0.5);">${user.username_global || 'N/A'}</h2>
-                        <p style="color:#b9bbbe; font-size:1.1em; margin:0;">ID: ${userIdForDisplay}</p>
+                        <h2 style="color:#fff; font-size:2em; margin:0 0 5px 0; text-shadow: 0 1px 3px rgba(0,0,0,0.5);">${escapeHTML(currentUsername)}</h2>
+                        <p style="color:#b9bbbe; font-size:1.1em; margin:0;">ID: ${escapeHTML(userIdForDisplay)}</p>
                     </div>
                 </div>
             </div>
-            <div class="profile-section quick-stats" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); gap:20px;">
+            <div class="profile-section quick-stats" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:15px;">
+                <div class="widget" style="text-align:center;"><h3><i class="fas fa-user-edit"></i> Nomes Globais</h3><p style="color:#06b6d4;">${nicknameCount}</p></div>
                 <div class="widget" style="text-align:center;"><h3><i class="fas fa-image"></i> Avatares</h3><p style="color:#06b6d4;">${avatarCount}</p></div>
                 <div class="widget" style="text-align:center;"><h3><i class="fas fa-images"></i> Banners</h3><p style="color:#06b6d4;">${bannerCount}</p></div>
-                <div class="widget" style="text-align:center;"><h3><i class="fas fa-signature"></i> Apelidos Únicos</h3><p style="color:#06b6d4;">${nicknameCount}</p></div>
                 <div class="widget" style="text-align:center;"><h3><i class="fas fa-server"></i> Servidores</h3><p style="color:#06b6d4;">${serverCount}</p></div>
-                <div class="widget" style="text-align:center;"><h3><i class="fas fa-history"></i> Registros Hist.</h3><p style="color:#06b6d4;">${historyCount}</p></div>
+                <div class="widget" style="text-align:center;"><h3><i class="fas fa-comments"></i> Mensagens</h3><p style="color:#06b6d4;">${messageCount}</p></div>
+                <div class="widget" style="text-align:center;"><h3><i class="fas fa-history"></i> Logs Hist.</h3><p style="color:#06b6d4;">${historyCount}</p></div>
             </div>
             <div class="profile-section">
-                <h3><i class="fas fa-info-circle"></i> Informações Gerais (Baseado nos Últimos Dados)</h3>
+                <h3><i class="fas fa-info-circle"></i> Informações Gerais</h3>
                 <ul class="profile-list">
-                    <li><strong>Último apelido conhecido (lista geral):</strong> ${user.nicknames && user.nicknames.length > 0 ? user.nicknames[user.nicknames.length -1] : 'N/A'}</li>
-                    <li><strong>Registrado pela primeira vez (no histórico):</strong> ${user.history && user.history.length > 0 ? formatDate(user.history[0].changed_at) : 'N/A'}</li>
-                    <li><strong>Última alteração detectada:</strong> ${user.history && user.history.length > 0 ? formatDate(user.history[user.history.length - 1].changed_at) : 'N/A'}</li>
+                    <li><strong>Primeira vez registrado:</strong> ${formatDate(user.first_seen_overall_at)}</li>
+                    <li><strong>Última atividade geral:</strong> ${formatDate(user.last_seen_overall_at)}</li>
                 </ul>
             </div>
         `;
@@ -283,9 +292,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderAvatarsView(user) {
         let html = '<div class="profile-section"><h3><i class="fas fa-image"></i> Galeria de Avatares</h3>';
-        if (user.avatar_urls && user.avatar_urls.length > 0) {
+        if (user.avatar_url_history && user.avatar_url_history.length > 0) {
             html += '<div class="avatar-gallery">';
-            user.avatar_urls.slice().reverse().forEach(url => {
+            user.avatar_url_history.slice().reverse().forEach(url => { // Mais recentes primeiro
                 html += `<img src="${url}" alt="Avatar Histórico" class="history-avatar" onclick="window.open('${url}', '_blank')" title="Clique para abrir em nova aba">`;
             });
             html += '</div>';
@@ -300,7 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let html = '<div class="profile-section"><h3><i class="fas fa-images"></i> Galeria de Banners</h3>';
         if (user.banner_urls && user.banner_urls.length > 0) {
             html += '<div class="banner-gallery">';
-            user.banner_urls.slice().reverse().forEach(url => {
+            user.banner_urls.slice().reverse().forEach(url => { // Mais recentes primeiro
                 html += `<img src="${url}" alt="Banner Histórico" class="history-banner" onclick="window.open('${url}', '_blank')" title="Clique para abrir em nova aba">`;
             });
             html += '</div>';
@@ -311,53 +320,21 @@ document.addEventListener('DOMContentLoaded', () => {
         return html;
     }
 
-    function renderNicknamesView(user) {
-        let html = '<div class="profile-section"><h3><i class="fas fa-signature"></i> Histórico de Nomes de Usuário/Apelidos</h3>';
-        html += '<p style="color:#ccc; font-size:0.9em; margin-bottom:15px;">Inclui nomes globais e apelidos de servidor (adicionados à lista geral), ordenados por data de alteração (mais recentes primeiro, quando disponível no histórico).</p>';
-        html += '<ul class="profile-list">';
-        
-        let allNames = [];
-        if (user.history && user.history.length > 0) {
-            user.history.forEach(entry => {
-                if (entry.changes.username_global) {
-                    allNames.push({ name: entry.changes.username_global, date: entry.changed_at, type: "Nome Global" });
-                }
-                if (entry.changes.nickname_added) {
-                     allNames.push({ name: entry.changes.nickname_added, date: entry.changed_at, type: "Apelido (do Histórico)" });
-                }
+    function renderNicknamesView(user) { // Mostra username_global_history
+        let html = '<div class="profile-section"><h3><i class="fas fa-signature"></i> Histórico de Nomes Globais</h3>';
+        if (user.username_global_history && user.username_global_history.length > 0) {
+            html += '<ul class="profile-list">';
+             // Para mostrar data, precisaríamos que o histórico de nomes estivesse atrelado a 'history' do DB.
+             // Por agora, apenas listamos os nomes da array username_global_history.
+            const uniqueNames = [...new Set(user.username_global_history)].reverse(); // Mais recentes primeiro, únicos
+            uniqueNames.forEach(name => {
+                html += `<li><strong>${escapeHTML(name) || 'N/A'}</strong></li>`;
             });
-        }
-        if (user.nicknames && user.nicknames.length > 0) {
-            user.nicknames.forEach(nick => {
-                if (nick && !allNames.some(n => n.name === nick && n.type === "Apelido (do Histórico)")) { 
-                    allNames.push({ name: nick, date: null, type: "Apelido (Lista Geral)" });
-                }
-            });
-        }
-        
-        allNames.sort((a, b) => {
-            const dateA = a.date ? new Date(a.date).getTime() : 0;
-            const dateB = b.date ? new Date(b.date).getTime() : 0;
-            if (dateA !== dateB) return dateB - dateA; // Mais recentes primeiro
-            // Se as datas forem iguais (ou ambas nulas), priorize "Nome Global" e "Apelido (do Histórico)"
-            if (a.type !== "Apelido (Lista Geral)" && b.type === "Apelido (Lista Geral)") return -1;
-            if (a.type === "Apelido (Lista Geral)" && b.type !== "Apelido (Lista Geral)") return 1;
-            return 0;
-        });
-
-        const uniqueSortedNames = allNames.filter((item, index, self) =>
-            index === 0 || item.name !== self[index - 1].name || (item.date && self[index-1].date && formatDate(item.date) !== formatDate(self[index-1].date))
-        );
-
-
-        if (uniqueSortedNames.length > 0) {
-            uniqueSortedNames.forEach(nameEntry => {
-                html += `<li><strong>${nameEntry.name || 'N/A'}</strong> <small style="color:#8a909a;">(${nameEntry.type}${nameEntry.date ? ' - ' + formatDate(nameEntry.date) : ''})</small></li>`;
-            });
+            html += '</ul>';
         } else {
-            html += '<li>Nenhum nome/apelido histórico encontrado.</li>';
+            html += '<p class="placeholder-text" style="font-size:1em;">Nenhum nome global histórico encontrado.</p>';
         }
-        html += '</ul></div>';
+        html += '</div>';
         return html;
     }
 
@@ -366,12 +343,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (user.servers && user.servers.length > 0) {
             html += '<ul class="profile-list">';
             const sortedServers = user.servers.slice().sort((a,b) => {
-                const dateA = a.first_seen ? new Date(a.first_seen).getTime() : 0;
-                const dateB = b.first_seen ? new Date(b.first_seen).getTime() : 0;
-                return dateB - dateA; // Mais recente primeiro
+                const dateA = new Date(formatDateForSort(a.last_message_at || a.first_message_at)).getTime();
+                const dateB = new Date(formatDateForSort(b.last_message_at || b.first_message_at)).getTime();
+                return dateB - dateA;
             });
             sortedServers.forEach(server => {
-                html += `<li><strong>${server.guild_name || 'Nome Desconhecido'}</strong> (ID: ${server.guild_id})<br><small style="color:#8a909a;">Visto pela primeira vez em: ${formatDate(server.first_seen)}</small></li>`;
+                html += `<li><strong>${escapeHTML(server.guild_name) || 'Nome Desconhecido'}</strong> (ID: ${escapeHTML(server.guild_id)})
+                           <br><small style="color:#8a909a;">Primeira msg: ${formatDate(server.first_message_at)}</small>
+                           <br><small style="color:#8a909a;">Última msg: ${formatDate(server.last_message_at)}</small></li>`;
             });
             html += '</ul>';
         } else {
@@ -381,15 +360,45 @@ document.addEventListener('DOMContentLoaded', () => {
         return html;
     }
 
+    function renderMessagesView(user) {
+        let html = '<div class="profile-section"><h3><i class="fas fa-comments"></i> Mensagens Recentes (Últimas 10)</h3>';
+        if (user.recent_messages && user.recent_messages.length > 0) {
+            html += '<ul class="profile-list messages-list">';
+            // A API já salva as mais recentes no final do array e fatia para 10.
+            // Para mostrar a mais nova primeiro na UI, invertemos a cópia do array.
+            user.recent_messages.slice().reverse().forEach(msg => {
+                html += `
+                    <li class="message-item">
+                        <div class="message-header">
+                            <strong style="color:#06b6d4;">${escapeHTML(msg.guild_name) || 'Servidor Desconhecido'}</strong>
+                            <span class="message-timestamp">${formatDate(msg.timestamp)}</span>
+                        </div>
+                        <div class="message-content">
+                            ${msg.content ? `<p class="message-text">${escapeHTML(msg.content)}</p>` : '<p class="message-text placeholder-text" style="font-size:0.9em; padding:0; min-height:auto; border:none; background:none;"><em>(Sem texto na mensagem)</em></p>'}
+                            ${msg.image_url ? `<a href="${msg.image_url}" target="_blank" rel="noopener noreferrer" class="message-image-link"><img src="${msg.image_url}" alt="Imagem da mensagem" class="message-image"></a>` : ''}
+                        </div>
+                        <div class="message-footer">
+                            <small>ID da Mensagem: ${escapeHTML(msg.message_id) || 'N/A'}</small>
+                        </div>
+                    </li>`;
+            });
+            html += '</ul>';
+        } else {
+            html += '<p class="placeholder-text" style="font-size:1em;">Nenhuma mensagem recente encontrada para este usuário.</p>';
+        }
+        html += '</div>';
+        return html;
+    }
+
     function renderFullHistoryView(user) {
-        let html = '<div class="profile-section"><h3><i class="fas fa-history"></i> Histórico Completo de Alterações</h3>';
+        let html = '<div class="profile-section"><h3><i class="fas fa-history"></i> Histórico Detalhado de Alterações (DB)</h3>';
         if (user.history && user.history.length > 0) {
             html += '<ul class="profile-history-log profile-list">';
-            user.history.slice().reverse().forEach(entry => {
+            user.history.slice().reverse().forEach(entry => { // Mais recentes primeiro
                 html += `
                     <li>
                         <strong style="color:#06b6d4;">Alterado em:</strong> ${formatDate(entry.changed_at)}
-                        <pre>${JSON.stringify(entry.changes, null, 2)}</pre>
+                        <pre>${escapeHTML(JSON.stringify(entry.changes, null, 2))}</pre>
                     </li>`;
             });
             html += '</ul>';
@@ -400,7 +409,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return html;
     }
 
-    // --- EVENT LISTENERS E CHAMADA INICIAL ---
     filterButtons.forEach(button => {
         button.addEventListener('click', () => {
             currentFilter = button.dataset.filter;
@@ -421,18 +429,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
-    if (prevPageBtn) {
-        prevPageBtn.addEventListener('click', () => {
-            if (currentPage > 0) fetchAllUsers(currentPage - 1);
-        });
-    }
-    if (nextPageBtn) {
-        nextPageBtn.addEventListener('click', () => fetchAllUsers(currentPage + 1));
-    }
-
-    // Chamadas iniciais ao carregar a página
-    fetchAllUsers(0);
+    
+    // Chamada inicial para carregar todos os usuários rastreados
+    fetchAllTrackedUsers();
     renderFilteredContent(); 
     updateActiveFilterButton(); 
 });
