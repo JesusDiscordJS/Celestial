@@ -660,7 +660,50 @@ body.dashboard-page-body { /* Se você usa esta classe no body da dashboard */
     margin-top: 3px;
 }
 
+#userContentArea .quick-stats {
+    /* O estilo do grid é definido inline no JS, mas podemos adicionar outros aqui se necessário */
+}
 
+#userContentArea .quick-stats .widget {
+    background: rgba(30, 32, 37, 0.6); /* Fundo sutil para cada widget */
+    padding: 15px 10px; /* Reduzido o padding vertical, mantido o horizontal */
+    border-radius: 8px;
+    border: 1px solid rgba(124, 58, 237, 0.15);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+#userContentArea .quick-stats .widget:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.2);
+}
+
+#userContentArea .quick-stats .widget h3 {
+    font-size: 0.85rem; /* Título do widget menor */
+    margin-top: 0;
+    margin-bottom: 10px; /* Espaço entre ícone/título e o número */
+    color: #b0b8c4; /* Cor mais suave para o título do widget */
+    font-weight: 500; /* Peso da fonte normal */
+    line-height: 1.2;
+}
+
+#userContentArea .quick-stats .widget h3 i {
+    display: block; /* Ícone em sua própria linha */
+    font-size: 1.6rem; /* Tamanho do ícone */
+    margin-bottom: 8px; /* Espaço abaixo do ícone */
+    color: #7c3aed; /* Cor roxa para o ícone */
+}
+
+#userContentArea .quick-stats .widget p {
+    font-size: 1.6rem; /* Tamanho da contagem (número) */
+    font-weight: 700; /* Negrito para a contagem */
+    color: #06b6d4; /* Cor ciano para a contagem */
+    margin: 0; /* Remove margem padrão do parágrafo */
+    line-height: 1;
+}
 /* Galerias de Avatar e Banner */
 #userContentArea .avatar-gallery,
 #userContentArea .banner-gallery { display: flex; flex-wrap: wrap; gap: 12px; }
