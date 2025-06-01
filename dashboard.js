@@ -272,13 +272,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
             </div>
-            <div class="profile-section quick-stats" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:15px;">
-                <div class="widget" style="text-align:center;"><h3><i class="fas fa-user-edit"></i> Nomes Globais</h3><p style="color:#06b6d4;">${nicknameCount}</p></div>
-                <div class="widget" style="text-align:center;"><h3><i class="fas fa-image"></i> Avatares</h3><p style="color:#06b6d4;">${avatarCount}</p></div>
-                <div class="widget" style="text-align:center;"><h3><i class="fas fa-images"></i> Banners</h3><p style="color:#06b6d4;">${bannerCount}</p></div>
-                <div class="widget" style="text-align:center;"><h3><i class="fas fa-server"></i> Servidores</h3><p style="color:#06b6d4;">${serverCount}</p></div>
-                <div class="widget" style="text-align:center;"><h3><i class="fas fa-comments"></i> Mensagens</h3><p style="color:#06b6d4;">${messageCount}</p></div>
-                <div class="widget" style="text-align:center;"><h3><i class="fas fa-history"></i> Logs Hist.</h3><p style="color:#06b6d4;">${historyCount}</p></div>
+            <div class="profile-section quick-stats" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:15px;"> 
+            <div class="profile-section quick-stats" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 180px)); gap:15px; justify-content: space-evenly;">
+                <div class="widget"><h3><i class="fas fa-user-edit"></i> Nomes Globais</h3><p>${nicknameCount}</p></div>
+                <div class="widget"><h3><i class="fas fa-image"></i> Avatares</h3><p>${avatarCount}</p></div>
+                <div class="widget"><h3><i class="fas fa-images"></i> Banners</h3><p>${bannerCount}</p></div>
+                <div class="widget"><h3><i class="fas fa-server"></i> Servidores</h3><p>${serverCount}</p></div>
+                <div class="widget"><h3><i class="fas fa-comments"></i> Mensagens</h3><p>${messageCount}</p></div>
+                <div class="widget"><h3><i class="fas fa-history"></i> Logs Hist.</h3><p>${historyCount}</p></div>
             </div>
             <div class="profile-section">
                 <h3><i class="fas fa-info-circle"></i> Informações Gerais</h3>
