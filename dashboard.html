@@ -67,6 +67,58 @@
         #adminFilteredUserListArea .user-list { /* Para reutilizar displayUserList */
             padding-left: 0;
         }
+
+        /* Estilos para Galeria Instagram (adicionar ao style.css ou aqui) */
+        .gallery-item-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 10px;
+            background-color: rgba(40, 42, 47, 0.6);
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(124, 58, 237, 0.1);
+            width: calc(20% - 20px); /* Exemplo para 5 colunas, ajuste conforme necessário */
+            box-sizing: border-box;
+        }
+
+        .gallery-item-container .history-avatar { /* re-usa history-avatar para a imagem */
+            width: 100%; /* Faz a imagem ocupar a largura do container */
+            max-height: 180px; /* Ajuste conforme necessário */
+            object-fit: cover;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+
+        .gallery-item-caption {
+            font-size: 0.8em;
+            color: #bbb;
+            text-align: center;
+            width: 100%; 
+            word-wrap: break-word;
+        }
+
+        .avatar-gallery { /* Garante que a galeria de avatares/instagram use flex */
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start; /* Alinha itens à esquerda */
+            gap: 15px;
+        }
+        /* Para telas menores, ajuste o número de colunas */
+        @media (max-width: 1200px) {
+            .gallery-item-container { width: calc(25% - 20px); } /* 4 colunas */
+        }
+        @media (max-width: 992px) {
+            .gallery-item-container { width: calc(33.333% - 20px); } /* 3 colunas */
+        }
+        @media (max-width: 768px) {
+            .gallery-item-container { width: calc(50% - 20px); } /* 2 colunas */
+        }
+        @media (max-width: 576px) {
+            .gallery-item-container { width: calc(100% - 20px); } /* 1 coluna */
+        }
+
     </style>
 </head>
 <body class="dashboard-page-body">
@@ -98,6 +150,7 @@
                 <button class="dashboard-btn filter-btn" data-filter="avatars"><i class="fas fa-image"></i> Galeria de Avatares</button>
                 <button class="dashboard-btn filter-btn" data-filter="banners"><i class="fas fa-images"></i> Galeria de Banners</button>
                 <button class="dashboard-btn filter-btn" data-filter="message_images_gallery"><i class="fas fa-photo-film"></i> Imagens de Mensagens</button>
+                <button class="dashboard-btn filter-btn" data-filter="instagram_gallery"><i class="fab fa-instagram"></i> Galeria Instagram</button> 
                 <button class="dashboard-btn filter-btn" data-filter="nicknames"><i class="fas fa-signature"></i> Nomes Antigos</button>
                 <button class="dashboard-btn filter-btn" data-filter="servers"><i class="fas fa-server"></i> Servidores Encontrados</button>
                 <button class="dashboard-btn filter-btn" data-filter="messages"><i class="fas fa-comments"></i> Mensagens Recentes</button>
@@ -121,7 +174,7 @@
                     <h2><i class="fas fa-users"></i> Usuários Rastreados</h2>
                     <div id="userListContainer"></div>
                     <div class="pagination-controls" style="display: none;">
-                         </div>
+                            </div>
                 </section>
             </main>
         </div>
