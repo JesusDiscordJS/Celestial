@@ -1,4 +1,4 @@
-// dashboard.js (Completo e Atualizado com Painel Admin e todas as Views)
+// dashboard.js (Completo e Atualizado com Painel Admin e todas as Views, incluindo Instagram Gallery)
 document.addEventListener('DOMContentLoaded', () => {
     const API_BASE_URL = 'https://celestial-api.onrender.com'; // Ou seu endpoint local
     const LOG_PREFIX = "[DashboardJS] ";
@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchUserIdInput = document.getElementById('searchUserIdInput');
     const searchUserBtn = document.getElementById('searchUserBtn');
     const loadingIndicator = document.getElementById('loadingIndicator');
-    const filterButtons = document.querySelectorAll('.dashboard-sidebar .filter-btn:not(#adminPanelBtn)');
+    // const filterButtons = document.querySelectorAll('.dashboard-sidebar .filter-btn:not(#adminPanelBtn)'); // Esta linha não é mais necessária aqui se os event listeners são adicionados a 'allFilterButtons'
     const paginationControlsDiv = document.querySelector('.pagination-controls');
     
     let currentUserData = null; // Dados do usuário do tracker selecionado
@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch(url, { ...options, headers });
             console.log(LOG_PREFIX + `Resposta de ${url} - Status: ${response.status}`);
-            if (response.status === 401) { console.warn(LOG_PREFIX + "401 Não Autorizado. Limpando token."); clearToken(); loggedInUserInfo = null; updateHeaderUI(null); return null; }
+            if (response.status === 401) { console.warn(LOG_PREFIX + "401 Não Autorizado. Limpando token."); clearToken(); loggedInUserInfo = null; updateHeaderUI(null); setLoggedOutUIFull(); return null; } // Atualizado para chamar setLoggedOutUIFull
             if (!response.ok) { const errorData = await response.json().catch(() => ({ error: `HTTP error ${response.status}`})); console.error(LOG_PREFIX + `Erro HTTP não OK: ${response.status}`, errorData); throw new Error(errorData.error || `HTTP error ${response.status}`);}
             const contentType = response.headers.get("content-type");
             if (contentType && contentType.includes("application/json")) return response.json();
@@ -110,12 +110,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (userData && userData.discordId) {
                     loggedInUserInfo = userData;
                     updateHeaderUI(loggedInUserInfo);
-                    // Se o filtro atual não for admin_panel, carrega a lista de usuários rastreados.
-                    // Se for admin_panel, renderFilteredContent cuidará de chamar renderAdminPanelView.
                     if (currentFilter !== 'admin_panel') {
                         fetchAllTrackedUsers(); 
                     }
-                    renderFilteredContent(); // Renderiza o conteúdo inicial (pode ser admin ou placeholder se !currentUserData)
+                    renderFilteredContent(); 
                 } else { console.warn(LOG_PREFIX + "/auth/me falhou ou não retornou dados. Limpando token."); clearToken(); setLoggedOutUIFull(); }
             } catch (error) { console.error(LOG_PREFIX + "Catch /auth/me:", error.message); setLoggedOutUIFull();
             } finally { showLoading(false); }
@@ -235,6 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'avatars': contentHTML = renderAvatarsView(currentUserData); break;
             case 'banners': contentHTML = renderBannersView(currentUserData); break;
             case 'message_images_gallery': contentHTML = renderMessageImagesGalleryView(currentUserData); break;
+            case 'instagram_gallery': contentHTML = renderInstagramGalleryView(currentUserData); break; // <-- NOVO CASE
             case 'nicknames': contentHTML = renderNicknamesView(currentUserData); break;
             case 'servers': contentHTML = renderServersView(currentUserData); break;
             case 'messages': contentHTML = renderMessagesView(currentUserData); break;
@@ -251,13 +250,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const avatarCount = user.avatar_url_history?.length || 0; 
         const bannerCount = user.banner_urls?.length || 0; 
         const messageImageCount = user.message_image_history?.length || 0; 
+        const instagramPostCount = user.instagram?.length || 0; // <-- Contagem para Instagram
         const nicknameCount = user.username_global_history ? new Set(user.username_global_history.filter(n => n)).size : 0;  
         const serverCount = user.servers?.length || 0; 
         const historyLogCount = user.history?.length || 0; 
         const recentMessageCount = user.recent_messages?.length || 0; 
         let userIdForDisplay = user.user_id ? user.user_id.toString() : 'N/A'; 
         const currentUsername = user.current_username_global || user.username_global_history?.slice(-1)[0] || 'N/A'; 
-        return ` <div class="profile-section user-main-info"> ${latestBanner ? `<div class="profile-banner" style="background-image: url('${escapeHTML(latestBanner)}');"></div>` : '<div class="profile-banner-placeholder"><span>Sem Banner</span></div>'} <div class="profile-header-content"> <img src="${escapeHTML(latestAvatar)}" alt="Avatar" class="profile-avatar-large"> <div class="profile-name-id"> <h2 title="${escapeHTML(currentUsername)}">${escapeHTML(currentUsername)}</h2> <p>ID (Tracker): ${escapeHTML(userIdForDisplay)}</p> </div> </div> </div> <div class="profile-section quick-stats"> <div class="widget"><h3><i class="fas fa-user-edit"></i> Nomes Globais</h3><p>${nicknameCount}</p></div> <div class="widget"><h3><i class="fas fa-image"></i> Avatares</h3><p>${avatarCount}</p></div> <div class="widget"><h3><i class="fas fa-images"></i> Banners</h3><p>${bannerCount}</p></div> <div class="widget"><h3><i class="fas fa-server"></i> Servidores</h3><p>${serverCount}</p></div> <div class="widget"><h3><i class="fas fa-photo-film"></i> Imgs. Msg</h3><p>${messageImageCount}</p></div> <div class="widget"><h3><i class="fas fa-comments"></i> Msgs. Recentes</h3><p>${recentMessageCount}</p></div> <div class="widget"><h3><i class="fas fa-history"></i> Logs Hist. (DB)</h3><p>${historyLogCount}</p></div> </div> <div class="profile-section"> <h3><i class="fas fa-info-circle"></i> Informações Gerais (Tracker)</h3> <ul class="profile-list"> <li><strong>Primeira vez Visto:</strong> ${formatDate(user.first_seen_overall_at)}</li> <li><strong>Última Atividade:</strong> ${formatDate(user.last_seen_overall_at)}</li> </ul> </div>`;
+        return ` <div class="profile-section user-main-info"> ${latestBanner ? `<div class="profile-banner" style="background-image: url('${escapeHTML(latestBanner)}');"></div>` : '<div class="profile-banner-placeholder"><span>Sem Banner</span></div>'} <div class="profile-header-content"> <img src="${escapeHTML(latestAvatar)}" alt="Avatar" class="profile-avatar-large"> <div class="profile-name-id"> <h2 title="${escapeHTML(currentUsername)}">${escapeHTML(currentUsername)}</h2> <p>ID (Tracker): ${escapeHTML(userIdForDisplay)}</p> </div> </div> </div> <div class="profile-section quick-stats"> <div class="widget"><h3><i class="fas fa-user-edit"></i> Nomes Globais</h3><p>${nicknameCount}</p></div> <div class="widget"><h3><i class="fas fa-image"></i> Avatares</h3><p>${avatarCount}</p></div> <div class="widget"><h3><i class="fas fa-images"></i> Banners</h3><p>${bannerCount}</p></div> <div class="widget"><h3><i class="fas fa-server"></i> Servidores</h3><p>${serverCount}</p></div> <div class="widget"><h3><i class="fas fa-photo-film"></i> Imgs. Msg</h3><p>${messageImageCount}</p></div> <div class="widget"><h3><i class="fab fa-instagram"></i> Posts Insta</h3><p>${instagramPostCount}</p></div> <div class="widget"><h3><i class="fas fa-comments"></i> Msgs. Recentes</h3><p>${recentMessageCount}</p></div> <div class="widget"><h3><i class="fas fa-history"></i> Logs Hist. (DB)</h3><p>${historyLogCount}</p></div> </div> <div class="profile-section"> <h3><i class="fas fa-info-circle"></i> Informações Gerais (Tracker)</h3> <ul class="profile-list"> <li><strong>Primeira vez Visto:</strong> ${formatDate(user.first_seen_overall_at)}</li> <li><strong>Última Atividade:</strong> ${formatDate(user.last_seen_overall_at)}</li> </ul> </div>`;
     }
     function renderAvatarsView(user) { 
         let html = '<div class="profile-section"><h3><i class="fas fa-image"></i> Galeria de Avatares</h3>'; 
@@ -288,6 +288,43 @@ document.addEventListener('DOMContentLoaded', () => {
         } else { html += '<p class="placeholder-text">Nenhuma imagem de mensagem encontrada no histórico.</p>';} 
         html += '</div>'; return html;
     }
+
+    // --- NOVA FUNÇÃO DE RENDERIZAÇÃO PARA GALERIA INSTAGRAM ---
+    function renderInstagramGalleryView(user) {
+        let html = `<div class="profile-section"><h3><i class="fab fa-instagram"></i> Galeria Instagram (Menções)</h3>`;
+        
+        const instagramPosts = user.instagram || [];
+
+        if (instagramPosts.length > 0) {
+            const sortedPosts = [...instagramPosts].sort((a, b) => formatDateForSort(b.timestamp) - formatDateForSort(a.timestamp));
+            
+            html += '<div class="avatar-gallery">'; // Reutiliza a classe .avatar-gallery
+            sortedPosts.forEach(post => {
+                const titleText = `Postado por: ${escapeHTML(post.postedByUsername || 'N/A')} (ID: ${escapeHTML(post.postedByUserId || 'N/A')})\nData: ${formatDate(post.timestamp)}\nID Mensagem Original: ${escapeHTML(post.messageId || 'N/A')}\nServidor: ${escapeHTML(post.guildId || 'N/A')} | Canal: ${escapeHTML(post.channelId || 'N/A')}`;
+                // Usando a estrutura de gallery-item-container para melhor agrupamento
+                html += `
+                    <div class="gallery-item-container"> 
+                        <img 
+                            src="${escapeHTML(post.imageUrl)}" 
+                            alt="Post do Instagram (ID Msg: ${escapeHTML(post.messageId || 'N/A')})" 
+                            class="history-avatar" 
+                            onclick="window.open('${escapeHTML(post.imageUrl)}', '_blank')" 
+                            title="${escapeHTML(titleText)}">
+                        <div class="gallery-item-caption">
+                            Postado por: ${escapeHTML(post.postedByUsername || 'N/A')}<br>
+                            <small>${formatDate(post.timestamp)}</small>
+                        </div>
+                    </div>`;
+            });
+            html += '</div>';
+        } else {
+            html += '<p class="placeholder-text">Nenhuma postagem do Instagram encontrada para este usuário.</p>';
+        }
+        html += '</div>';
+        return html;
+    }
+    // --- FIM DA NOVA FUNÇÃO ---
+
     function renderNicknamesView(user) { 
         let html = '<div class="profile-section"><h3><i class="fas fa-signature"></i> Histórico de Nomes Globais</h3>'; 
         if (user.username_global_history && user.username_global_history.length > 0) { 
@@ -340,6 +377,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="admin-filters">
                     <div><input type="checkbox" id="filterHasMessageImages" name="hasMessageImages"><label for="filterHasMessageImages">Possui imagens de mensagens?</label></div>
                     <div><input type="checkbox" id="filterHasAvatarHistory" name="hasAvatarHistory"><label for="filterHasAvatarHistory">Possui histórico de avatares?</label></div>
+                    <div><input type="checkbox" id="filterHasInstagram" name="hasInstagramPosts"><label for="filterHasInstagram">Possui posts Instagram?</label></div> 
                     <div><label for="filterUsernameContains">Nome Global Contém:</label><input type="text" id="filterUsernameContains" name="usernameContains" placeholder="Ex: astroboy"></div>
                     <div><label for="filterDiscordId">ID (Tracker/Discord):</label><input type="text" id="filterDiscordId" name="discordId" placeholder="ID numérico"></div>
                     <button id="applyUserFiltersBtn" class="dashboard-btn" style="background-color: #06b6d4; border-color: #0891b2;"><i class="fas fa-filter"></i> Aplicar Filtros</button>
@@ -348,7 +386,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>`;
         html += `</div>`;
 
-        setTimeout(() => {
+        setTimeout(() => { // Adiciona event listeners após o HTML ser inserido no DOM
             const applyFiltersBtn = document.getElementById('applyUserFiltersBtn');
             if (applyFiltersBtn) applyFiltersBtn.addEventListener('click', handleApplyAdminUserFilters);
             fetchAdminStats();
@@ -357,22 +395,88 @@ document.addEventListener('DOMContentLoaded', () => {
         return html;
     }
 
-    async function fetchAdminStats() { /* ... como antes ... */ const statsArea = document.getElementById('adminStatsArea'); if (!statsArea) return; console.log(LOG_PREFIX + "Buscando estatísticas admin."); try { const stats = await fetchWithAuth(`${API_BASE_URL}/admin/stats`); if (stats) { statsArea.innerHTML = `<ul class="profile-list"><li><strong>Total Usuários Rastreados:</strong> ${stats.totalTrackedUsers ?? 'N/A'}</li><li><strong>Total Imagens de Mensagens:</strong> ${stats.totalMessageImages ?? 'N/A'}</li></ul>`; } else { statsArea.innerHTML = '<p>Não foi possível carregar estatísticas.</p>';}} catch (e) { console.error(LOG_PREFIX+"Erro stats admin:", e.message); statsArea.innerHTML = `<p class="error-message">Erro: ${e.message}</p>`;}}
-    async function fetchAdminRoleConfig() { /* ... como antes ... */ const roleConfigArea = document.getElementById('adminRoleConfigArea'); if (!roleConfigArea) return; console.log(LOG_PREFIX + "Buscando config roles."); try { const r = await fetchWithAuth(`${API_BASE_URL}/admin/roles/config`); if (r) { roleConfigArea.innerHTML = `<div><strong>Admins:</strong><pre>${escapeHTML(r.adminIds?.join('\n')||'Nenhum')}</pre></div><div style="margin-top:10px;"><strong>Premium:</strong><pre>${escapeHTML(r.premiumIds?.join('\n')||'Nenhum')}</pre></div>`;} else {roleConfigArea.innerHTML = '<p>Não foi possível carregar roles.</p>';}} catch (e) { console.error(LOG_PREFIX+"Erro config roles:", e.message); roleConfigArea.innerHTML = `<p class="error-message">Erro: ${e.message}</p>`;}}
-    async function handleApplyAdminUserFilters() { /* ... como antes ... */ const f = {hasMessageImages:document.getElementById('filterHasMessageImages').checked, hasAvatarHistory:document.getElementById('filterHasAvatarHistory').checked, usernameContains:document.getElementById('filterUsernameContains').value.trim(), discordId:document.getElementById('filterDiscordId').value.trim()}; const area = document.getElementById('adminFilteredUserListArea'); if (!area) return; console.log(LOG_PREFIX+"Aplicando filtros admin:", f); area.innerHTML = `<p><i class="fas fa-spinner fa-spin"></i> Buscando...</p>`; const qP = new URLSearchParams(); if(f.hasMessageImages)qP.append('hasMessageImages','true'); if(f.hasAvatarHistory)qP.append('hasAvatarHistory','true'); if(f.usernameContains)qP.append('usernameContains',f.usernameContains); if(f.discordId)qP.append('discordId',f.discordId); try {showLoading(true); const u = await fetchWithAuth(`${API_BASE_URL}/admin/users/filter?${qP.toString()}`); if(u){displayUserList(u,area); if(u.length===0)area.innerHTML='<p class="placeholder-text">Nenhum usuário com esses filtros.</p>';} else {area.innerHTML='<p class="error-message">Falha ao buscar ou acesso negado.</p>';}} catch(e){console.error(LOG_PREFIX+"Erro filtros admin:",e.message); area.innerHTML=`<p class="error-message">Erro: ${e.message}</p>`;} finally {showLoading(false);}}
+    async function fetchAdminStats() { 
+        const statsArea = document.getElementById('adminStatsArea'); 
+        if (!statsArea) return; 
+        console.log(LOG_PREFIX + "Buscando estatísticas admin."); 
+        try { 
+            const stats = await fetchWithAuth(`${API_BASE_URL}/admin/stats`); 
+            if (stats) { 
+                statsArea.innerHTML = `<ul class="profile-list">
+                    <li><strong>Total Usuários Rastreados:</strong> ${stats.totalTrackedUsers ?? 'N/A'}</li>
+                    <li><strong>Total Imagens de Mensagens:</strong> ${stats.totalMessageImages ?? 'N/A'}</li>
+                    <li><strong>Total Posts Instagram:</strong> ${stats.totalInstagramImages ?? 'N/A'}</li> 
+                </ul>`; 
+            } else { 
+                statsArea.innerHTML = '<p>Não foi possível carregar estatísticas.</p>';
+            }
+        } catch (e) { 
+            console.error(LOG_PREFIX+"Erro stats admin:", e.message); 
+            statsArea.innerHTML = `<p class="error-message">Erro: ${e.message}</p>`;
+        }
+    }
+    async function fetchAdminRoleConfig() { 
+        const roleConfigArea = document.getElementById('adminRoleConfigArea'); 
+        if (!roleConfigArea) return; 
+        console.log(LOG_PREFIX + "Buscando config roles."); 
+        try { 
+            const r = await fetchWithAuth(`${API_BASE_URL}/admin/roles/config`); 
+            if (r) { 
+                roleConfigArea.innerHTML = `<div><strong>Admins:</strong><pre>${escapeHTML(r.adminIds?.join('\n')||'Nenhum')}</pre></div><div style="margin-top:10px;"><strong>Premium:</strong><pre>${escapeHTML(r.premiumIds?.join('\n')||'Nenhum')}</pre></div>`;
+            } else {
+                roleConfigArea.innerHTML = '<p>Não foi possível carregar roles.</p>';
+            }
+        } catch (e) { 
+            console.error(LOG_PREFIX+"Erro config roles:", e.message); 
+            roleConfigArea.innerHTML = `<p class="error-message">Erro: ${e.message}</p>`;
+        }
+    }
+    async function handleApplyAdminUserFilters() { 
+        const f = {
+            hasMessageImages:document.getElementById('filterHasMessageImages').checked, 
+            hasAvatarHistory:document.getElementById('filterHasAvatarHistory').checked, 
+            hasInstagramPosts: document.getElementById('filterHasInstagram').checked, // <-- Ler filtro Instagram
+            usernameContains:document.getElementById('filterUsernameContains').value.trim(), 
+            discordId:document.getElementById('filterDiscordId').value.trim()
+        }; 
+        const area = document.getElementById('adminFilteredUserListArea'); 
+        if (!area) return; 
+        console.log(LOG_PREFIX+"Aplicando filtros admin:", f); 
+        area.innerHTML = `<p><i class="fas fa-spinner fa-spin"></i> Buscando...</p>`; 
+        const qP = new URLSearchParams(); 
+        if(f.hasMessageImages)qP.append('hasMessageImages','true'); 
+        if(f.hasAvatarHistory)qP.append('hasAvatarHistory','true'); 
+        if(f.hasInstagramPosts)qP.append('hasInstagramPosts', 'true'); // <-- Adicionar filtro Instagram à query
+        if(f.usernameContains)qP.append('usernameContains',f.usernameContains); 
+        if(f.discordId)qP.append('discordId',f.discordId); 
+        try {
+            showLoading(true); 
+            const u = await fetchWithAuth(`${API_BASE_URL}/admin/users/filter?${qP.toString()}`); 
+            if(u){
+                displayUserList(u,area); 
+                if(u.length===0)area.innerHTML='<p class="placeholder-text">Nenhum usuário com esses filtros.</p>';
+            } else {
+                area.innerHTML='<p class="error-message">Falha ao buscar ou acesso negado.</p>';
+            }
+        } catch(e){
+            console.error(LOG_PREFIX+"Erro filtros admin:",e.message); 
+            area.innerHTML=`<p class="error-message">Erro: ${e.message}</p>`;
+        } finally {
+            showLoading(false);
+        }
+    }
     
     // Event Listeners para filtros da sidebar
     const allFilterButtons = document.querySelectorAll('.dashboard-sidebar .filter-btn');
     allFilterButtons.forEach(button => {
         button.addEventListener('click', () => {
             const targetFilter = button.dataset.filter;
-            if (!loggedInUserInfo && targetFilter !== 'admin_panel') { // Permite tentar acessar admin para ver msg de erro
+            if (!loggedInUserInfo && targetFilter !== 'admin_panel') { 
                 alert("Por favor, faça login para usar os filtros.");
                 return;
             }
-            // Se tentar acessar admin sem ser admin (mesmo logado com outra role)
             if (targetFilter === 'admin_panel' && (!loggedInUserInfo || loggedInUserInfo.role !== 'admin')) {
-                 currentFilter = targetFilter; // Define para que renderFilteredContent mostre o erro de acesso
+                 currentFilter = targetFilter; 
             } else {
                 currentFilter = targetFilter;
             }
@@ -396,5 +500,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     handlePageLoadAuth();
-    updateActiveFilterButtonDashboard(); // Define o botão 'summary' como ativo inicialmente se não houver filtro na URL
+    updateActiveFilterButtonDashboard(); 
 });
