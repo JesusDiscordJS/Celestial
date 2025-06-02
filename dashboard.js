@@ -1,4 +1,4 @@
-// dashboard.js (Completo e Atualizado com Painel Admin e todas as Views, incluindo Instagram Gallery)
+// dashboard.js (Completo e Ajustado - Inclui Galeria Instagram e atualizações Admin)
 document.addEventListener('DOMContentLoaded', () => {
     const API_BASE_URL = 'https://celestial-api.onrender.com'; // Ou seu endpoint local
     const LOG_PREFIX = "[DashboardJS] ";
@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const usernameDisplay = document.getElementById('usernameDisplay');
     const userRoleDisplay = document.getElementById('userRoleDisplay');
     const logoutButtonHeader = document.getElementById('logoutButtonHeader');
-    const adminPanelBtn = document.getElementById('adminPanelBtn'); // Botão do painel admin na sidebar
+    const adminPanelBtn = document.getElementById('adminPanelBtn');
 
     // Elementos do Conteúdo Principal
     const userListContainer = document.getElementById('userListContainer');
@@ -19,12 +19,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchUserIdInput = document.getElementById('searchUserIdInput');
     const searchUserBtn = document.getElementById('searchUserBtn');
     const loadingIndicator = document.getElementById('loadingIndicator');
-    // const filterButtons = document.querySelectorAll('.dashboard-sidebar .filter-btn:not(#adminPanelBtn)'); // Esta linha não é mais necessária aqui se os event listeners são adicionados a 'allFilterButtons'
     const paginationControlsDiv = document.querySelector('.pagination-controls');
     
-    let currentUserData = null; // Dados do usuário do tracker selecionado
-    let currentFilter = 'summary'; // Filtro padrão para visualização de usuário
-    let loggedInUserInfo = null; // Dados do usuário autenticado
+    let currentUserData = null;
+    let currentFilter = 'summary';
+    let loggedInUserInfo = null;
 
     // --- Funções de Autenticação e UI do Header ---
     function getToken() { return localStorage.getItem('appToken'); }
@@ -38,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if(usernameDisplay) usernameDisplay.textContent = userData.username;
             if(userRoleDisplay) {
                 userRoleDisplay.textContent = userData.role;
-                userRoleDisplay.className = 'user-role-display'; // Classe base
+                userRoleDisplay.className = 'user-role-display';
                 userRoleDisplay.classList.add('role-' + userData.role.toLowerCase());
             }
             if(userInfoDisplay) userInfoDisplay.style.display = 'flex';
@@ -82,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch(url, { ...options, headers });
             console.log(LOG_PREFIX + `Resposta de ${url} - Status: ${response.status}`);
-            if (response.status === 401) { console.warn(LOG_PREFIX + "401 Não Autorizado. Limpando token."); clearToken(); loggedInUserInfo = null; updateHeaderUI(null); setLoggedOutUIFull(); return null; } // Atualizado para chamar setLoggedOutUIFull
+            if (response.status === 401) { console.warn(LOG_PREFIX + "401 Não Autorizado. Limpando token."); clearToken(); loggedInUserInfo = null; updateHeaderUI(null); setLoggedOutUIFull(); return null; }
             if (!response.ok) { const errorData = await response.json().catch(() => ({ error: `HTTP error ${response.status}`})); console.error(LOG_PREFIX + `Erro HTTP não OK: ${response.status}`, errorData); throw new Error(errorData.error || `HTTP error ${response.status}`);}
             const contentType = response.headers.get("content-type");
             if (contentType && contentType.includes("application/json")) return response.json();
@@ -211,6 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderFilteredContent() {
+        console.log(LOG_PREFIX + "Renderizando filtro:", currentFilter); // Log para depuração
         if (!userContentArea) return; userContentArea.innerHTML = ''; 
         if (!loggedInUserInfo) { setLoggedOutUIFull(); return; } 
         
@@ -233,7 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'avatars': contentHTML = renderAvatarsView(currentUserData); break;
             case 'banners': contentHTML = renderBannersView(currentUserData); break;
             case 'message_images_gallery': contentHTML = renderMessageImagesGalleryView(currentUserData); break;
-            case 'instagram_gallery': contentHTML = renderInstagramGalleryView(currentUserData); break; // <-- NOVO CASE
+            case 'instagram_gallery': contentHTML = renderInstagramGalleryView(currentUserData); break;
             case 'nicknames': contentHTML = renderNicknamesView(currentUserData); break;
             case 'servers': contentHTML = renderServersView(currentUserData); break;
             case 'messages': contentHTML = renderMessagesView(currentUserData); break;
@@ -250,7 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const avatarCount = user.avatar_url_history?.length || 0; 
         const bannerCount = user.banner_urls?.length || 0; 
         const messageImageCount = user.message_image_history?.length || 0; 
-        const instagramPostCount = user.instagram?.length || 0; // <-- Contagem para Instagram
+        const instagramPostCount = user.instagram?.length || 0;
         const nicknameCount = user.username_global_history ? new Set(user.username_global_history.filter(n => n)).size : 0;  
         const serverCount = user.servers?.length || 0; 
         const historyLogCount = user.history?.length || 0; 
@@ -289,19 +289,14 @@ document.addEventListener('DOMContentLoaded', () => {
         html += '</div>'; return html;
     }
 
-    // --- NOVA FUNÇÃO DE RENDERIZAÇÃO PARA GALERIA INSTAGRAM ---
     function renderInstagramGalleryView(user) {
         let html = `<div class="profile-section"><h3><i class="fab fa-instagram"></i> Galeria Instagram (Menções)</h3>`;
-        
         const instagramPosts = user.instagram || [];
-
         if (instagramPosts.length > 0) {
             const sortedPosts = [...instagramPosts].sort((a, b) => formatDateForSort(b.timestamp) - formatDateForSort(a.timestamp));
-            
-            html += '<div class="avatar-gallery">'; // Reutiliza a classe .avatar-gallery
+            html += '<div class="avatar-gallery">';
             sortedPosts.forEach(post => {
                 const titleText = `Postado por: ${escapeHTML(post.postedByUsername || 'N/A')} (ID: ${escapeHTML(post.postedByUserId || 'N/A')})\nData: ${formatDate(post.timestamp)}\nID Mensagem Original: ${escapeHTML(post.messageId || 'N/A')}\nServidor: ${escapeHTML(post.guildId || 'N/A')} | Canal: ${escapeHTML(post.channelId || 'N/A')}`;
-                // Usando a estrutura de gallery-item-container para melhor agrupamento
                 html += `
                     <div class="gallery-item-container"> 
                         <img 
@@ -323,7 +318,6 @@ document.addEventListener('DOMContentLoaded', () => {
         html += '</div>';
         return html;
     }
-    // --- FIM DA NOVA FUNÇÃO ---
 
     function renderNicknamesView(user) { 
         let html = '<div class="profile-section"><h3><i class="fas fa-signature"></i> Histórico de Nomes Globais</h3>'; 
@@ -386,7 +380,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>`;
         html += `</div>`;
 
-        setTimeout(() => { // Adiciona event listeners após o HTML ser inserido no DOM
+        setTimeout(() => {
             const applyFiltersBtn = document.getElementById('applyUserFiltersBtn');
             if (applyFiltersBtn) applyFiltersBtn.addEventListener('click', handleApplyAdminUserFilters);
             fetchAdminStats();
@@ -435,7 +429,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const f = {
             hasMessageImages:document.getElementById('filterHasMessageImages').checked, 
             hasAvatarHistory:document.getElementById('filterHasAvatarHistory').checked, 
-            hasInstagramPosts: document.getElementById('filterHasInstagram').checked, // <-- Ler filtro Instagram
+            hasInstagramPosts: document.getElementById('filterHasInstagram').checked,
             usernameContains:document.getElementById('filterUsernameContains').value.trim(), 
             discordId:document.getElementById('filterDiscordId').value.trim()
         }; 
@@ -446,7 +440,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const qP = new URLSearchParams(); 
         if(f.hasMessageImages)qP.append('hasMessageImages','true'); 
         if(f.hasAvatarHistory)qP.append('hasAvatarHistory','true'); 
-        if(f.hasInstagramPosts)qP.append('hasInstagramPosts', 'true'); // <-- Adicionar filtro Instagram à query
+        if(f.hasInstagramPosts)qP.append('hasInstagramPosts', 'true');
         if(f.usernameContains)qP.append('usernameContains',f.usernameContains); 
         if(f.discordId)qP.append('discordId',f.discordId); 
         try {
@@ -471,6 +465,7 @@ document.addEventListener('DOMContentLoaded', () => {
     allFilterButtons.forEach(button => {
         button.addEventListener('click', () => {
             const targetFilter = button.dataset.filter;
+            console.log(LOG_PREFIX + "Botão de filtro da Sidebar clicado. targetFilter:", targetFilter); // Log para depuração
             if (!loggedInUserInfo && targetFilter !== 'admin_panel') { 
                 alert("Por favor, faça login para usar os filtros.");
                 return;
