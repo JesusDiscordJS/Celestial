@@ -5,77 +5,67 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Celestial Tracker - Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
-    <style>
-        /* Estilos rápidos para a área de perfil no header */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 30px; /* Ajuste o padding conforme necessário */
-            background-color: rgba(10, 5, 20, 0.85); /* Cor de fundo do header */
-            border-bottom: 1px solid rgba(124, 58, 237, 0.2);
-        }
-        .user-profile-area {
-            display: flex;
-            align-items: center;
-        }
-        .user-profile-area .discord-login-btn-header { /* Renomeado para evitar conflito com landing page */
-            color: #fff;
-            background-color: #5865F2; /* Cor do Discord */
-            padding: 8px 15px;
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .user-profile-area .discord-login-btn-header:hover {
-            background-color: #4f5bda;
-        }
-        #userInfoDisplay {
-            display: flex; /* Será alterado para flex por JS */
-            align-items: center;
-        }
-        #userAvatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-right: 12px;
-            border: 2px solid #06b6d4;
-        }
-        #usernameDisplay {
-            font-weight: bold;
-            color: #fff;
-            font-size: 1.1em;
-        }
-        #userRoleDisplay {
-            font-size: 0.75em;
-            color: #0f0820; /* Cor escura para contraste com fundo claro */
-            margin-left: 8px;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-        /* Cores para roles */
-        #userRoleDisplay.role-free { background-color: #747f8d; /* Cinza Discord */ }
-        #userRoleDisplay.role-premium { background-color: #f0b132; /* Amarelo/Dourado */ }
-        #userRoleDisplay.role-admin { background-color: #10b981; /* Verde (do botão ativo) */ }
+    <link rel="stylesheet" href="style.css"> <style>
+        /* Estilos rápidos para a área de perfil no header (COMO ANTES) */
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; background-color: rgba(10, 5, 20, 0.85); border-bottom: 1px solid rgba(124, 58, 237, 0.2); }
+        .user-profile-area { display: flex; align-items: center; }
+        .user-profile-area .discord-login-btn-header { color: #fff; background-color: #5865F2; padding: 8px 15px; border-radius: 5px; text-decoration: none; font-weight: bold; display: flex; align-items: center; gap: 8px; }
+        .user-profile-area .discord-login-btn-header:hover { background-color: #4f5bda; }
+        #userInfoDisplay { display: flex; align-items: center; } /* JS controla display:flex */
+        #userAvatar { width: 40px; height: 40px; border-radius: 50%; margin-right: 12px; border: 2px solid #06b6d4;}
+        #usernameDisplay { font-weight: bold; color: #fff; font-size: 1.1em; }
+        #userRoleDisplay { font-size: 0.75em; color: #0f0820; margin-left: 8px; padding: 3px 8px; border-radius: 4px; font-weight: bold; text-transform: uppercase; }
+        #userRoleDisplay.role-free { background-color: #747f8d; }
+        #userRoleDisplay.role-premium { background-color: #f0b132; }
+        #userRoleDisplay.role-admin { background-color: #10b981; }
+        #logoutButtonHeader { background-color: #d9534f; color: white; margin-left: 20px; padding: 8px 15px; font-size: 0.9em; border: none; border-radius: 5px; cursor: pointer; }
+        #logoutButtonHeader:hover { background-color: #c9302c; }
 
-        #logoutButtonHeader { /* Renomeado para evitar conflito */
-            background-color: #d9534f; /* Vermelho para logout */
-            color: white;
-            margin-left: 20px;
-            padding: 8px 15px;
-            font-size: 0.9em;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+        /* Estilos básicos para o painel admin (adicione ao seu CSS principal) */
+        .admin-section {
+            background-color: rgba(30, 32, 37, 0.5); /* Um pouco diferente das .profile-section normais */
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(168, 85, 247, 0.3); /* Cor roxa mais proeminente */
         }
-        #logoutButtonHeader:hover {
-            background-color: #c9302c;
+        .admin-section h4 {
+            color: #a855f7; /* Roxo */
+            margin-top: 0;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(168, 85, 247, 0.2);
+        }
+        .admin-filters div {
+            margin-bottom: 10px;
+        }
+        .admin-filters label {
+            margin-left: 5px;
+            margin-right: 15px;
+            color: #ccc;
+        }
+        .admin-filters input[type="text"], .admin-filters input[type="checkbox"] {
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+        .admin-filters input[type="text"] {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #444;
+            background-color: #2a2d31;
+            color: #eee;
+        }
+        #adminRoleConfigArea pre {
+            background-color: #1e1e1e;
+            padding: 10px;
+            border-radius: 5px;
+            color: #cdd2d9;
+            white-space: pre-wrap;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        #adminFilteredUserListArea .user-list { /* Para reutilizar displayUserList */
+            padding-left: 0;
         }
     </style>
 </head>
@@ -83,7 +73,8 @@
     <div id="dashboardArea">
         <header class="header">
             <div class="logo">
-                <img src="images/celestial-logo.png" alt="Celestial Bot"> <h1>Celestial Tracker <span style="font-size: 0.7em; color: #06b6d4;">- Dashboard</span></h1>
+                <img src="images/celestial-logo.png" alt="Celestial Bot">
+                <h1>Celestial Tracker <span style="font-size: 0.7em; color: #06b6d4;">- Dashboard</span></h1>
             </div>
             <div class="user-profile-area" id="userProfileArea">
                 <a href="#" class="discord-login-btn-header" id="dashboardLoginBtn" style="display: none;">
@@ -93,7 +84,7 @@
                     <img id="userAvatar" src="" alt="Avatar">
                     <div>
                         <span id="usernameDisplay"></span>
-                        <span id="userRoleDisplay"></span>
+                        <span id="userRoleDisplay" class="user-role-display"></span>
                     </div>
                     <button id="logoutButtonHeader" style="display: none;">Logout</button>
                 </div>
@@ -106,11 +97,12 @@
                 <button class="dashboard-btn filter-btn active" data-filter="summary"><i class="fas fa-user-circle"></i> Resumo do Usuário</button>
                 <button class="dashboard-btn filter-btn" data-filter="avatars"><i class="fas fa-image"></i> Galeria de Avatares</button>
                 <button class="dashboard-btn filter-btn" data-filter="banners"><i class="fas fa-images"></i> Galeria de Banners</button>
-                <button class="dashboard-btn filter-btn" data-filter="message_images_gallery"><i class="fas fa-photo-film"></i> Imagens de Mensagens</button> <button class="dashboard-btn filter-btn" data-filter="nicknames"><i class="fas fa-signature"></i> Nomes Antigos</button>
+                <button class="dashboard-btn filter-btn" data-filter="message_images_gallery"><i class="fas fa-photo-film"></i> Imagens de Mensagens</button>
+                <button class="dashboard-btn filter-btn" data-filter="nicknames"><i class="fas fa-signature"></i> Nomes Antigos</button>
                 <button class="dashboard-btn filter-btn" data-filter="servers"><i class="fas fa-server"></i> Servidores Encontrados</button>
                 <button class="dashboard-btn filter-btn" data-filter="messages"><i class="fas fa-comments"></i> Mensagens Recentes</button>
                 <button class="dashboard-btn filter-btn" data-filter="fullHistory"><i class="fas fa-history"></i> Histórico Completo</button>
-                 <button class="dashboard-btn filter-btn" id="adminPanelBtn" data-filter="admin_panel" style="display: none; margin-top:20px; background-color: #7c3aed; border-color: #a855f7;">
+                <button class="dashboard-btn filter-btn" id="adminPanelBtn" data-filter="admin_panel" style="display: none; margin-top:20px; background-color: rgba(124, 58, 237, 0.8); border-color: #a855f7;">
                     <i class="fas fa-user-shield"></i> Painel Admin
                 </button>
             </aside>
@@ -120,25 +112,16 @@
                     <i class="fas fa-spinner fa-spin"></i> Carregando dados... ✨
                 </div>
                 <section class="user-search-section-dashboard">
-                    <input type="text" id="searchUserIdInput" placeholder="Digite o ID do Usuário Discord para buscar...">
+                    <input type="text" id="searchUserIdInput" placeholder="Digite o ID (tracker) para buscar...">
                     <button id="searchUserBtn" class="dashboard-btn"><i class="fas fa-search"></i> Buscar Usuário</button>
                 </section>
                 <div id="userContentArea">
-                    <p class="placeholder-text">
-                        <i class="fas fa-info-circle" style="font-size: 1.5em; margin-bottom: 10px; display: block;"></i>
-                        Bem-vindo ao Dashboard! <br>
-                        <span id="loginPrompt" style="display:none;">Por favor, <a href="#" id="inlineLoginLink">faça login com Discord</a> para acessar os dados.</span>
-                        <span id="loggedInContentPlaceholder">Use a barra de pesquisa ou selecione um usuário da lista.</span>
-                    </p>
-                </div>
+                    </div>
                 <section class="user-list-section-dashboard">
                     <h2><i class="fas fa-users"></i> Usuários Rastreados</h2>
                     <div id="userListContainer"></div>
                     <div class="pagination-controls" style="display: none;">
-                        <button id="prevPageBtn" class="dashboard-btn" disabled><i class="fas fa-arrow-left"></i> Anterior</button>
-                        <span id="currentPageSpan">Página: 1</span>
-                        <button id="nextPageBtn" class="dashboard-btn">Próxima <i class="fas fa-arrow-right"></i></button>
-                    </div>
+                         </div>
                 </section>
             </main>
         </div>
