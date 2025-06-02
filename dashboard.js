@@ -33,20 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#039;');
     }
-
-Sim, você tem razão em apontar se as datas estão aparecendo incorretamente. O problema provavelmente está na forma como a função formatDate no seu dashboard.js está interpretando as strings de data que vêm da API.
-
-Se a sua API está retornando datas como strings no formato ISO 8601 (ex: "2025-06-01T21:21:08.147Z"), como no exemplo que você mostrou, a versão anterior da função formatDate poderia interpretá-las incorretamente ao tentar usar parseInt diretamente na string ISO.
-
-Vamos corrigir a função formatDate e também a formatDateForSort (usada para ordenar os usuários por data) no seu dashboard.js para lidar de forma mais robusta com os formatos de data que sua API pode estar enviando (sejam strings ISO ou timestamps numéricos).
-
-Substitua as funções formatDate e formatDateForSort no seu arquivo dashboard.js pelas seguintes:
-
-JavaScript
-
-// Coloque estas funções dentro do seu `dashboard.js`
-// (substituindo as versões antigas delas)
-
 function formatDate(dateSource) {
     if (!dateSource) return 'N/A';
     let date;
