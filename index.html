@@ -109,6 +109,11 @@
     <script>
         const isMobile = window.innerWidth <= 768;
 
+        // Defina a URL base da sua API aqui. Se estiver rodando localmente:
+        // const API_BASE_URL = 'http://localhost:3000'; 
+        // Se estiver no Render ou outro serviço, use a URL da API implantada:
+        const API_BASE_URL = 'https://celestial-api.onrender.com'; // Exemplo, ajuste conforme necessário
+
         function createStars() {
             const starsContainer = document.getElementById('stars');
             if (!starsContainer) return;
@@ -155,8 +160,9 @@
         const loginButton = document.getElementById('discordLoginBtn');
         if (loginButton) {
             loginButton.addEventListener('click', function(event) {
-                event.preventDefault(); // Previne qualquer comportamento padrão do botão, se houver
-                window.location.href = 'dashboard.html'; // Redireciona para a página da dashboard
+                event.preventDefault();
+                // Redireciona para a rota de autenticação do Discord no backend
+                window.location.href = `${API_BASE_URL}/auth/discord`; 
             });
         }
 
@@ -186,9 +192,9 @@
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         const element = entry.target;
-                        element.style.animation = 'none';
-                        element.offsetHeight;
-                        element.style.animation = '';
+                        element.style.animation = 'none'; // Reset animation
+                        element.offsetHeight; /* Trigger reflow */
+                        element.style.animation = ''; // Re-apply animation
                     }
                 });
             }, { threshold: 0.5 });
