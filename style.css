@@ -578,6 +578,95 @@ body.dashboard-page-body { /* Se você usa esta classe no body da dashboard */
     min-width: 0;  
 }
 
+/* === Estilos para o Painel Admin === */
+.admin-main-panel { /* Container principal do painel admin dentro de userContentArea */
+    /* Pode herdar de .profile-section ou ter seus próprios estilos base */
+}
+
+.admin-section {
+    background-color: rgba(30, 32, 37, 0.6); /* Cor de fundo um pouco diferente */
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    border: 1px solid rgba(168, 85, 247, 0.35); /* Roxo mais destacado */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.admin-section h4 {
+    color: #c084fc; /* Tom de roxo mais claro para títulos */
+    font-size: 1.3em;
+    margin-top: 0;
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(168, 85, 247, 0.25);
+}
+.admin-section h4 i {
+    margin-right: 8px;
+}
+
+.admin-filters {
+    padding: 10px 0;
+}
+
+.admin-filters div {
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap; /* Para responsividade */
+}
+
+.admin-filters label {
+    margin-right: 10px;
+    margin-left: 5px; /* Para checkbox */
+    color: #d1d5db; /* Texto mais claro */
+    min-width: 200px; /* Ajuda no alinhamento */
+}
+.admin-filters input[type="checkbox"] {
+    margin-right: 5px;
+    transform: scale(1.1); /* Checkbox um pouco maior */
+}
+
+.admin-filters input[type="text"] {
+    padding: 8px 10px;
+    border-radius: 5px;
+    border: 1px solid #555; /* Borda mais visível */
+    background-color: #2a2d31; /* Fundo escuro */
+    color: #eee;
+    font-size: 0.9em;
+    min-width: 200px;
+}
+
+.admin-filters .dashboard-btn { /* Estilo para o botão de aplicar filtros */
+    padding: 10px 20px;
+    font-size: 0.95em;
+    margin-top: 10px; /* Espaço acima do botão */
+}
+
+#adminStatsArea ul.profile-list li,
+#adminRoleConfigArea div {
+    color: #cdd2d9;
+    font-size: 0.95em;
+}
+#adminRoleConfigArea pre {
+    background-color: rgba(10, 5, 20, 0.7); /* Fundo bem escuro para o <pre> */
+    padding: 12px;
+    border-radius: 5px;
+    color: #a5b4fc; /* Cor do texto dentro do pre */
+    white-space: pre-wrap;
+    max-height: 150px;
+    overflow-y: auto;
+    border: 1px solid rgba(124, 58, 237, 0.2);
+    margin-top: 5px;
+}
+#adminRoleConfigArea strong {
+    color: #e0e0e0;
+}
+
+#adminFilteredUserListArea .user-list {
+    padding-left: 0;
+    list-style: none;
+}
+/* A lista de usuários filtrados reutilizará os estilos de .user-list-item-enhanced */
 /* Seção de Pesquisa de Usuário */
 .user-search-section-dashboard {
     background: rgba(20, 10, 35, 0.7);  
