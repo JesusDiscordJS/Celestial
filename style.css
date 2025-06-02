@@ -494,21 +494,21 @@ body.dashboard-page-body { /* Se você usa esta classe no body da dashboard */
 /* Layout Flex para Sidebar e Conteúdo Principal */
 .dashboard-layout {
     display: flex;
-    gap: 25px; 
+    gap: 25px;  
     margin-top: 20px; /* Espaço abaixo do header da dashboard */
 }
 
 /* Barra Lateral de Navegação */
 .dashboard-sidebar {
-    flex: 0 0 280px; 
+    flex: 0 0 280px;  
     background: rgba(20, 10, 35, 0.75); /* Fundo semi-transparente para deixar o gradiente do body aparecer */
     backdrop-filter: blur(10px);
     padding: 25px;
     border-radius: 15px;
     border: 1px solid rgba(124, 58, 237, 0.35); /* Borda sutil roxa */
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-    height: fit-content; 
-    align-self: flex-start; 
+    height: fit-content;  
+    align-self: flex-start;  
 }
 
 .dashboard-sidebar h3 {
@@ -531,8 +531,8 @@ body.dashboard-page-body { /* Se você usa esta classe no body da dashboard */
     width: 100%;
     margin-bottom: 10px;
     text-align: left;
-    padding: 10px 15px; 
-    font-size: 0.95rem; 
+    padding: 10px 15px;  
+    font-size: 0.95rem;  
     background: rgba(124, 58, 237, 0.2); /* Fundo sutil para botões não ativos */
     border: 1px solid rgba(124, 58, 237, 0.4);
     box-shadow: none; /* Remove sombra padrão do .dashboard-btn para um look mais integrado */
@@ -545,7 +545,7 @@ body.dashboard-page-body { /* Se você usa esta classe no body da dashboard */
 
 .dashboard-sidebar .dashboard-btn i {
     margin-right: 10px;
-    width: 18px; 
+    width: 18px;  
     text-align: center;
     color: rgba(255,255,255,0.7); /* Cor do ícone */
 }
@@ -554,8 +554,8 @@ body.dashboard-page-body { /* Se você usa esta classe no body da dashboard */
 }
 
 .dashboard-sidebar .dashboard-btn.active {
-    background: linear-gradient(45deg, #10b981, #06b6d4) !important; 
-    color: #0f0820 !important; 
+    background: linear-gradient(45deg, #10b981, #06b6d4) !important;  
+    color: #0f0820 !important;  
     border-color: #10b981;
     box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
 }
@@ -568,13 +568,13 @@ body.dashboard-page-body { /* Se você usa esta classe no body da dashboard */
 
 /* Área de Visualização Principal do Conteúdo da Dashboard */
 .dashboard-main-view {
-    flex-grow: 1; 
-    min-width: 0; 
+    flex-grow: 1;  
+    min-width: 0;  
 }
 
 /* Seção de Pesquisa de Usuário */
 .user-search-section-dashboard {
-    background: rgba(20, 10, 35, 0.7); 
+    background: rgba(20, 10, 35, 0.7);  
     backdrop-filter: blur(8px);
     padding: 20px;
     border-radius: 12px;
@@ -596,7 +596,7 @@ body.dashboard-page-body { /* Se você usa esta classe no body da dashboard */
 }
 .user-search-section-dashboard input[type="text"]::placeholder { color: #8a909a; }
 .user-search-section-dashboard .dashboard-btn { /* Usa seu .dashboard-btn */
-    padding: 12px 20px; 
+    padding: 12px 20px;  
 }
 
 /* Área onde o conteúdo do usuário filtrado é exibido */
@@ -605,7 +605,7 @@ body.dashboard-page-body { /* Se você usa esta classe no body da dashboard */
     backdrop-filter: blur(12px);
     padding: 25px; /* Padding interno */
     border-radius: 15px;
-    min-height: 450px; 
+    min-height: 450px;  
     border: 1px solid rgba(124, 58, 237, 0.3);
     box-shadow: 0 5px 25px rgba(0,0,0,0.35);
     color: #e0e0e0; /* Cor de texto padrão para o conteúdo */
@@ -624,9 +624,9 @@ body.dashboard-page-body { /* Se você usa esta classe no body da dashboard */
     margin-bottom: 0; /* Remove margem da última seção */
 }
 
-#userContentArea .profile-section h3 { 
+#userContentArea .profile-section h3 {  
     font-size: 1.5rem; /* Tamanho do título da seção */
-    color: #06b6d4; 
+    color: #06b6d4;  
     margin-bottom: 18px;
     padding-bottom: 8px;
     border-bottom: 1px solid rgba(124, 58, 237, 0.3);
@@ -638,15 +638,15 @@ body.dashboard-page-body { /* Se você usa esta classe no body da dashboard */
 /* Estilos para listas dentro das seções de perfil */
 #userContentArea .profile-list { list-style: none; padding-left: 0; }
 #userContentArea .profile-list li {
-    background: rgba(124, 58, 237, 0.08); 
+    background: rgba(124, 58, 237, 0.08);  
     padding: 10px 15px;
     border-radius: 6px;
     margin-bottom: 8px;
     color: #cdd2d9; /* Cor de texto para itens da lista */
-    border-left: 3px solid #7c3aed; 
+    border-left: 3px solid #7c3aed;  
     transition: background-color 0.2s ease, transform 0.2s ease;
 }
-#userContentArea .profile-list li:hover { 
+#userContentArea .profile-list li:hover {  
     background-color: rgba(124, 58, 237, 0.15);
     transform: translateX(3px);
 }
@@ -720,7 +720,7 @@ body.dashboard-page-body { /* Se você usa esta classe no body da dashboard */
     width: 200px; height: auto; max-height: 100px; /* Limita altura do banner */
     object-fit: cover; /* Cover pode ser melhor para banners */
     border-radius: 8px;
-    border: 2px solid rgba(124, 58, 237, 0.3); 
+    border: 2px solid rgba(124, 58, 237, 0.3);  
     background-color: rgba(0,0,0,0.2);
     cursor: pointer;
     transition: transform 0.25s ease;
@@ -738,15 +738,15 @@ body.dashboard-page-body { /* Se você usa esta classe no body da dashboard */
     max-height: 400px; /* Permite scroll se o histórico for muito grande */
     overflow-y: auto;
 }
-#userContentArea .profile-history-log li { 
-    border-bottom: 1px dashed rgba(124,58,237,0.15); 
+#userContentArea .profile-history-log li {  
+    border-bottom: 1px dashed rgba(124,58,237,0.15);  
     padding-bottom: 12px; margin-bottom:12px;
 }
 #userContentArea .profile-history-log li:last-child { border-bottom: none; margin-bottom: 0; }
 
 
 /* Placeholder e mensagens de erro dentro de #userContentArea */
-#userContentArea .placeholder-text, 
+#userContentArea .placeholder-text,  
 #userContentArea .error-message {
     padding: 30px; text-align: center; font-size: 1.1rem; color: #969faf;
     background: rgba(24, 25, 28, 0.5); border-radius: 8px;
@@ -762,21 +762,21 @@ body.dashboard-page-body { /* Se você usa esta classe no body da dashboard */
 
 
 /* Seção da Lista de Usuários Recentes na Dashboard */
-.user-list-section-dashboard { 
-    margin-top: 30px; 
-    background: rgba(20, 10, 35, 0.65); 
-    backdrop-filter: blur(8px); 
+.user-list-section-dashboard {  
+    margin-top: 30px;  
+    background: rgba(20, 10, 35, 0.65);  
+    backdrop-filter: blur(8px);  
     padding: 20px 25px; /* Mais padding horizontal */
-    border-radius: 15px; 
+    border-radius: 15px;  
     border: 1px solid rgba(124, 58, 237, 0.3);
 }
-.user-list-section-dashboard h2 { 
-    font-size: 1.6rem; 
-    margin-bottom: 20px; 
+.user-list-section-dashboard h2 {  
+    font-size: 1.6rem;  
+    margin-bottom: 20px;  
     padding-bottom: 10px;
     border-bottom: 1px solid rgba(124,58,237,0.2);
-    background: linear-gradient(45deg, #7c3aed, #06b6d4); 
-    -webkit-background-clip: text; 
+    background: linear-gradient(45deg, #7c3aed, #06b6d4);  
+    -webkit-background-clip: text;  
     -webkit-text-fill-color: transparent;
     background-clip: text;
     text-fill-color: transparent;
@@ -793,22 +793,22 @@ body.dashboard-page-body { /* Se você usa esta classe no body da dashboard */
     box-shadow: 0 4px 10px rgba(0,0,0, 0.2);
     transition: all 0.3s ease;
 }
-.user-list-item-enhanced:hover { 
-    transform: translateY(-3px); 
-    box-shadow: 0 6px 18px rgba(124, 58, 237, 0.2); 
-    border-color: rgba(124, 58, 237, 0.4); 
+.user-list-item-enhanced:hover {  
+    transform: translateY(-3px);  
+    box-shadow: 0 6px 18px rgba(124, 58, 237, 0.2);  
+    border-color: rgba(124, 58, 237, 0.4);  
 }
 
-.user-list-item-enhanced .user-avatar-small { 
-    width: 50px; height: 50px; border-radius: 50%; margin-right: 18px; 
-    border: 2px solid rgba(124, 58, 237, 0.5); flex-shrink: 0; object-fit: cover; 
+.user-list-item-enhanced .user-avatar-small {  
+    width: 50px; height: 50px; border-radius: 50%; margin-right: 18px;  
+    border: 2px solid rgba(124, 58, 237, 0.5); flex-shrink: 0; object-fit: cover;  
 }
 
-.user-list-item-enhanced .user-info-column, 
-.user-list-item-enhanced .server-info-column, 
-.user-list-item-enhanced .last-update-column { 
-    display: flex; flex-direction: column; justify-content: center; 
-    flex-grow: 1; min-width: 0; margin-right: 15px; 
+.user-list-item-enhanced .user-info-column,  
+.user-list-item-enhanced .server-info-column,  
+.user-list-item-enhanced .last-update-column {  
+    display: flex; flex-direction: column; justify-content: center;  
+    flex-grow: 1; min-width: 0; margin-right: 15px;  
 }
 .user-list-item-enhanced .user-info-column { flex-basis: 22%; flex-grow: 1.5; }
 .user-list-item-enhanced .server-info-column { flex-basis: 28%; flex-grow: 1.8; }
@@ -822,15 +822,15 @@ body.dashboard-page-body { /* Se você usa esta classe no body da dashboard */
 .user-list-item-enhanced .info-value.placeholder { color: #5c626b; font-style: italic; }
 
 .user-list-item-enhanced .view-profile-btn { /* Usa .dashboard-btn */
-    margin-left: auto; padding: 8px 15px; font-size: 0.85em; 
-    flex-shrink: 0; white-space: nowrap; 
+    margin-left: auto; padding: 8px 15px; font-size: 0.85em;  
+    flex-shrink: 0; white-space: nowrap;  
 }
 .user-list-item-enhanced .view-profile-btn i { margin-right: 6px; }
 
 
 /* Controles de Paginação (reutiliza .dashboard-btn) */
 .pagination-controls { display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 25px; }
-.pagination-controls .dashboard-btn { min-width: 110px; padding: 8px 15px; font-size:0.9em; } 
+.pagination-controls .dashboard-btn { min-width: 110px; padding: 8px 15px; font-size:0.9em; }  
 .pagination-controls .dashboard-btn i { font-size: 0.9em; }
 .pagination-controls span { color: #b0b8c4; font-weight: bold; font-size: 0.9em; }
 
@@ -840,28 +840,28 @@ body.dashboard-page-body { /* Se você usa esta classe no body da dashboard */
     .user-list-item-enhanced .server-info-column,
     .user-list-item-enhanced .last-update-column {
         /* Ocultar em telas médias se ficar muito apertado, ou reduzir flex-basis */
-        /* display: none; */ 
+        /* display: none; */  
     }
 }
 
-@media (max-width: 992px) { 
+@media (max-width: 992px) {  
     .dashboard-layout { flex-direction: column; padding: 0 15px; }
     .dashboard-sidebar { flex: 0 0 auto; width:100%; margin-bottom:20px;}
     
     .user-list-item-enhanced { flex-wrap: wrap; /* Permite que o botão vá para baixo */ }
     .user-list-item-enhanced .user-info-column { flex-basis: 100%; margin-bottom: 8px; }
-    .user-list-item-enhanced .server-info-column, 
-    .user-list-item-enhanced .last-update-column { 
+    .user-list-item-enhanced .server-info-column,  
+    .user-list-item-enhanced .last-update-column {  
         flex-basis: calc(50% - 10px); /* Tenta colocar 2 por linha */
         margin-bottom: 8px;
     }
-    .user-list-item-enhanced .view-profile-btn { 
-        margin-left: 0; margin-top: 10px; width: 100%; text-align: center; 
+    .user-list-item-enhanced .view-profile-btn {  
+        margin-left: 0; margin-top: 10px; width: 100%; text-align: center;  
         flex-basis: 100%; /* Botão ocupa toda a largura */
     }
 }
 
-@media (max-width: 576px) { 
+@media (max-width: 576px) {  
     #dashboardArea { padding: 10px; }
     .dashboard-layout { gap: 15px; margin-top: 15px; padding: 0 10px;}
     .dashboard-sidebar { padding: 15px; }
@@ -869,7 +869,7 @@ body.dashboard-page-body { /* Se você usa esta classe no body da dashboard */
     .dashboard-sidebar .dashboard-btn { padding: 10px 15px; font-size: 0.9rem; }
     
     .user-search-section-dashboard {flex-direction: column; gap: 10px; padding: 15px;}
-    .user-search-section-dashboard input[type="text"], 
+    .user-search-section-dashboard input[type="text"],  
     .user-search-section-dashboard .dashboard-btn { width:100%;}
     
     #userContentArea { padding: 15px; }
@@ -885,8 +885,8 @@ body.dashboard-page-body { /* Se você usa esta classe no body da dashboard */
     .user-list-item-enhanced .user-avatar-small { width: 45px; height: 45px; margin-right: 15px; }
     .user-list-item-enhanced .username { font-size: 1rem; }
     .user-list-item-enhanced .info-value { font-size: 0.8rem; }
-    .user-list-item-enhanced .server-info-column, 
-    .user-list-item-enhanced .last-update-column { 
+    .user-list-item-enhanced .server-info-column,  
+    .user-list-item-enhanced .last-update-column {  
         flex-basis: 100%; /* Uma info por linha abaixo do nome/ID */
     }
     .pagination-controls .dashboard-btn { font-size:0.8em; padding: 8px 10px; min-width: 80px;}
@@ -895,7 +895,7 @@ body.dashboard-page-body { /* Se você usa esta classe no body da dashboard */
 
 /* === FIM DO NOVO CSS ESPECÍFICO PARA A DASHBOARD === */
 
-/* === NOVOS ESTILOS PARA A SEÇÃO DE MENSAGENS === */
+/* === NOVOS ESTILOS PARA A SEÇÃO DE MENSAGENS (Já fornecido anteriormente) === */
 .messages-list .message-item {
     border-left-color: #06b6d4; /* Cor diferente para destacar itens de mensagem */
     margin-bottom: 15px;
@@ -955,3 +955,79 @@ body.dashboard-page-body { /* Se você usa esta classe no body da dashboard */
     font-size: 0.75em;
     color: #6b7280;
 }
+
+/* === INÍCIO DO CSS PARA A NOVA GALERIA DE IMAGENS DE MENSAGENS === */
+.message-image-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); /* Aumentei um pouco o minmax */
+    gap: 18px; /* Aumentei o gap */
+    margin-top: 20px;
+}
+
+.message-image-item {
+    background-color: rgba(24, 25, 28, 0.85); /* Um pouco mais escuro que profile-section */
+    border-radius: 10px; /* Mais arredondado */
+    padding: 12px;
+    border: 1px solid rgba(124, 58, 237, 0.25);
+    box-shadow: 0 3px 8px rgba(0,0,0, 0.25);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    display: flex; /* Para melhor controle do conteúdo interno */
+    flex-direction: column;
+}
+
+.message-image-item:hover {
+    transform: translateY(-4px) scale(1.02); /* Efeito de hover mais pronunciado */
+    box-shadow: 0 5px 15px rgba(124, 58, 237, 0.3);
+    border-color: rgba(124, 58, 237, 0.4);
+}
+
+.gallery-message-image {
+    width: 100%;
+    height: 180px; /* Altura um pouco maior */
+    object-fit: cover;
+    border-radius: 6px; /* Bordas da imagem */
+    margin-bottom: 10px;
+    cursor: pointer;
+    background-color: rgba(10, 5, 20, 0.5); /* Fundo para imagens que não carregam */
+    border: 1px solid rgba(124, 58, 237, 0.15); /* Borda sutil na imagem */
+}
+
+.image-context {
+    font-size: 0.8rem;
+    color: #b0b8c4;
+    margin-top: auto; /* Empurra o contexto para baixo se o card tiver altura variável por algum motivo */
+}
+
+.image-context p {
+    margin: 4px 0; /* Espaçamento entre os parágrafos do contexto */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.3;
+}
+.image-context p:last-child {
+    margin-bottom: 0;
+}
+
+.image-context strong { /* Remove a cor específica para usar a cor do parágrafo e destacar com negrito */
+    font-weight: 600;
+    color: #cdd2d9; /* Cor um pouco mais clara para os labels */
+}
+
+.image-context-server, .image-context-date, .image-context-text {
+    /* Estilos específicos podem ser adicionados aqui se necessário */
+}
+.image-context-text { /* Permite que o texto da mensagem quebre linha se for muito longo */
+    white-space: normal; 
+    /* max-height: 3.9em; /* Aprox 3 linhas, ajuste conforme necessário */
+    /* Removido max-height para permitir que o texto flua, o card vai expandir */
+    overflow: hidden; /* Ainda útil com text-overflow se o texto for realmente muito longo */
+    text-overflow: ellipsis; /* Aplicado ao container, mas pode não funcionar perfeitamente com múltiplas linhas sem JS */
+    display: -webkit-box; /* Para truncamento de múltiplas linhas */
+    -webkit-line-clamp: 2; /* Número de linhas a exibir */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+
+/* === FIM DO CSS PARA A NOVA GALERIA DE IMAGENS DE MENSAGENS === */
